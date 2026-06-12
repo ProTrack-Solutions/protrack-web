@@ -52,8 +52,8 @@ export function PrivateLayout({ children }: { children: React.ReactNode }) {
         <SidebarItem
           icon={<PackageSearch size={18} />}
           text="Produtos"
-          router="/produtos"
-          active={currentPath === "/produtos"}
+          router="/stock"
+          active={currentPath === "/stock"}
         />
         <SidebarItem
           icon={<UserSearch size={18} />}
