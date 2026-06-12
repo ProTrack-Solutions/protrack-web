@@ -8,7 +8,7 @@ const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
 export const metadata: Metadata = {
   title: "ProTrack",
   icons: {
-    icon: "@/assets/logo.svg",
+    icon: "logo.svg",
   },
 };
 
