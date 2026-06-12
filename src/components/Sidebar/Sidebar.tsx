@@ -4,7 +4,6 @@ import { useState } from "react";
 import { SidebarContext } from "@/context/SidebarContext";
 import { ChevronFirst, ChevronLast, MoreVertical } from "lucide-react";
 import Image from "next/image"; // Otimização de imagens nativa do Next.js
-import logoImg from "@/assets/logo.svg";
 
 import {
   DropdownMenu,
@@ -24,7 +23,7 @@ export function Sidebar({ children }: SidebarProps) {
 
   const handleLogout = async () => {
     try {
-      router.push("/login"); // Exemplo de redirecionamento pós-logout caso seu hook não o faça
+      router.push("/"); // Exemplo de redirecionamento pós-logout caso seu hook não o faça
     } catch (error) {
       console.error("Erro ao fazer logout:", error);
     }
@@ -36,14 +35,16 @@ export function Sidebar({ children }: SidebarProps) {
         {/* Header */}
         <div className="p-3 pb-1 flex justify-between items-center">
           <div
-            className={`overflow-hidden transition-all duration-300 ${
-              expanded ? "w-22" : "w-0"
+            className={`overflow-hidden transition-all duration-300 relative ${
+              expanded ? "w-22 h-8" : "w-0"
             }`}
           >
             <Image
-              src={logoImg}
+              src="/logo.svg"
               alt="Logo"
-              priority // Carrega a logo com prioridade por estar no topo
+              fill
+              className="object-contain"
+              priority
             />
           </div>
           <button
