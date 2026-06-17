@@ -35,7 +35,7 @@ export function SaleInfoCard() {
               <FormLabel>Cliente</FormLabel>
               <Select onValueChange={field.onChange} value={field.value}>
                 <FormControl>
-                  <SelectTrigger>
+                  <SelectTrigger className="w-full">
                     <SelectValue placeholder="Selecione um cliente" />
                   </SelectTrigger>
                 </FormControl>

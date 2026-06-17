@@ -60,7 +60,7 @@ export function SidebarItem({
           transition-colors group
           ${
             active
-              ? "bg-gradient-primary from-indigo-200 to-indigo-100 text-indigo-800"
+              ? "bg-gradient-primary from-indigo-200 to-indigo-100 text-black"
               : "hover:bg-indigo-50 text-gray-600"
           }
         `}
@@ -80,7 +80,7 @@ export function SidebarItem({
         transition-colors group
         ${
           active
-            ? "bg-gradient-primary from-indigo-200 to-indigo-100 text-indigo-800"
+            ? "bg-gradient-primary from-indigo-200 to-indigo-100 text-indigo-800/30"
             : "hover:bg-indigo-50 text-gray-600"
         }
       `}

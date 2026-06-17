@@ -87,7 +87,7 @@ export function SaleProductsTable() {
                           value={field.value}
                         >
                           <FormControl>
-                            <SelectTrigger>
+                            <SelectTrigger className="w-full">
                               <SelectValue placeholder="Selecione o produto" />
                             </SelectTrigger>
                           </FormControl>
