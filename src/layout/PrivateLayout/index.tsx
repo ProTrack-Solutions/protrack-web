@@ -44,7 +44,7 @@ export function PrivateLayout({ children }: { children: React.ReactNode }) {
           icon={<Calculator size={18} />}
           text="Dashboard Financeiro"
           router="/dashboard"
-          active={currentPath === "/financeiro" || currentPath === "/"}
+          active={currentPath === "/dashboard"}
           requiredRoles={["admin", "financeiro"]}
         />
 
@@ -59,7 +59,7 @@ export function PrivateLayout({ children }: { children: React.ReactNode }) {
           icon={<UserSearch size={18} />}
           text="Clientes"
           router="/clients"
-          active={currentPath === "/clientes"}
+          active={currentPath === "/clients"}
         />
 
         <SidebarSectionLabel text="Vendas" />
@@ -67,7 +67,7 @@ export function PrivateLayout({ children }: { children: React.ReactNode }) {
           icon={<Store size={18} />}
           text="Nova Venda"
           router="/sale"
-          active={currentPath === "/venda"}
+          active={currentPath === "/sale"}
           requiredRoles={["admin", "vendedor"]}
         />
         <SidebarItem
@@ -125,7 +125,7 @@ export function PrivateLayout({ children }: { children: React.ReactNode }) {
         />
       </Sidebar>
 
-      <main className="w-full">
+      <main className="w-full overflow-auto">
         {children} {/* Corrigido: Substitui o <Outlet /> do antigo Router */}
       </main>
     </div>
