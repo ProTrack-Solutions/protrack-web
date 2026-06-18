@@ -5,10 +5,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Form } from "@/components/ui/form";
 import { VendaForm, vendaSchema } from "@/@types/sale.type";
 import { SaleFormActions } from "./components/saleFormAction";
-import { SaleHeader } from "./components/saleHeader";
 import { SaleInfoCard } from "./components/saleInfoCard";
 import { SaleProductsTable } from "./components/saleProductTable";
 import { SaleSummaryCard } from "./components/saleSummaryCard";
+import { Header } from "@/components/Header";
 
 export default function Sale() {
   const form = useForm<VendaForm>({
@@ -27,8 +27,11 @@ export default function Sale() {
   };
 
   return (
-    <div className="p-6 space-y-6 flex-1">
-      <SaleHeader />
+    <div className="p-6 space-y-6">
+      <Header
+        title="Bem-vindo à página vendas!"
+        text="Aqui você pode cadastrar novas vendas."
+      />
 
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">

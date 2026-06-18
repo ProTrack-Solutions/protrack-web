@@ -2,10 +2,10 @@
 
 import { Product } from "@/@types/stock.type";
 import { useMemo, useState } from "react";
-import { EstoqueHeader } from "./components/EstoqueHeader";
 import { EstoqueSearch } from "./components/EstoqueSearch";
 import { EstoqueStats } from "./components/EstoqueStats";
 import { EstoqueTable } from "./components/EstoqueTable";
+import { Header } from "@/components/Header";
 
 const PRODUCTS: Product[] = [
   {
@@ -115,9 +115,12 @@ export default function Stock() {
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/30">
-      <div className="p-6 space-y-6 max-w-[1600px] mx-auto">
-        <EstoqueHeader />
+    <div className="p-6 space-y-6">
+      <Header
+        title="Bem-vindo à página estoque!"
+        text="Aqui você pode visualizar todos os produtos cadastrados no sistema.."
+      />
+      <div className="p-6 space-y-6 mx-auto">
         <EstoqueStats stats={stats} />
         <EstoqueSearch searchTerm={searchTerm} onSearchChange={setSearchTerm} />
         <EstoqueTable products={filteredProducts} />
