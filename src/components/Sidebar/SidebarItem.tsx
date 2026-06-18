@@ -60,7 +60,7 @@ export function SidebarItem({
           transition-colors group
           ${
             active
-              ? "bg-gradient-primary from-indigo-200 to-indigo-100 text-black"
+              ? "bg-blue-500/30 from-indigo-200 to-indigo-100 text-indigo-900"
               : "hover:bg-indigo-50 text-gray-600"
           }
         `}

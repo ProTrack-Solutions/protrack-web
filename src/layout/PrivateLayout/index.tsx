@@ -112,8 +112,8 @@ export function PrivateLayout({ children }: { children: React.ReactNode }) {
         <SidebarItem
           icon={<PackagePlus size={18} />}
           text="Novo Produto"
-          router="/cadastroprodutos"
-          active={currentPath === "/cadastroprodutos"}
+          router="/product-registration"
+          active={currentPath === "/product-registration"}
           requiredRoles={["admin", "operador"]}
         />
         <SidebarItem
