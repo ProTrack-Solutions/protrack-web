@@ -5,11 +5,14 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { AppInput } from "@/components/AppInput";
 import { AppButton } from "@/components/AppButton";
+import { signIn } from "next-auth/react";
+import { LoginParams } from "@/@types/auth.type";
 
 export default function Auth() {
-  //const { setHasCompany } = useAuth();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [loginParams, setLoginParams] = useState<LoginParams>({
+    email: "",
+    password: "",
+  });
   const [mostrarSenha, setMostrarSenha] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
@@ -23,22 +26,24 @@ export default function Auth() {
     e.preventDefault();
 
     setError("");
-    setIsLoading(true);
 
     try {
-      /**const response = await login({
-        email,
-        password,
-        aud,
-      });*/
+      setIsLoading(true);
+      const result = await signIn("credentials", {
+        email: loginParams.email,
+        password: loginParams.password,
+        redirect: false,
+      });
 
-      /** localStorage.setItem("access_token", response.access_token);
-      localStorage.setItem("has_company", String(response.has_company));
-      setHasCompany(response.has_company);*/
-
-      router.push("/dashboard");
-    } catch {
-      setError("Email ou senha inválidos");
+      if (!result || result.error) {
+        setError("Credenciais inválidas ou erro ao conectar com o servidor.");
+      } else {
+        router.push("/dashboard");
+        router.refresh();
+      }
+    } catch (error) {
+      setError("Ocorreu um erro inesperado. Tente novamente.");
+      console.error(error);
     } finally {
       setIsLoading(false);
     }
@@ -65,8 +70,8 @@ export default function Auth() {
           </div>
         </div>
       </div>
-      <div className="bg-transparent w-133 flex justify-center items-center">
-        <div className="flex flex-col gap-2">
+      <div className="bg-transparent w-110 flex justify-center items-center">
+        <div className="flex-1 flex-col gap-2 p-10">
           <div className="flex flex-col">
             <strong className="text-3xl text-blue-800">Bem vindo!</strong>
             <span className="text-sm text-zinc-500">
@@ -77,14 +82,18 @@ export default function Auth() {
             <AppInput
               label="Email"
               type="text"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              value={loginParams.email}
+              onChange={(e) =>
+                setLoginParams({ ...loginParams, email: e.target.value })
+              }
             />
             <AppInput
               label="Senha"
               type={mostrarSenha ? "text" : "password"}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              value={loginParams.password}
+              onChange={(e) =>
+                setLoginParams({ ...loginParams, password: e.target.value })
+              }
             />
             <div className="flex justify-between">
               <label className="inline-flex items-center space-x-2 cursor-pointer">
@@ -112,7 +121,7 @@ export default function Auth() {
               className="w-1/1 h-10 bg-blue-500 cursor-pointer"
             />
             {error && (
-              <div className="mt-2 p-2 bg-red-100 border border-red-400 text-red-700 rounded">
+              <div className="mt-2 p-2 bg-red-100 border border-red-400 text-red-700 rounded w-full">
                 {error}
               </div>
             )}
