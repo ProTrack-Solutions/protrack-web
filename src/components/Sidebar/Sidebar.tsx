@@ -12,6 +12,7 @@ import {
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu"; // shadcn/ui
 import { useRouter } from "next/navigation"; // Hook de navegação correto para o Next.js
+import { signOut } from "next-auth/react";
 
 type SidebarProps = {
   children: React.ReactNode;
@@ -23,7 +24,7 @@ export function Sidebar({ children }: SidebarProps) {
 
   const handleLogout = async () => {
     try {
-      router.push("/"); // Exemplo de redirecionamento pós-logout caso seu hook não o faça
+      signOut({ callbackUrl: "/auth" }); // Exemplo de redirecionamento pós-logout caso seu hook não o faça
     } catch (error) {
       console.error("Erro ao fazer logout:", error);
     }

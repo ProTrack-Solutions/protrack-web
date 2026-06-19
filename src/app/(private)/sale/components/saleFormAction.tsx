@@ -1,6 +1,6 @@
 import { useFormContext } from "react-hook-form";
 import { Button } from "@/components/ui/button";
-import type { VendaForm } from "./sale.types";
+import { VendaForm } from "@/@types/sale.type";
 
 export function SaleFormActions() {
   const { reset } = useFormContext<VendaForm>();
