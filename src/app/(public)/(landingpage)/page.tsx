@@ -63,7 +63,7 @@ export default function Ladingpage() {
                 Benefícios
               </a>
               <Button asChild variant="outline" size="sm">
-                <Link href="/auth">Acessar Sistema</Link>
+                <Link href="/login">Acessar Sistema</Link>
               </Button>
             </div>
           </div>

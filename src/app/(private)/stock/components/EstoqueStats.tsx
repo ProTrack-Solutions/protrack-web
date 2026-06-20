@@ -1,27 +1,23 @@
-import { type EstoqueStats } from "@/@types/stock.type";
+import { EstoqueStatsProps } from "@/@types/stock.type";
 import { Card, CardContent } from "@/components/ui/card";
 import { AlertTriangle, Boxes, DollarSign, Package } from "lucide-react";
 
-interface EstoqueStatsProps {
-  stats: EstoqueStats;
-}
-
-const STAT_CARDS = (stats: EstoqueStats) => [
+const STAT_CARDS = (stats: EstoqueStatsProps) => [
   {
     label: "Produtos Cadastrados",
-    value: stats.totalProdutos,
+    value: stats.productsCount,
     icon: Package,
     gradient: "from-blue-500 to-blue-600",
   },
   {
     label: "Itens em Estoque",
-    value: stats.totalItens,
+    value: stats.itensInStock,
     icon: Boxes,
     gradient: "from-indigo-500 to-purple-600",
   },
   {
     label: "Valor Total",
-    value: `R$ ${stats.valorTotal.toLocaleString("pt-BR", {
+    value: `R$ ${stats.totalValueInStock.toLocaleString("pt-BR", {
       minimumFractionDigits: 2,
       maximumFractionDigits: 2,
     })}`,
@@ -30,16 +26,16 @@ const STAT_CARDS = (stats: EstoqueStats) => [
   },
   {
     label: "Estoque Baixo",
-    value: stats.baixoEstoque,
+    value: stats.lowItensInStock,
     icon: AlertTriangle,
     gradient: "from-rose-500 to-orange-500",
   },
 ];
 
-export function EstoqueStats({ stats }: EstoqueStatsProps) {
+export function EstoqueStats(props: EstoqueStatsProps) {
   return (
     <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-      {STAT_CARDS(stats).map((card) => (
+      {STAT_CARDS(props).map((card) => (
         <Card
           key={card.label}
           className="group relative overflow-hidden border-border/50 hover:shadow-md transition-all hover:-translate-y-0.5"

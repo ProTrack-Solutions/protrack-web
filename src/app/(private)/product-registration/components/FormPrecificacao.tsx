@@ -3,7 +3,7 @@ import { Label } from "@/components/ui/label";
 import { DollarSign, Percent, TrendingUp } from "lucide-react";
 import { CardSection } from "./CardSection";
 import { ProductFormData } from "@/@types/product-registration.type";
-import { useMargem } from "@/hook/useMargem";
+import { useMargem } from "@/hooks/useMargem";
 
 interface FormPrecificacaoProps {
   formData: ProductFormData;

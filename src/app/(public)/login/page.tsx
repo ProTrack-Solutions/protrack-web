@@ -8,7 +8,7 @@ import { AppButton } from "@/components/AppButton";
 import { signIn } from "next-auth/react";
 import { LoginParams } from "@/@types/auth.type";
 
-export default function Auth() {
+export default function Login() {
   const [loginParams, setLoginParams] = useState<LoginParams>({
     email: "",
     password: "",

@@ -8,7 +8,7 @@ export default auth((req) => {
   const { nextUrl } = req;
 
   // Define se o usuário está tentando acessar a página de login
-  const isAuthRoute = nextUrl.pathname === "/auth";
+  const isAuthRoute = nextUrl.pathname === "/login";
 
   // Lista de páginas ou prefixos que são públicos (além do login, se houver)
   const isPublicRoute =
@@ -18,7 +18,7 @@ export default auth((req) => {
 
   // 1. Se estiver deslogado e tentar acessar uma rota privada, vai para o login
   if (!isLoggedIn && !isPublicRoute) {
-    return NextResponse.redirect(new URL("/auth", nextUrl));
+    return NextResponse.redirect(new URL("/login", nextUrl));
   }
 
   // 2. Se estiver logado e tentar ir para o login, redireciona de acordo com o vínculo da empresa
