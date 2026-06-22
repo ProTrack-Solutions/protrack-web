@@ -75,35 +75,35 @@ export function EstoqueTable({ products }: EstoqueTableProps) {
                       <Package className="w-4 h-4 text-blue-600 dark:text-blue-400" />
                     </div>
                     <span className="font-medium text-foreground">
-                      {product.nome}
+                      {product.name}
                     </span>
                   </div>
                 </TableCell>
                 <TableCell className="font-mono text-sm text-muted-foreground">
-                  {product.codigoBarras}
+                  {product.barcode}
                 </TableCell>
                 <TableCell>
                   <Badge
                     variant="outline"
-                    className={`${getCategoryStyle(product.categoria)} font-medium`}
+                    className={`${getCategoryStyle(product.category_name)} font-medium`}
                   >
-                    {product.categoria}
+                    {product.category_name}
                   </Badge>
                 </TableCell>
                 <TableCell>
                   <span className="inline-flex items-center justify-center min-w-[2.5rem] h-7 px-2 rounded-md border border-border bg-muted/50 text-sm font-semibold">
-                    {product.tamanho}
+                    {product.size}
                   </span>
                 </TableCell>
                 <TableCell className="text-right font-semibold text-foreground">
-                  R$ {product.preco.toFixed(2).replace(".", ",")}
+                  R$ {product.cost_price.toFixed(2).replace(".", ",")}
                 </TableCell>
                 <TableCell className="text-center">
                   <Badge
                     variant="outline"
-                    className={`${getQuantityStyle(product.quantidade)} font-semibold min-w-[3rem] justify-center`}
+                    className={`${getQuantityStyle(product.quantity)} font-semibold min-w-[3rem] justify-center`}
                   >
-                    {product.quantidade} un
+                    {product.quantity} un
                   </Badge>
                 </TableCell>
               </TableRow>

@@ -1,4 +1,5 @@
 import axios from "axios";
+import { getSession } from "next-auth/react";
 
 export const api = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL,
@@ -10,10 +11,10 @@ export const api = axios.create({
 });
 
 api.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem("@protrack:token");
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+  async (config) => {
+    const session = await getSession();
+    if (session?.accessToken) {
+      config.headers.Authorization = `Bearer ${session?.accessToken}`;
     }
     return config;
   },
@@ -24,10 +25,10 @@ api.interceptors.request.use(
 
 api.interceptors.response.use(
   (response) => response,
-  (error) => {
+  async (error) => {
     if (error.response && error.response.status === 401) {
-      localStorage.removeItem("@protrack:token");
-      window.location.href = "/";
+      const { signOut } = await import("next-auth/react");
+      await signOut({ callbackUrl: "/login" });
     }
     return Promise.reject(error);
   },

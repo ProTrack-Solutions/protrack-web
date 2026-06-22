@@ -24,7 +24,7 @@ export function Sidebar({ children }: SidebarProps) {
 
   const handleLogout = async () => {
     try {
-      signOut({ callbackUrl: "/auth" }); // Exemplo de redirecionamento pós-logout caso seu hook não o faça
+      signOut({ callbackUrl: "/login" }); // Exemplo de redirecionamento pós-logout caso seu hook não o faça
     } catch (error) {
       console.error("Erro ao fazer logout:", error);
     }
