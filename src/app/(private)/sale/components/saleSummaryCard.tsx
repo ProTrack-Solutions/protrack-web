@@ -5,7 +5,7 @@ import { VendaForm } from "@/@types/sale.type";
 export function SaleSummaryCard() {
   const { control } = useFormContext<VendaForm>();
 
-  const produtos = useWatch({ control, name: "produtos" });
+  const produtos = useWatch({ control, name: "produtos" }) ?? [];
 
   const totalItens = produtos.length;
   const totalQuantidade = produtos.reduce(

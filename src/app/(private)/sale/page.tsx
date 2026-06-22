@@ -1,9 +1,8 @@
 "use client";
 
 import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { Form } from "@/components/ui/form";
-import { VendaForm, vendaSchema } from "@/@types/sale.type";
+import { VendaForm } from "@/@types/sale.type";
 import { SaleFormActions } from "./components/saleFormAction";
 import { SaleInfoCard } from "./components/saleInfoCard";
 import { SaleProductsTable } from "./components/saleProductTable";
@@ -11,14 +10,7 @@ import { SaleSummaryCard } from "./components/saleSummaryCard";
 import { Header } from "@/components/Header";
 
 export default function Sale() {
-  const form = useForm<VendaForm>({
-    resolver: zodResolver(vendaSchema),
-    defaultValues: {
-      clienteId: "",
-      dataVenda: new Date().toISOString().split("T")[0],
-      produtos: [{ produtoId: "", quantidade: 1, precoUnitario: 0 }],
-    },
-  });
+  const form = useForm<VendaForm>();
 
   const onSubmit = (data: VendaForm) => {
     console.log("Dados da venda:", data);

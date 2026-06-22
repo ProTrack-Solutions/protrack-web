@@ -35,7 +35,7 @@ export function SaleProductsTable() {
     name: "produtos",
   });
 
-  const watchedProdutos = useWatch({ control, name: "produtos" });
+  const watchedProdutos = useWatch({ control, name: "produtos" }) ?? [];
 
   const handleProdutoChange = (index: number, produtoId: string) => {
     const produto = produtosList.find((p) => p.id === produtoId);
