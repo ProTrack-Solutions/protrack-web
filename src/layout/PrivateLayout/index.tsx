@@ -42,7 +42,7 @@ export function PrivateLayout({ children }: { children: React.ReactNode }) {
         <SidebarSectionLabel text="Visão Geral" />
         <SidebarItem
           icon={<Calculator size={18} />}
-          text="Dashboard Financeiro"
+          text="Dashboard"
           router="/dashboard"
           active={currentPath === "/dashboard"}
           requiredRoles={["admin", "financeiro"]}
@@ -119,8 +119,8 @@ export function PrivateLayout({ children }: { children: React.ReactNode }) {
         <SidebarItem
           icon={<UserPlus size={18} />}
           text="Novo Cliente"
-          router="/cadastrodeclientes"
-          active={currentPath === "/cadastrodeclientes"}
+          router="/client-registration"
+          active={currentPath === "/client-registration"}
           requiredRoles={["admin", "operador"]}
         />
       </Sidebar>
