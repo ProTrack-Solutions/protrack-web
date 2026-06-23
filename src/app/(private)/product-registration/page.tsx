@@ -37,22 +37,21 @@ export default function ProductRegistration() {
         title="Bem-vindo à página cadastro de produtos!"
         text="Aqui você pode cadastrar novos produtos no estoque."
       />
-      <div className="p-6 space-y-6 mx-auto">
-        <form
-          onSubmit={handleSubmit}
-          className="grid grid-cols-1 lg:grid-cols-3 gap-6"
-        >
-          <div className="lg:col-span-2 space-y-6">
-            <FormInfoBasica formData={formData} onChange={handleChange} />
-            <FormEstoque formData={formData} onChange={handleChange} />
-            <FormPrecificacao formData={formData} onChange={handleChange} />
-          </div>
 
-          <div className="space-y-6">
-            <CadastroProdutoResumo formData={formData} onReset={handleReset} />
-          </div>
-        </form>
-      </div>
+      <form
+        onSubmit={handleSubmit}
+        className="grid grid-cols-1 lg:grid-cols-3 gap-6"
+      >
+        <div className="lg:col-span-2 space-y-6">
+          <FormInfoBasica formData={formData} onChange={handleChange} />
+          <FormEstoque formData={formData} onChange={handleChange} />
+          <FormPrecificacao formData={formData} onChange={handleChange} />
+        </div>
+
+        <div className="space-y-6">
+          <CadastroProdutoResumo formData={formData} onReset={handleReset} />
+        </div>
+      </form>
     </div>
   );
 }

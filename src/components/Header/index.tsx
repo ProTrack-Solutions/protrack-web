@@ -1,4 +1,4 @@
-import type { TypeHeader } from "../../@types/types.components";
+import { TypeHeader } from "@/@types/header.type";
 
 export function Header({ title, text }: TypeHeader) {
   return (

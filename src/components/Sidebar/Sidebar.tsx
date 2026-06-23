@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { SidebarContext } from "@/context/SidebarContext";
-import { ChevronFirst, ChevronLast, MoreVertical } from "lucide-react";
+import { MoreVertical, PanelLeftClose, PanelLeftOpen } from "lucide-react";
 import Image from "next/image"; // Otimização de imagens nativa do Next.js
 
 import {
@@ -52,7 +52,11 @@ export function Sidebar({ children }: SidebarProps) {
             onClick={() => setExpanded((curr) => !curr)}
             className="p-1 rounded-lg bg-gray-50 hover:bg-gray-100 cursor-pointer"
           >
-            {expanded ? <ChevronFirst /> : <ChevronLast />}
+            {expanded ? (
+              <PanelLeftClose className="text-gray-500" size={20} />
+            ) : (
+              <PanelLeftOpen className="text-gray-500" size={20} />
+            )}
           </button>
         </div>
 

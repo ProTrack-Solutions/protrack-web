@@ -8,6 +8,7 @@ import { TopProductsChart } from "./components/TopProductsChart";
 import { PaymentMethodsChart } from "./components/PaymentMethodsChart";
 import { StockValueCard } from "./components/StockValueCard";
 import { AccountsPayableCard } from "./components/AccountsPayableCard";
+import { Header } from "@/components/Header";
 
 export default function DashBoard() {
   // Centralização dos dados fictícios (fácil substituição por requisições de API no futuro)
@@ -60,14 +61,10 @@ export default function DashBoard() {
   return (
     <div className="p-6 space-y-6">
       {/* Título da Página */}
-      <div>
-        <h1 className="text-3xl font-bold text-foreground mb-2">
-          Dashboard Financeiro
-        </h1>
-        <p className="text-muted-foreground">
-          Visão geral da situação financeira da empresa
-        </p>
-      </div>
+      <Header
+        title="Dashboard Financeiro"
+        text="Visão geral da situação financeira da empresa"
+      />
 
       {/* Cards Superiores de Status Geral */}
       <CardsStatusFinance />
