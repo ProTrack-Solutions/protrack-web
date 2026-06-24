@@ -20,6 +20,7 @@ import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { cn } from "@/lib/utils";
 import { ClienteFormData } from "@/@types/client-registration.type";
+import { Gender } from "@/enum/gender.enum";
 
 interface InformacoesPessoaisProps {
   formData: ClienteFormData;
@@ -135,10 +136,10 @@ export function InformacoesPessoais({
                 <SelectValue placeholder="Selecione" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="masculino">Masculino</SelectItem>
-                <SelectItem value="feminino">Feminino</SelectItem>
-                <SelectItem value="outro">Outro</SelectItem>
-                <SelectItem value="nao_informar">
+                <SelectItem value={Gender.GenderMale}>Masculino</SelectItem>
+                <SelectItem value={Gender.GenderFemale}>Feminino</SelectItem>
+                <SelectItem value={Gender.GenderOther}>Outro</SelectItem>
+                <SelectItem value={Gender.GenderNotSay}>
                   Prefiro não informar
                 </SelectItem>
               </SelectContent>

@@ -11,10 +11,14 @@ import {
 } from "@/@types/client-registration.type";
 import { useState } from "react";
 import { format } from "date-fns";
+import { CreateClient } from "@/service/clients.service";
+import { toast } from "sonner";
+import { time } from "console";
 
 export default function ClientRegistration() {
   const [formData, setFormData] = useState<ClienteFormData>(initialData);
   const [date, setDate] = useState<Date | undefined>(undefined);
+  const [loaging, setLoaging] = useState(false);
 
   const handleChange = (field: keyof ClienteFormData, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
@@ -33,14 +37,19 @@ export default function ClientRegistration() {
     setDate(undefined);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!formData.full_name || !formData.cpf || !formData.email) return;
-
-    // TODO: chamar a API aqui
-    console.log("Dados do cliente:", formData);
-
-    handleReset();
+  const handleCreateClient = async () => {
+    try {
+      setLoaging(true);
+      setTimeout(() => {}, 5000);
+      await CreateClient(formData);
+      toast.success("Cliente cadastrado com sucesso");
+    } catch (error) {
+      toast.error("Erro ao cadastrar cliente");
+      console.log(error);
+    } finally {
+      setFormData(initialData);
+      setLoaging(false);
+    }
   };
 
   return (
@@ -50,10 +59,7 @@ export default function ClientRegistration() {
         text="Preencha os dados abaixo para cadastrar um novo cliente."
       />
 
-      <form
-        onSubmit={handleSubmit}
-        className="grid grid-cols-1 lg:grid-cols-3 gap-6 "
-      >
+      <form className="grid grid-cols-1 lg:grid-cols-3 gap-6 ">
         <div className="lg:col-span-2 space-y-6">
           <InformacoesPessoais
             formData={formData}
@@ -66,7 +72,12 @@ export default function ClientRegistration() {
         </div>
 
         <div>
-          <ResumoSidebar formData={formData} onReset={handleReset} />
+          <ResumoSidebar
+            formData={formData}
+            onReset={handleReset}
+            handleCreateClient={handleCreateClient}
+            loaging={loaging}
+          />
         </div>
       </form>
     </div>

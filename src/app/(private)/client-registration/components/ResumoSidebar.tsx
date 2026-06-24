@@ -1,11 +1,15 @@
 import { ClienteFormData } from "@/@types/client-registration.type";
+import { GenderFormatPtBR } from "@/app/utils/genderFormat";
+import LoadingProgressive from "@/components/Loading";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Eraser, Save, User } from "lucide-react";
 
 interface ResumoSidebarProps {
   formData: ClienteFormData;
+  loaging: boolean;
   onReset: () => void;
+  handleCreateClient: () => void;
 }
 
 function buildEnderecoLabel(formData: ClienteFormData): string {
@@ -29,7 +33,12 @@ function buildEnderecoLabel(formData: ClienteFormData): string {
     .join(" ");
 }
 
-export function ResumoSidebar({ formData, onReset }: ResumoSidebarProps) {
+export function ResumoSidebar({
+  formData,
+  loaging,
+  onReset,
+  handleCreateClient,
+}: ResumoSidebarProps) {
   return (
     <Card className="border-border/50 sticky top-6">
       <CardContent className="p-6 space-y-5">
@@ -67,7 +76,7 @@ export function ResumoSidebar({ formData, onReset }: ResumoSidebarProps) {
                 Gênero
               </p>
               <p className="text-sm font-bold text-foreground mt-1 capitalize">
-                {formData.gender ? formData.gender.replace("_", " ") : "—"}
+                {GenderFormatPtBR(formData.gender)}
               </p>
             </div>
           </div>
@@ -95,9 +104,10 @@ export function ResumoSidebar({ formData, onReset }: ResumoSidebarProps) {
           <Button
             type="submit"
             className="w-full h-11 bg-blue-600 hover:bg-blue-700 text-white font-semibold shadow-sm"
+            onClick={() => handleCreateClient()}
           >
             <Save className="w-4 h-4 mr-2" />
-            Cadastrar cliente
+            {loaging ? "Cadastrando..." : "Cadastrar cliente"}
           </Button>
           <Button
             type="button"

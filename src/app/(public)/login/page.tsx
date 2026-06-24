@@ -37,6 +37,7 @@ export default function Login() {
 
       if (!result || result.error) {
         setError("Credenciais inválidas ou erro ao conectar com o servidor.");
+        console.log("Login", result.error);
       } else {
         router.push("/dashboard");
         router.refresh();
