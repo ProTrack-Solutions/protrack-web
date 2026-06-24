@@ -18,7 +18,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="pt-BR" className={cn("font-sans", geist.variable)}>
+    <html
+      lang="pt-BR"
+      className={cn("font-sans overflow-hidden", geist.variable)}
+    >
       <body>{children}</body>
     </html>
   );
