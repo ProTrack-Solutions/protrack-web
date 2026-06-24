@@ -2,20 +2,26 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Eraser, Save, Tag } from "lucide-react";
-import { ProductFormData } from "@/@types/product-registration.type";
+
+import { useProductsCategories } from "@/hooks/useProductsCategories";
+import { CreateProductParams } from "@/@types/product-registration.type";
 
 interface CadastroProdutoResumoProps {
-  formData: ProductFormData;
+  formData: CreateProductParams;
   onReset: () => void;
+  handleCreateProduct: () => void;
 }
 
 export function CadastroProdutoResumo({
   formData,
   onReset,
+  handleCreateProduct,
 }: CadastroProdutoResumoProps) {
-  const precoVenda = (parseFloat(formData.precoVenda) || 0)
+  const precoVenda = Number(formData.sale_price || 0)
     .toFixed(2)
     .replace(".", ",");
+
+  const { data: productsCategories } = useProductsCategories();
 
   return (
     <Card className="border-border/50 sticky top-6">
@@ -36,22 +42,26 @@ export function CadastroProdutoResumo({
               Produto
             </p>
             <p className="text-sm font-semibold text-foreground mt-1 break-words">
-              {formData.nome || "—"}
+              {formData.name || "—"}
             </p>
           </div>
 
           <div className="flex flex-wrap gap-2">
-            {formData.categoria && (
+            {formData.category_id && (
               <Badge
                 variant="outline"
                 className="bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-500/10 dark:text-blue-400"
               >
-                {formData.categoria}
+                {productsCategories?.map(
+                  (productsCategory) =>
+                    productsCategory.id === formData.category_id &&
+                    productsCategory.name,
+                )}
               </Badge>
             )}
-            {formData.tamanho && (
+            {formData.size && (
               <Badge variant="outline" className="bg-muted/60">
-                Tam: {formData.tamanho}
+                Tam: {formData.size}
               </Badge>
             )}
           </div>
@@ -62,7 +72,7 @@ export function CadastroProdutoResumo({
                 Estoque
               </p>
               <p className="text-lg font-bold text-foreground mt-1">
-                {formData.quantidade || 0}
+                {formData.quantity || 0}
               </p>
             </div>
             <div className="rounded-lg border border-border/60 bg-muted/30 p-3">
@@ -79,7 +89,8 @@ export function CadastroProdutoResumo({
         <div className="space-y-2 pt-2 border-t border-border/50">
           <Button
             type="submit"
-            className="w-full h-11 bg-blue-600 hover:bg-blue-700 text-white font-semibold shadow-sm"
+            className="w-full h-11 bg-blue-600 hover:bg-blue-700 text-white font-semibold shadow-sm cursor-pointer"
+            onClick={() => handleCreateProduct()}
           >
             <Save className="w-4 h-4 mr-2" />
             Cadastrar produto

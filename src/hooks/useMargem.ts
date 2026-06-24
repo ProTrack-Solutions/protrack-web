@@ -7,12 +7,12 @@ interface UseMargemResult {
 }
 
 export function useMargem(
-  precoCusto: string,
-  precoVenda: string,
+  precoCusto: number,
+  precoVenda: number,
 ): UseMargemResult {
   return useMemo(() => {
-    const custo = parseFloat(precoCusto) || 0;
-    const venda = parseFloat(precoVenda) || 0;
+    const custo = precoCusto || 0;
+    const venda = precoVenda || 0;
     const margemValor = venda - custo;
     const margemPercent = custo > 0 ? (margemValor / custo) * 100 : 0;
 
