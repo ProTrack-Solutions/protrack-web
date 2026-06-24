@@ -1,11 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { GetProducts } from "@/service/products.service";
 
-interface Params {
-  PerPage: number;
-  Page: number;
-}
-
 export const useProducts = () => {
   const { data, isLoading, isError, refetch } = useQuery({
     queryKey: ["products-stock"],
