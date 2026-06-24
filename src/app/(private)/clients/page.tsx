@@ -3,12 +3,12 @@
 import { useState } from "react";
 import {
   Edit,
-  UserCheck,
   UserX,
   Phone,
   Mail,
   MapPin,
   FileText,
+  Calendar,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -26,115 +26,54 @@ import {
 
 import { Header } from "@/components/Header";
 import { FilterShearch } from "@/components/FilterShearch";
-
-interface Cliente {
-  id: number;
-  name: string;
-  email: string;
-  phone: string;
-  document: string;
-  address: string;
-  status: "ativo" | "inativo";
-  type: "pf" | "pj";
-  created_at: string;
-  updated_at: string;
-}
-
-const mockClientes: Cliente[] = [
-  {
-    id: 1,
-    name: "João Silva",
-    email: "joao.silva@email.com",
-    phone: "(11) 98765-4321",
-    document: "123.456.789-00",
-    address: "Rua das Flores, 123 - São Paulo, SP",
-    status: "ativo",
-    type: "pf",
-    created_at: "2024-01-15T08:00:00Z",
-    updated_at: "2024-01-15T08:00:00Z",
-  },
-  {
-    id: 2,
-    name: "Maria Santos Comércio LTDA",
-    email: "contato@mariasantos.com.br",
-    phone: "(11) 3333-4444",
-    document: "12.345.678/0001-90",
-    address: "Av. Paulista, 1000 - São Paulo, SP",
-    status: "ativo",
-    type: "pj",
-    created_at: "2024-02-20T10:00:00Z",
-    updated_at: "2024-03-10T14:30:00Z",
-  },
-  {
-    id: 3,
-    name: "Pedro Costa",
-    email: "pedro.costa@email.com",
-    phone: "(21) 91234-5678",
-    document: "987.654.321-00",
-    address: "Rua do Sol, 456 - Rio de Janeiro, RJ",
-    status: "inativo",
-    type: "pf",
-    created_at: "2023-11-05T09:00:00Z",
-    updated_at: "2023-12-01T16:00:00Z",
-  },
-  {
-    id: 4,
-    name: "Ana Oliveira ME",
-    email: "ana@oliveirame.com.br",
-    phone: "(31) 3222-1111",
-    document: "98.765.432/0001-10",
-    address: "Rua da Lua, 789 - Belo Horizonte, MG",
-    status: "ativo",
-    type: "pj",
-    created_at: "2024-03-01T11:00:00Z",
-    updated_at: "2024-03-01T11:00:00Z",
-  },
-];
+import { useClients } from "@/hooks/useClients";
+import { formatPhoneNational } from "@/app/utils/phoneFormat";
+import { formatDocument } from "@/app/utils/documentFormat";
+import { Loading } from "@/components/Loading";
+import { formatDate } from "@/app/utils/dateFormat";
 
 export default function Clientes() {
-  const [clientes, setClientes] = useState<Cliente[]>(mockClientes);
   const [searchTerm, setSearchTerm] = useState("");
 
-  const filteredClientes = clientes.filter(
-    (cliente) =>
-      cliente.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      cliente.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      cliente.document.includes(searchTerm) ||
-      cliente.phone.includes(searchTerm),
+  const { clients, loading } = useClients();
+
+  const filteredClientes = clients.filter(
+    (client) =>
+      client.full_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      client.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      client.cpf.includes(searchTerm) ||
+      client.mobile_phone.includes(searchTerm),
   );
 
-  const getStatusBadge = (status: Cliente["status"]) => {
-    const variants = {
+  const getStatusBadge = (date?: Date | null) => {
+    let status = "Ativo";
+
+    if (date === null) {
+      status = "Inativo";
+    }
+
+    const variants: Record<string, string> = {
       ativo: "bg-green-100 text-green-800 hover:bg-green-100",
       inativo: "bg-gray-100 text-gray-800 hover:bg-gray-100",
     };
+
+    const isAtivo = status?.toLowerCase() === "ativo";
+    const currentStatus = isAtivo ? "ativo" : "inativo";
+
     return (
-      <Badge className={variants[status]}>
-        {status === "ativo" ? "Ativo" : "Inativo"}
+      <Badge className={variants[currentStatus]}>
+        {isAtivo ? "Ativo" : "Inativo"}
       </Badge>
     );
   };
 
-  const getTypeLabel = (type: Cliente["type"]) => {
-    return type === "pf" ? "Pessoa Física" : "Pessoa Jurídica";
-  };
-
-  const toggleClienteStatus = (clienteId: number) => {
-    setClientes((prev) =>
-      prev.map((cliente) =>
-        cliente.id === clienteId
-          ? {
-              ...cliente,
-              status:
-                cliente.status === "ativo"
-                  ? ("inativo" as const)
-                  : ("ativo" as const),
-              updated_at: new Date().toISOString(),
-            }
-          : cliente,
-      ),
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center w-full h-full">
+        <Loading />
+      </div>
     );
-  };
+  }
 
   return (
     <div className="p-6 space-y-6">
@@ -151,7 +90,6 @@ export default function Clientes() {
           <TableHeader>
             <TableRow>
               <TableHead>Nome / Razão Social</TableHead>
-              <TableHead>Tipo</TableHead>
               <TableHead>Contato</TableHead>
               <TableHead>Documento</TableHead>
               <TableHead>Status</TableHead>
@@ -166,16 +104,20 @@ export default function Clientes() {
                   <div className="flex items-center gap-2">
                     <FileText className="h-4 w-4 text-muted-foreground" />
                     <div>
-                      <div className="font-medium">{cliente.name}</div>
+                      <div className="font-medium flex flex-row items-center gap-2">
+                        {cliente.full_name}
+                        <div className="text-sm text-muted-foreground flex flex-row items-center gap-1">
+                          <Calendar className="h-3 w-3" />
+                          {formatDate(cliente.birth_date)}
+                        </div>
+                      </div>
                       <div className="text-sm text-muted-foreground flex items-center gap-1">
                         <MapPin className="h-3 w-3" />
-                        {cliente.address}
+                        Rua {cliente.address_street}, {cliente.address_number} -
+                        {cliente.address_city}, {cliente.address_state}
                       </div>
                     </div>
                   </div>
-                </TableCell>
-                <TableCell>
-                  <Badge variant="outline">{getTypeLabel(cliente.type)}</Badge>
                 </TableCell>
                 <TableCell>
                   <div className="space-y-1">
@@ -185,14 +127,14 @@ export default function Clientes() {
                     </div>
                     <div className="text-sm flex items-center gap-1">
                       <Phone className="h-3 w-3 text-muted-foreground" />
-                      {cliente.phone}
+                      {formatPhoneNational(cliente?.mobile_phone)}
                     </div>
                   </div>
                 </TableCell>
                 <TableCell className="font-mono text-sm">
-                  {cliente.document}
+                  {formatDocument(cliente.cpf)}
                 </TableCell>
-                <TableCell>{getStatusBadge(cliente.status)}</TableCell>
+                <TableCell>{getStatusBadge(cliente.deleted_at)}</TableCell>
                 <TableCell>
                   {new Date(cliente.created_at).toLocaleDateString("pt-BR")}
                 </TableCell>
@@ -202,15 +144,9 @@ export default function Clientes() {
                       <Edit className="h-4 w-4" />
                     </Button>
 
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => toggleClienteStatus(cliente.id)}
-                    >
-                      {cliente.status === "ativo" ? (
+                    <Button variant="ghost" size="sm">
+                      {cliente.deleted_at && (
                         <UserX className="h-4 w-4 text-red-600" />
-                      ) : (
-                        <UserCheck className="h-4 w-4 text-green-600" />
                       )}
                     </Button>
                   </div>
