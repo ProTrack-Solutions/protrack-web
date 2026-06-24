@@ -16,6 +16,7 @@ import { toast } from "sonner";
 export default function ProductRegistration() {
   const [formData, setFormData] =
     useState<CreateProductParams>(initialFormData);
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (
     field: keyof CreateProductParams,
@@ -42,12 +43,16 @@ export default function ProductRegistration() {
 
   const handleCreateProduct = async () => {
     try {
+      setLoading(true);
       console.log("handleCreateProduct", formData);
       await CreateProduct(formData);
       toast.success("Produto cadastrado com sucesso!");
     } catch (error) {
       console.log(error);
       toast.error("Erro ao cadastrar produto!");
+    } finally {
+      setLoading(false);
+      setFormData(initialFormData);
     }
   };
 
@@ -70,6 +75,7 @@ export default function ProductRegistration() {
               formData={formData}
               onReset={handleReset}
               handleCreateProduct={handleCreateProduct}
+              loading={loading}
             />
           </div>
         </form>

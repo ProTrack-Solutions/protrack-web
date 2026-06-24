@@ -8,6 +8,7 @@ import { CreateProductParams } from "@/@types/product-registration.type";
 
 interface CadastroProdutoResumoProps {
   formData: CreateProductParams;
+  loading: boolean;
   onReset: () => void;
   handleCreateProduct: () => void;
 }
@@ -16,6 +17,7 @@ export function CadastroProdutoResumo({
   formData,
   onReset,
   handleCreateProduct,
+  loading,
 }: CadastroProdutoResumoProps) {
   const precoVenda = Number(formData.sale_price || 0)
     .toFixed(2)
@@ -93,7 +95,7 @@ export function CadastroProdutoResumo({
             onClick={() => handleCreateProduct()}
           >
             <Save className="w-4 h-4 mr-2" />
-            Cadastrar produto
+            {loading ? "Cadastrando ..." : "Cadastrar produto"}
           </Button>
           <Button
             type="button"

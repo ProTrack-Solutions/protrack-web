@@ -1,10 +1,12 @@
+import { Gender } from "@/enum/gender.enum";
+
 export interface ClienteFormData {
   full_name: string;
   birth_date: string;
   cpf: string;
   rg: string;
   marital_status: string;
-  gender: string;
+  gender: Gender;
   whatsapp: string;
   mobile_phone: string;
   home_phone: string;
@@ -25,7 +27,7 @@ export const initialData: ClienteFormData = {
   cpf: "",
   rg: "",
   marital_status: "",
-  gender: "",
+  gender: Gender.GenderNotSay,
   whatsapp: "",
   mobile_phone: "",
   home_phone: "",
