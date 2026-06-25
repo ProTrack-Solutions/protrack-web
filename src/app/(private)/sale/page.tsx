@@ -2,12 +2,12 @@
 
 import { useForm } from "react-hook-form";
 import { Form } from "@/components/ui/form";
-import { VendaForm } from "@/@types/sale.type";
 import { SaleFormActions } from "./components/saleFormAction";
 import { SaleInfoCard } from "./components/saleInfoCard";
 import { SaleProductsTable } from "./components/saleProductTable";
 import { SaleSummaryCard } from "./components/saleSummaryCard";
 import { Header } from "@/components/Header";
+import { VendaForm } from "@/schemas/sale.schema";
 
 export default function Sale() {
   const form = useForm<VendaForm>({

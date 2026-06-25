@@ -2,7 +2,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Boxes, Ruler } from "lucide-react";
 import { CardSection } from "./CardSection";
-import { CreateProductParams } from "@/@types/product-registration.type";
+import { CreateProductParams } from "@/interfaces/product-registration.interface";
 
 interface FormEstoqueProps {
   formData: CreateProductParams;

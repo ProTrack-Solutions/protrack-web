@@ -1,8 +1,7 @@
-import { ClienteFormData } from "@/@types/client-registration.type";
 import { GenderFormatPtBR } from "@/app/utils/genderFormat";
-import LoadingProgressive from "@/components/Loading";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { ClienteFormData } from "@/interfaces/client-registration.interface";
 import { Eraser, Save, User } from "lucide-react";
 
 interface ResumoSidebarProps {

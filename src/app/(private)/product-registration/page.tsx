@@ -3,7 +3,7 @@
 import {
   CreateProductParams,
   initialFormData,
-} from "@/@types/product-registration.type";
+} from "@/interfaces/product-registration.interface";
 import { useState } from "react";
 import { CadastroProdutoResumo } from "./components/CadastroProdutoResumo";
 import { FormEstoque } from "./components/FormEstoque";

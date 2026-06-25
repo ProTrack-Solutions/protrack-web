@@ -1,6 +1,6 @@
 import { useFormContext, useWatch } from "react-hook-form";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { VendaForm } from "@/@types/sale.type";
+import { VendaForm } from "@/schemas/sale.schema";
 
 export function SaleSummaryCard() {
   const { control } = useFormContext<VendaForm>();

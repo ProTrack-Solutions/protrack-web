@@ -1,4 +1,4 @@
-import { TypeHeader } from "@/@types/header.type";
+import { TypeHeader } from "@/interfaces/header.interface";
 
 export function Header({ title, text }: TypeHeader) {
   return (
