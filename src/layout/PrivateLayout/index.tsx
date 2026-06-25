@@ -73,8 +73,8 @@ export function PrivateLayout({ children }: { children: React.ReactNode }) {
         <SidebarItem
           icon={<ShoppingCart size={18} />}
           text="Histórico de Vendas"
-          router="/totalVendas"
-          active={currentPath === "/totalVendas"}
+          router="/sales-list"
+          active={currentPath === "/sales-list"}
           requiredRoles={["admin", "financeiro", "vendedor"]}
         />
 

@@ -1,6 +1,6 @@
-import { ClienteFormData } from "@/@types/client-registration.type";
+import { ClienteFormData } from "@/interfaces/client-registration.interface";
+import { ClientResponse } from "@/interfaces/client.interface";
 import { api } from "./api";
-import { ClientResponse } from "@/@types/client.type";
 
 export const CreateClient = async (params: ClienteFormData): Promise<void> => {
   const response = await api.post("/customers", params);

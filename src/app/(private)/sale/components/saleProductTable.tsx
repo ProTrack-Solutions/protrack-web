@@ -24,8 +24,9 @@ import {
   FormItem,
   FormMessage,
 } from "@/components/ui/form";
-import { VendaForm } from "@/@types/sale.type";
+
 import { produtos as produtosList } from "../sale.data";
+import { VendaForm } from "@/schemas/sale.schema";
 
 export function SaleProductsTable() {
   const { control, setValue } = useFormContext<VendaForm>();

@@ -5,15 +5,14 @@ import { Contato } from "./components/Contato";
 import { Endereco } from "./components/Endereco";
 import { InformacoesPessoais } from "./components/InformacoesPessoais";
 import { ResumoSidebar } from "./components/ResumoSidebar";
-import {
-  ClienteFormData,
-  initialData,
-} from "@/@types/client-registration.type";
 import { useState } from "react";
 import { format } from "date-fns";
 import { CreateClient } from "@/service/clients.service";
 import { toast } from "sonner";
-import { time } from "console";
+import {
+  ClienteFormData,
+  initialData,
+} from "@/interfaces/client-registration.interface";
 
 export default function ClientRegistration() {
   const [formData, setFormData] = useState<ClienteFormData>(initialData);

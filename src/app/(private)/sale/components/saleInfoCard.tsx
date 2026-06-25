@@ -15,8 +15,9 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { VendaForm } from "@/@types/sale.type";
+
 import { clientes } from "../sale.data";
+import { VendaForm } from "@/schemas/sale.schema";
 
 export function SaleInfoCard() {
   const { control } = useFormContext<VendaForm>();

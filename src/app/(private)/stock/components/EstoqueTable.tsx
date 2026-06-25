@@ -1,4 +1,4 @@
-import { Product } from "@/@types/stock.type";
+import { Product } from "@/interfaces/stock.interface";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import {

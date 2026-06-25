@@ -4,7 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Eraser, Save, Tag } from "lucide-react";
 
 import { useProductsCategories } from "@/hooks/useProductsCategories";
-import { CreateProductParams } from "@/@types/product-registration.type";
+import { CreateProductParams } from "@/interfaces/product-registration.interface";
 
 interface CadastroProdutoResumoProps {
   formData: CreateProductParams;
