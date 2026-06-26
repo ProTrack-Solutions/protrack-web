@@ -16,11 +16,15 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 
-import { clientes } from "../sale.data";
-import { VendaForm } from "@/schemas/sale.schema";
+import { CreateSaleParams } from "@/interfaces/sale.interface";
+import { Client } from "@/interfaces/client.interface";
 
-export function SaleInfoCard() {
-  const { control } = useFormContext<VendaForm>();
+interface Props {
+  clients: Client[];
+}
+
+export function SaleInfoCard({ clients }: Props) {
+  const { control } = useFormContext<CreateSaleParams>();
 
   return (
     <Card className="flex-1">
@@ -30,7 +34,7 @@ export function SaleInfoCard() {
       <CardContent className="space-y-4">
         <FormField
           control={control}
-          name="clienteId"
+          name="customer_id"
           render={({ field }) => (
             <FormItem>
               <FormLabel>Cliente</FormLabel>
@@ -41,9 +45,9 @@ export function SaleInfoCard() {
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  {clientes.map((cliente) => (
+                  {clients.map((cliente) => (
                     <SelectItem key={cliente.id} value={cliente.id}>
-                      {cliente.nome} - {cliente.email}
+                      {cliente.full_name} - {cliente.email}
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -53,18 +57,10 @@ export function SaleInfoCard() {
           )}
         />
 
-        <FormField
-          control={control}
-          name="dataVenda"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Data da Venda</FormLabel>
-              <FormControl>
-                <Input type="date" {...field} />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+        <Input
+          type="date"
+          value={new Date().toISOString().split("T")[0]}
+          disabled
         />
       </CardContent>
     </Card>

@@ -1,5 +1,4 @@
 import { Status } from "@/enum/status.enum";
-import { string } from "zod";
 
 export interface ProductCategoriesResponse {
   id: string;
