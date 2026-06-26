@@ -11,7 +11,7 @@ export const useProductsCategories = () => {
   });
 
   return {
-    data,
+    productsCategories: data,
     isLoading,
     isError,
     refetch,

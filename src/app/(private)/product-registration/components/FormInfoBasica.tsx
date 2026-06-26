@@ -19,7 +19,7 @@ interface FormInfoBasicaProps {
 }
 
 export function FormInfoBasica({ formData, onChange }: FormInfoBasicaProps) {
-  const { data: productsCategories } = useProductsCategories();
+  const { productsCategories } = useProductsCategories();
 
   return (
     <CardSection

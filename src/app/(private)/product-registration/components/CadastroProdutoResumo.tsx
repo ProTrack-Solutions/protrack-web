@@ -23,7 +23,7 @@ export function CadastroProdutoResumo({
     .toFixed(2)
     .replace(".", ",");
 
-  const { data: productsCategories } = useProductsCategories();
+  const { productsCategories } = useProductsCategories();
 
   return (
     <Card className="border-border/50 sticky top-6">
