@@ -31,11 +31,20 @@ import { formatPhoneNational } from "@/app/utils/phoneFormat";
 import { formatDocument } from "@/app/utils/documentFormat";
 import { Loading } from "@/components/Loading";
 import { formatDate } from "@/app/utils/dateFormat";
+import { DialogEditClients } from "@/components/DialogAlterClients";
+import { Client } from "@/interfaces/client.interface";
+import { Dialog } from "@/components/ui/dialog";
 
 export default function Clientes() {
   const [searchTerm, setSearchTerm] = useState("");
 
   const { clients, loading } = useClients();
+
+  const [clientsSelected, setClientsSelected] = useState<Client>();
+  const [openDialog, setOpenDialog] = useState(false);
+
+  console.log("clientsSelected", clientsSelected);
+  console.log("openDialog", openDialog);
 
   const filteredClientes = clients.filter(
     (client) =>
@@ -81,9 +90,7 @@ export default function Clientes() {
         title="Bem-vindo à página clientes!"
         text="Aqui você pode visualizar todos os clientes cadastrados no sistema.."
       />
-
       <FilterShearch searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
-
       {/* Tabela de Clientes */}
       <Card>
         <Table>
@@ -140,7 +147,15 @@ export default function Clientes() {
                 </TableCell>
                 <TableCell>
                   <div className="flex gap-2">
-                    <Button variant="ghost" size="sm">
+                    <Button
+                      className="cursor-pointer"
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => {
+                        setOpenDialog(true);
+                        setClientsSelected(cliente);
+                      }}
+                    >
                       <Edit className="h-4 w-4" />
                     </Button>
 
@@ -162,6 +177,22 @@ export default function Clientes() {
           </div>
         )}
       </Card>
+
+      <Dialog
+        open={openDialog}
+        onOpenChange={(openDialog) => {
+          setOpenDialog(openDialog);
+          if (!open) setClientsSelected(undefined);
+        }}
+      >
+        {clientsSelected && (
+          <DialogEditClients
+            key={clientsSelected.id}
+            clients={clientsSelected}
+            setOpenDialog={setOpenDialog}
+          />
+        )}
+      </Dialog>
     </div>
   );
 }

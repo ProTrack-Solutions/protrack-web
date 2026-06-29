@@ -37,3 +37,25 @@ export interface ClientResponse {
   total_rows: number;
   total_pages: number;
 }
+
+export interface UpdatedClient {
+  full_name: string;
+  birth_date: string;
+  cpf: string;
+  rg: string;
+  marital_status: string;
+  gender: Gender;
+  whatsapp: string;
+  mobile_phone: string;
+  home_phone: string;
+  email: string;
+  address_street: string;
+  address_number: string;
+  address_complement: string;
+  address_neighborhood: string;
+  address_city: string;
+  address_state: string;
+  address_zipcode: string;
+  address_country: string;
+  balance_due: number;
+}

@@ -1,5 +1,5 @@
 import { ClienteFormData } from "@/interfaces/client-registration.interface";
-import { ClientResponse } from "@/interfaces/client.interface";
+import { ClientResponse, UpdatedClient } from "@/interfaces/client.interface";
 import { api } from "./api";
 
 export const CreateClient = async (params: ClienteFormData): Promise<void> => {
@@ -15,5 +15,13 @@ export const GetClient = async (): Promise<ClientResponse> => {
     },
   });
 
+  return response.data;
+};
+
+export const UpdateClient = async (
+  clientId: string,
+  params: UpdatedClient,
+): Promise<void> => {
+  const response = await api.put(`/customers/${clientId}`, params);
   return response.data;
 };
