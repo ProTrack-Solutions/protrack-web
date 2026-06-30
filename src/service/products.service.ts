@@ -1,4 +1,7 @@
-import { ProductResponse } from "@/interfaces/stock.interface";
+import {
+  ProductResponse,
+  ProductUpdateParams,
+} from "@/interfaces/stock.interface";
 import { api } from "./api";
 import { CreateProductParams } from "@/interfaces/product-registration.interface";
 
@@ -15,5 +18,13 @@ export const GetProducts = async (): Promise<ProductResponse> => {
 export const CreateProduct = async (params: CreateProductParams) => {
   const response = await api.post("/product", params);
   console.log("CreateProduct", params);
+  return response.data;
+};
+
+export const UpdateProcut = async (
+  productId: string,
+  params: ProductUpdateParams,
+) => {
+  const response = await api.put(`/product/${productId}`, params);
   return response.data;
 };

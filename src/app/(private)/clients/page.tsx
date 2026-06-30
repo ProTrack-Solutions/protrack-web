@@ -45,9 +45,6 @@ export default function Clientes() {
   const [clientsSelected, setClientsSelected] = useState<Client>();
   const [openDialog, setOpenDialog] = useState(false);
 
-  console.log("clientsSelected", clientsSelected);
-  console.log("openDialog", openDialog);
-
   const filteredClientes = clients.filter(
     (client) =>
       client.full_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -106,10 +103,10 @@ export default function Clientes() {
       />
       <FilterShearch searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
       {/* Tabela de Clientes */}
-      <Card>
+      <Card className="pt-0">
         <Table>
           <TableHeader>
-            <TableRow>
+            <TableRow className="bg-muted/50 hover:bg-muted/50 border-b border-border">
               <TableHead>Nome / Razão Social</TableHead>
               <TableHead>Contato</TableHead>
               <TableHead>Documento</TableHead>
