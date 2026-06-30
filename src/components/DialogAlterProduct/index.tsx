@@ -108,7 +108,7 @@ export const DialogEditProduct = ({
           {/* Informações básicas */}
           <div className="space-y-4">
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-sm">
+              <div className="w-9 h-9 rounded-lg bg-linear-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-sm">
                 <Info className="w-4 h-4 text-white" />
               </div>
               <div>
@@ -185,7 +185,7 @@ export const DialogEditProduct = ({
                   placeholder="Detalhes do produto, características, material..."
                   value={formData.description}
                   onChange={(e) => handleChange("description", e.target.value)}
-                  className="min-h-[100px] resize-none"
+                  className="min-h-25 resize-none"
                 />
               </div>
             </div>
@@ -194,7 +194,7 @@ export const DialogEditProduct = ({
           {/* Estoque */}
           <div className="space-y-4">
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-sm">
+              <div className="w-9 h-9 rounded-lg bg-linear-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-sm">
                 <Boxes className="w-4 h-4 text-white" />
               </div>
               <div>
@@ -247,7 +247,7 @@ export const DialogEditProduct = ({
           {/* Precificação */}
           <div className="space-y-4">
             <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center shadow-sm">
+              <div className="w-9 h-9 rounded-lg bg-linear-to-br from-emerald-500 to-teal-600 flex items-center justify-center shadow-sm">
                 <DollarSign className="w-4 h-4 text-white" />
               </div>
               <div>
@@ -316,7 +316,7 @@ export const DialogEditProduct = ({
 
             {/* Margem */}
             <div
-              className={`relative overflow-hidden rounded-xl bg-gradient-to-r ${margemTone} p-5 text-white shadow-sm`}
+              className={`relative overflow-hidden rounded-xl bg-linear-to-r ${margemTone} p-5 text-white shadow-sm`}
             >
               <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_top_right,white,transparent_60%)]" />
               <div className="relative flex items-center justify-between gap-4">
