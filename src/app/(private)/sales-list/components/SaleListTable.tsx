@@ -1,4 +1,4 @@
-import { Fragment } from "react";
+import { Fragment, useState } from "react";
 import { ChevronDown, ChevronRight, Pencil } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -17,6 +17,7 @@ import {
   getSaleStatusLabel,
   getSaleStatusVariant,
 } from "@/app/utils/salesStatus";
+import { DialogAlterSale } from "@/components/DialogAlterSale";
 
 const formatCurrency = (value: number) =>
   value.toLocaleString("pt-BR", {
@@ -35,6 +36,12 @@ export const SaleListTable = ({
   expandedId,
   setExpandedId,
 }: SaleListTableProps) => {
+  const [openDialog, setOpenDialog] = useState(false);
+
+  const [selectSale, setSelectSale] = useState<
+    ListSalesWithInstallmentsResponse | undefined
+  >(undefined);
+
   return (
     <Card>
       <CardContent className="p-0">
@@ -121,7 +128,15 @@ export const SaleListTable = ({
                         </Badge>
                       </TableCell>
                       <TableCell className="text-center">
-                        <Button variant="ghost" size="icon">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="cursor-pointer"
+                          onClick={() => {
+                            setOpenDialog(true);
+                            setSelectSale(venda);
+                          }}
+                        >
                           <Pencil className="h-4 w-4" />
                         </Button>
                       </TableCell>
@@ -196,6 +211,18 @@ export const SaleListTable = ({
           </TableBody>
         </Table>
       </CardContent>
+
+      {selectSale && (
+        <DialogAlterSale
+          key={selectSale.sale.sale_id}
+          setOpen={(isOpen) => {
+            setOpenDialog(isOpen);
+            if (!isOpen) setSelectSale(undefined);
+          }}
+          open={openDialog}
+          sale={selectSale}
+        />
+      )}
     </Card>
   );
 };

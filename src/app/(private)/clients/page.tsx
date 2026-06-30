@@ -33,7 +33,6 @@ import { Loading } from "@/components/Loading";
 import { formatDate } from "@/app/utils/dateFormat";
 import { DialogEditClients } from "@/components/DialogAlterClients";
 import { Client } from "@/interfaces/client.interface";
-import { Dialog } from "@/components/ui/dialog";
 import { DeleteClient } from "@/service/clients.service";
 import { toast } from "sonner";
 
@@ -42,7 +41,7 @@ export default function Clientes() {
 
   const { clients, loading, refetch } = useClients();
 
-  const [clientsSelected, setClientsSelected] = useState<Client>();
+  const [clientsSelected, setClientsSelected] = useState<Client>({} as Client);
   const [openDialog, setOpenDialog] = useState(false);
 
   const filteredClientes = clients.filter(
@@ -196,21 +195,12 @@ export default function Clientes() {
         )}
       </Card>
 
-      <Dialog
+      <DialogEditClients
+        key={clientsSelected?.id}
+        clients={clientsSelected}
+        onOpenChange={setOpenDialog}
         open={openDialog}
-        onOpenChange={(openDialog) => {
-          setOpenDialog(openDialog);
-          if (!open) setClientsSelected(undefined);
-        }}
-      >
-        {clientsSelected && (
-          <DialogEditClients
-            key={clientsSelected.id}
-            clients={clientsSelected}
-            setOpenDialog={setOpenDialog}
-          />
-        )}
-      </Dialog>
+      />
     </div>
   );
 }
