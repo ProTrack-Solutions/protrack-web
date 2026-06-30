@@ -44,6 +44,7 @@ import { Client, UpdatedClient } from "@/interfaces/client.interface";
 import { Gender } from "@/enum/gender.enum";
 import { estados } from "@/const/states.const";
 import { UpdateClient } from "@/service/clients.service";
+import { useClients } from "@/hooks/useClients";
 
 interface DialogEditClientsProps {
   clients: Client;
@@ -103,16 +104,18 @@ export function DialogEditClients({
     }));
   };
 
+  const { refetch } = useClients();
+
   const handleUpdateClient = async () => {
     try {
       console.log("formData", formData);
       await UpdateClient(clients.id, formData);
-
       toast.success("Cliente atualizado com sucesso");
     } catch (error) {
       console.log(error);
       toast.error("Erro ao atualizar cliente");
     } finally {
+      refetch();
       setOpenDialog(false);
     }
   };
@@ -411,7 +414,7 @@ export function DialogEditClients({
         </div>
       </div>
 
-      <DialogFooter className="gap-2 sm:gap-0">
+      <DialogFooter className="gap-2 sm:gap-0 bg-transparent">
         <Button
           variant="outline"
           onClick={() => {}}
@@ -419,7 +422,10 @@ export function DialogEditClients({
         >
           <X className="h-4 w-4" /> Cancelar
         </Button>
-        <Button onClick={handleUpdateClient} className="gap-1 cursor-pointer">
+        <Button
+          onClick={handleUpdateClient}
+          className="gap-1 bg-blue-600 hover:bg-blue-700 cursor-pointer"
+        >
           <Save className="h-4 w-4" /> Salvar Alterações
         </Button>
       </DialogFooter>

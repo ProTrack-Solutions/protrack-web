@@ -34,3 +34,14 @@ export interface EstoqueStatsProps {
   productsCount: number;
   totalValueInStock: number;
 }
+
+export interface ProductUpdateParams {
+  barcode: string;
+  category_id: string;
+  cost_price: number;
+  description: string;
+  name: string;
+  quantity: number;
+  sale_price: number;
+  size: string;
+}

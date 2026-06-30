@@ -17,6 +17,7 @@ export default function Stock() {
     lowItensInStock,
     productsCount,
     totalValueInStock,
+    refetch,
   } = useProducts();
 
   const [searchTerm, setSearchTerm] = useState("");
