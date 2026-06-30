@@ -25,3 +25,8 @@ export const UpdateClient = async (
   const response = await api.put(`/customers/${clientId}`, params);
   return response.data;
 };
+
+export const DeleteClient = async (clientId: string) => {
+  const response = await api.delete(`/customers/${clientId}`);
+  return response.data;
+};

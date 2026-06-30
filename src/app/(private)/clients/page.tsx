@@ -34,11 +34,13 @@ import { formatDate } from "@/app/utils/dateFormat";
 import { DialogEditClients } from "@/components/DialogAlterClients";
 import { Client } from "@/interfaces/client.interface";
 import { Dialog } from "@/components/ui/dialog";
+import { DeleteClient } from "@/service/clients.service";
+import { toast } from "sonner";
 
 export default function Clientes() {
   const [searchTerm, setSearchTerm] = useState("");
 
-  const { clients, loading } = useClients();
+  const { clients, loading, refetch } = useClients();
 
   const [clientsSelected, setClientsSelected] = useState<Client>();
   const [openDialog, setOpenDialog] = useState(false);
@@ -74,6 +76,18 @@ export default function Clientes() {
         {isAtivo ? "Ativo" : "Inativo"}
       </Badge>
     );
+  };
+
+  const handleDeleteClient = async (clientID: string) => {
+    try {
+      await DeleteClient(clientID);
+      toast.success("Cliente deletado com sucesso");
+    } catch (error) {
+      console.log(error);
+      toast.error("Erro ao deletar cliente");
+    } finally {
+      refetch();
+    }
   };
 
   if (loading) {
@@ -159,7 +173,14 @@ export default function Clientes() {
                       <Edit className="h-4 w-4" />
                     </Button>
 
-                    <Button variant="ghost" size="sm">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="cursor-pointer"
+                      onClick={() => {
+                        handleDeleteClient(cliente.id);
+                      }}
+                    >
                       {cliente.deleted_at && (
                         <UserX className="h-4 w-4 text-red-600" />
                       )}

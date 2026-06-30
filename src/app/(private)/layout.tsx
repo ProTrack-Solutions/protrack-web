@@ -16,7 +16,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   return (
     <QueryClientProvider client={queryClient}>
       <PrivateLayout>{children}</PrivateLayout>
-      <Toaster />
+      <Toaster theme="light" richColors closeButton position="top-right" />
     </QueryClientProvider>
   );
 }

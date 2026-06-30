@@ -44,7 +44,6 @@ import { Client, UpdatedClient } from "@/interfaces/client.interface";
 import { Gender } from "@/enum/gender.enum";
 import { estados } from "@/const/states.const";
 import { UpdateClient } from "@/service/clients.service";
-import { formatDate } from "@/app/utils/dateFormat";
 
 interface DialogEditClientsProps {
   clients: Client;
@@ -413,10 +412,14 @@ export function DialogEditClients({
       </div>
 
       <DialogFooter className="gap-2 sm:gap-0">
-        <Button variant="outline" onClick={() => {}} className="gap-1">
+        <Button
+          variant="outline"
+          onClick={() => {}}
+          className="gap-1 cursor-pointer"
+        >
           <X className="h-4 w-4" /> Cancelar
         </Button>
-        <Button onClick={handleUpdateClient} className="gap-1">
+        <Button onClick={handleUpdateClient} className="gap-1 cursor-pointer">
           <Save className="h-4 w-4" /> Salvar Alterações
         </Button>
       </DialogFooter>
