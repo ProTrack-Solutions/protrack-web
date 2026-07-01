@@ -24,3 +24,11 @@ interface CreateSaleItemParams {
   product_id: string;
   quantity: number;
 }
+
+export interface UpdateSaleParams {
+  discount_amount: number;
+  due_days: number;
+  payment_method: PaymentMethod;
+  installments_count: number;
+  prohibited: number;
+}
