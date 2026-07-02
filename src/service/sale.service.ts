@@ -1,7 +1,9 @@
-import { SaleListResponse } from "@/interfaces/sales-list.interface";
 import { api } from "./api";
 import {
   CreateSaleParams,
+  GetSalesSummaryResponse,
+  GetTotalValuePenddingResponse,
+  SaleListResponse,
   UpdateSaleParams,
 } from "@/interfaces/sale.interface";
 
@@ -26,3 +28,18 @@ export const UpdateSale = async (
 ): Promise<void> => {
   await api.put(`/sales/${saleId}`, params);
 };
+
+export const GetSalesSummary = async (): Promise<GetSalesSummaryResponse> => {
+  const response = await api.get<GetSalesSummaryResponse>(
+    "/sales/total-amount",
+  );
+  return response.data;
+};
+
+export const GetTotalValuePendding =
+  async (): Promise<GetTotalValuePenddingResponse> => {
+    const response = await api.get<GetTotalValuePenddingResponse>(
+      "/sales/total-pending",
+    );
+    return response.data;
+  };

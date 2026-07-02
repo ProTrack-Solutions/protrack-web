@@ -1,5 +1,8 @@
-import { ClienteFormData } from "@/interfaces/client-registration.interface";
-import { ClientResponse, UpdatedClient } from "@/interfaces/client.interface";
+import {
+  ClienteFormData,
+  ClientResponse,
+  UpdatedClient,
+} from "@/interfaces/client.interface";
 import { api } from "./api";
 
 export const CreateClient = async (params: ClienteFormData): Promise<void> => {

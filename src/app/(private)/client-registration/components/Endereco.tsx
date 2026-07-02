@@ -9,8 +9,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { MapPin } from "lucide-react";
-import { ClienteFormData } from "@/interfaces/client-registration.interface";
 import { estados } from "@/const/states.const";
+import { ClienteFormData } from "@/interfaces/client.interface";
 
 interface EnderecoProps {
   formData: ClienteFormData;

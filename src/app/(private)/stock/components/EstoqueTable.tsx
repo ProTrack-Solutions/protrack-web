@@ -1,6 +1,6 @@
 "use client";
 
-import { Product } from "@/interfaces/stock.interface";
+import { Product } from "@/interfaces/products.interface";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import {

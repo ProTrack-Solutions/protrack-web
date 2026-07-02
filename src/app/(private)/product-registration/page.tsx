@@ -1,9 +1,5 @@
 "use client";
 
-import {
-  CreateProductParams,
-  initialFormData,
-} from "@/interfaces/product-registration.interface";
 import { useState } from "react";
 import { CadastroProdutoResumo } from "./components/CadastroProdutoResumo";
 import { FormEstoque } from "./components/FormEstoque";
@@ -12,6 +8,10 @@ import { FormPrecificacao } from "./components/FormPrecificacao";
 import { Header } from "@/components/Header";
 import { CreateProduct } from "@/service/products.service";
 import { toast } from "sonner";
+import {
+  CreateProductParams,
+  initialFormData,
+} from "@/interfaces/products.interface";
 
 export default function ProductRegistration() {
   const [formData, setFormData] =

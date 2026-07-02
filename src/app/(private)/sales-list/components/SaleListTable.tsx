@@ -11,13 +11,14 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ListSalesWithInstallmentsResponse } from "@/interfaces/sales-list.interface";
+
 import { getPaymentMethodLabel } from "@/app/utils/paymentMethodFormat";
 import {
   getSaleStatusLabel,
   getSaleStatusVariant,
 } from "@/app/utils/salesStatus";
 import { DialogAlterSale } from "@/components/DialogAlterSale";
+import { ListSalesWithInstallmentsResponse } from "@/interfaces/sale.interface";
 
 const formatCurrency = (value: number) =>
   value.toLocaleString("pt-BR", {

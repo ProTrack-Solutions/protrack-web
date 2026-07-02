@@ -1,4 +1,4 @@
-import { EstoqueStatsProps } from "@/interfaces/stock.interface";
+import { EstoqueStatsProps } from "@/interfaces/products.interface";
 import { Card, CardContent } from "@/components/ui/card";
 import { AlertTriangle, Boxes, DollarSign, Package } from "lucide-react";
 

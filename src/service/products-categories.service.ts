@@ -1,4 +1,4 @@
-import { ProductCategoriesResponse } from "@/interfaces/products-categories.interface";
+import { ProductCategoriesResponse } from "@/interfaces/products.interface";
 import { api } from "./api";
 
 export const GetProductsCategories = async (): Promise<
