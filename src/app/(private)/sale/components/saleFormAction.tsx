@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { VendaForm } from "@/schemas/sale.schema";
 
 export function SaleFormActions() {
-  const { reset, formState } = useFormContext<VendaForm>();
+  const { formState } = useFormContext<VendaForm>();
 
   return (
     <div className="flex justify-end space-x-4">

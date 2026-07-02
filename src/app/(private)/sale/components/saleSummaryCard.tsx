@@ -1,7 +1,7 @@
 import { useFormContext, useWatch } from "react-hook-form";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CreateSaleParams } from "@/interfaces/sale.interface";
-import { Product } from "@/interfaces/stock.interface";
+import { Product } from "@/interfaces/products.interface";
 
 interface Props {
   products: Product[];

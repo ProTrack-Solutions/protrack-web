@@ -28,7 +28,7 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 import { useProductsCategories } from "@/hooks/useProductsCategories";
-import { Product, ProductUpdateParams } from "@/interfaces/stock.interface";
+import { Product, ProductUpdateParams } from "@/interfaces/products.interface";
 import { UpdateProcut } from "@/service/products.service";
 import { useProducts } from "@/hooks/useProducts";
 

@@ -2,8 +2,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { DollarSign, Percent, TrendingUp } from "lucide-react";
 import { CardSection } from "./CardSection";
-import { CreateProductParams } from "@/interfaces/product-registration.interface";
+
 import { useMargem } from "@/hooks/useMargem";
+import { CreateProductParams } from "@/interfaces/products.interface";
 
 interface FormPrecificacaoProps {
   formData: CreateProductParams;

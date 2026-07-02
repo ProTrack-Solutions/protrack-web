@@ -9,10 +9,7 @@ import { useState } from "react";
 import { format } from "date-fns";
 import { CreateClient } from "@/service/clients.service";
 import { toast } from "sonner";
-import {
-  ClienteFormData,
-  initialData,
-} from "@/interfaces/client-registration.interface";
+import { ClienteFormData, initialData } from "@/interfaces/client.interface";
 
 export default function ClientRegistration() {
   const [formData, setFormData] = useState<ClienteFormData>(initialData);

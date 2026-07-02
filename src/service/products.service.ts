@@ -1,9 +1,11 @@
 import {
+  GetTopProductsResponse,
   ProductResponse,
   ProductUpdateParams,
-} from "@/interfaces/stock.interface";
+  CreateProductParams,
+  GetTotalInStockResponse,
+} from "@/interfaces/products.interface";
 import { api } from "./api";
-import { CreateProductParams } from "@/interfaces/product-registration.interface";
 
 export const GetProducts = async (): Promise<ProductResponse> => {
   const response = await api.get<ProductResponse>("/product/company", {
@@ -26,5 +28,19 @@ export const UpdateProcut = async (
   params: ProductUpdateParams,
 ) => {
   const response = await api.put(`/product/${productId}`, params);
+  return response.data;
+};
+
+export const GetTopProducts = async (): Promise<GetTopProductsResponse> => {
+  const response = await api.get<GetTopProductsResponse>(
+    "/product/top-products",
+  );
+  return response.data;
+};
+
+export const GetTotalInStock = async (): Promise<GetTotalInStockResponse> => {
+  const response = await api.get<GetTotalInStockResponse>(
+    "/product/cost-total",
+  );
   return response.data;
 };

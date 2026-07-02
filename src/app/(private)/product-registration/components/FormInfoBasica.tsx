@@ -11,7 +11,7 @@ import {
 import { Barcode, Info } from "lucide-react";
 import { CardSection } from "./CardSection";
 import { useProductsCategories } from "@/hooks/useProductsCategories";
-import { CreateProductParams } from "@/interfaces/product-registration.interface";
+import { CreateProductParams } from "@/interfaces/products.interface";
 
 interface FormInfoBasicaProps {
   formData: CreateProductParams;

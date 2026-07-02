@@ -25,7 +25,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { CreateSaleParams } from "@/interfaces/sale.interface";
-import { Product } from "@/interfaces/stock.interface";
+import { Product } from "@/interfaces/products.interface";
 import { useState } from "react";
 
 interface Props {

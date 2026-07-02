@@ -1,7 +1,7 @@
 import { GenderFormatPtBR } from "@/app/utils/genderFormat";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { ClienteFormData } from "@/interfaces/client-registration.interface";
+import { ClienteFormData } from "@/interfaces/client.interface";
 import { Eraser, Save, User } from "lucide-react";
 
 interface ResumoSidebarProps {

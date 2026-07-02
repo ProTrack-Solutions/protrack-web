@@ -21,7 +21,7 @@ import { ptBR } from "date-fns/locale";
 import { cn } from "@/lib/utils";
 
 import { Gender } from "@/enum/gender.enum";
-import { ClienteFormData } from "@/interfaces/client-registration.interface";
+import { ClienteFormData } from "@/interfaces/client.interface";
 
 interface InformacoesPessoaisProps {
   formData: ClienteFormData;
