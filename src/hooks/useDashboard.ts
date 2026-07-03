@@ -1,11 +1,13 @@
 import { useQuery } from "@tanstack/react-query";
-import { GetSalesSummary, GetTotalValuePendding } from "@/service/sale.service";
 import {
-  GetProducts,
-  GetTopProducts,
-  GetTotalInStock,
-} from "@/service/products.service";
+  GetSalesSummary,
+  GetTop5Products,
+  GetTotalValuePendding,
+} from "@/service/sale.service";
+import { GetTotalInStock } from "@/service/products.service";
 import { GetPaymentMethodsStats } from "@/service/payment-methods.service";
+import { GetBillsPayableSummary } from "@/service/bills-payable.service";
+import { GetCashFlow } from "@/service/cash-flow.service";
 
 export const useDashboard = () => {
   const { data, isLoading, isError, refetch } = useQuery({
@@ -17,12 +19,16 @@ export const useDashboard = () => {
         topProducts,
         paymentMethodsStats,
         totalValueInStock,
+        billsPayableSummary,
+        cashFlow,
       ] = await Promise.all([
         GetSalesSummary(),
         GetTotalValuePendding(),
-        GetTopProducts(),
+        GetTop5Products(),
         GetPaymentMethodsStats(),
         GetTotalInStock(),
+        GetBillsPayableSummary(),
+        GetCashFlow(),
       ]);
 
       return {
@@ -31,6 +37,8 @@ export const useDashboard = () => {
         topProducts,
         paymentMethodsStats,
         totalValueInStock,
+        billsPayableSummary,
+        cashFlow,
       };
     },
     refetchInterval: 10000,
@@ -38,11 +46,13 @@ export const useDashboard = () => {
   });
 
   return {
-    SalesSummaryData: data?.salesSummary,
-    TotalSalesPedding: data?.totalSalePendding,
-    TopProducts: data?.topProducts,
-    PaymentMethodsStats: data?.paymentMethodsStats,
-    TotalValueInStock: data?.totalValueInStock,
+    salesSummaryData: data?.salesSummary,
+    totalSalesPedding: data?.totalSalePendding.total_pending,
+    topProducts: data?.topProducts,
+    paymentMethodsStats: data?.paymentMethodsStats,
+    totalValueInStock: data?.totalValueInStock,
+    billsPayableSummary: data?.billsPayableSummary,
+    cashFlow: data?.cashFlow,
     loading: isLoading,
     error: isError
       ? "Erro ao carregar dados do dashboard. Por favor, tente novamente."

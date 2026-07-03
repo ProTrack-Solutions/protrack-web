@@ -4,8 +4,14 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 import { Package } from "lucide-react";
+import { GetTotalInStockResponse } from "@/interfaces/products.interface";
+import { formatCurrency } from "@/app/utils/currencyFormat";
 
-export function StockValueCard() {
+interface Props {
+  totalValueInStock: GetTotalInStockResponse;
+}
+
+export function StockValueCard({ totalValueInStock }: Props) {
   return (
     <Card>
       <CardHeader>
@@ -17,15 +23,22 @@ export function StockValueCard() {
       <CardContent>
         <div className="space-y-4">
           <div>
-            <p className="text-2xl font-bold text-foreground">R$ 85.400</p>
+            <p className="text-2xl font-bold text-foreground">
+              R$ {formatCurrency(totalValueInStock.cost_total)}
+            </p>
             <p className="text-sm text-muted-foreground">Total investido</p>
           </div>
           <div className="space-y-2">
             <div className="flex justify-between text-sm">
               <span>Giro de estoque</span>
-              <span className="font-medium">68%</span>
+              <span className="font-medium">
+                {totalValueInStock.inventory_turnover}%
+              </span>
             </div>
-            <Progress value={68} className="h-2" />
+            <Progress
+              value={totalValueInStock.inventory_turnover}
+              className="h-2"
+            />
           </div>
           <Button variant="outline" size="sm" className="w-full">
             Ver Detalhes

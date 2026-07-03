@@ -3,13 +3,15 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "lucide-react";
+import { GetBillsPayableSummaryResponse } from "@/interfaces/bills-payable.interface";
+import { formatCurrency } from "@/app/utils/currencyFormat";
 
 interface AccountsPayableCardProps {
-  totalPendente: number;
+  billsPayableSummary: GetBillsPayableSummaryResponse;
 }
 
 export function AccountsPayableCard({
-  totalPendente,
+  billsPayableSummary,
 }: AccountsPayableCardProps) {
   return (
     <Card>
@@ -23,25 +25,28 @@ export function AccountsPayableCard({
         <div className="space-y-4">
           <div>
             <p className="text-2xl font-bold text-destructive">
-              R${" "}
-              {totalPendente.toLocaleString("pt-BR", {
-                minimumFractionDigits: 2,
-              })}
+              R$ {formatCurrency(billsPayableSummary.total_to_pay ?? 0)}
             </p>
             <p className="text-sm text-muted-foreground">Total pendente</p>
           </div>
           <div className="space-y-2">
             <div className="flex justify-between text-sm">
               <span>Vencidas</span>
-              <span className="font-medium text-destructive">R$ 2.400</span>
+              <span className="font-medium text-destructive">
+                R$ {formatCurrency(billsPayableSummary.total_overdue ?? 0)}
+              </span>
             </div>
             <div className="flex justify-between text-sm">
               <span>Vencem hoje</span>
-              <span className="font-medium text-secondary">R$ 1.800</span>
+              <span className="font-medium text-secondary">
+                R$ {formatCurrency(billsPayableSummary.total_scheduled ?? 0)}
+              </span>
             </div>
             <div className="flex justify-between text-sm">
               <span>Próximos 7 dias</span>
-              <span className="font-medium">R$ 4.200</span>
+              <span className="font-medium">
+                R$ {formatCurrency(billsPayableSummary.total_quantity ?? 0)}
+              </span>
             </div>
           </div>
           <Button variant="outline" size="sm" className="w-full">
