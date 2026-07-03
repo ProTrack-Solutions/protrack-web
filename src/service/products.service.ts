@@ -31,8 +31,8 @@ export const UpdateProcut = async (
   return response.data;
 };
 
-export const GetTopProducts = async (): Promise<GetTopProductsResponse> => {
-  const response = await api.get<GetTopProductsResponse>(
+export const GetTopProducts = async (): Promise<GetTopProductsResponse[]> => {
+  const response = await api.get<GetTopProductsResponse[]>(
     "/product/top-products",
   );
   return response.data;

@@ -2,6 +2,7 @@ import { api } from "./api";
 import {
   CreateSaleParams,
   GetSalesSummaryResponse,
+  GetTop5ProductsResponse,
   GetTotalValuePenddingResponse,
   SaleListResponse,
   UpdateSaleParams,
@@ -43,3 +44,10 @@ export const GetTotalValuePendding =
     );
     return response.data;
   };
+
+export const GetTop5Products = async (): Promise<GetTop5ProductsResponse[]> => {
+  const response = await api.get<GetTop5ProductsResponse[]>(
+    "/sales/top5-products",
+  );
+  return response.data;
+};

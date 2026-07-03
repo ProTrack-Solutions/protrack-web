@@ -93,3 +93,9 @@ export interface GetSalesSummaryResponse {
 export interface GetTotalValuePenddingResponse {
   total_pending: number;
 }
+
+export interface GetTop5ProductsResponse {
+  product_name: string;
+  product_real_profit: number;
+  total_sale: number;
+}
