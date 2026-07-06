@@ -6,12 +6,17 @@ import { Button } from "@/components/ui/button";
 import { Package } from "lucide-react";
 import { GetTotalInStockResponse } from "@/interfaces/products.interface";
 import { formatCurrency } from "@/app/utils/currencyFormat";
+import { GetInventoryTurnoverResponse } from "@/interfaces/sale.interface";
 
 interface Props {
   totalValueInStock: GetTotalInStockResponse;
+  inventoryTurnover: GetInventoryTurnoverResponse;
 }
 
-export function StockValueCard({ totalValueInStock }: Props) {
+export function StockValueCard({
+  totalValueInStock,
+  inventoryTurnover,
+}: Props) {
   return (
     <Card>
       <CardHeader>
@@ -32,11 +37,11 @@ export function StockValueCard({ totalValueInStock }: Props) {
             <div className="flex justify-between text-sm">
               <span>Giro de estoque</span>
               <span className="font-medium">
-                {totalValueInStock.inventory_turnover}%
+                {inventoryTurnover.inventory_turnover}%
               </span>
             </div>
             <Progress
-              value={totalValueInStock.inventory_turnover}
+              value={inventoryTurnover.inventory_turnover}
               className="h-2"
             />
           </div>

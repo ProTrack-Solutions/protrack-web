@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import {
+  GetInventoryTurnover,
   GetSalesSummary,
   GetTop5Products,
   GetTotalValuePendding,
@@ -21,6 +22,7 @@ export const useDashboard = () => {
         totalValueInStock,
         billsPayableSummary,
         cashFlow,
+        inventoryTurnover,
       ] = await Promise.all([
         GetSalesSummary(),
         GetTotalValuePendding(),
@@ -29,6 +31,7 @@ export const useDashboard = () => {
         GetTotalInStock(),
         GetBillsPayableSummary(),
         GetCashFlow(),
+        GetInventoryTurnover(),
       ]);
 
       return {
@@ -39,6 +42,7 @@ export const useDashboard = () => {
         totalValueInStock,
         billsPayableSummary,
         cashFlow,
+        inventoryTurnover,
       };
     },
     refetchInterval: 10000,
@@ -53,6 +57,7 @@ export const useDashboard = () => {
     totalValueInStock: data?.totalValueInStock,
     billsPayableSummary: data?.billsPayableSummary,
     cashFlow: data?.cashFlow,
+    inventoryTurnover: data?.inventoryTurnover,
     loading: isLoading,
     error: isError
       ? "Erro ao carregar dados do dashboard. Por favor, tente novamente."

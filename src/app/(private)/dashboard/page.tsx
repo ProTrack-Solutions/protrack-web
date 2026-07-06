@@ -32,6 +32,7 @@ export default function DashBoard() {
     totalValueInStock,
     billsPayableSummary,
     cashFlow,
+    inventoryTurnover,
   } = useDashboard();
 
   console.log("cashFlow", cashFlow);
@@ -78,6 +79,10 @@ export default function DashBoard() {
           totalValueInStock={
             totalValueInStock ?? {
               cost_total: 0,
+            }
+          }
+          inventoryTurnover={
+            inventoryTurnover ?? {
               inventory_turnover: 0,
             }
           }

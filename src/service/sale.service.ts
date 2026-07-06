@@ -1,6 +1,7 @@
 import { api } from "./api";
 import {
   CreateSaleParams,
+  GetInventoryTurnoverResponse,
   GetSalesSummaryResponse,
   GetTop5ProductsResponse,
   GetTotalValuePenddingResponse,
@@ -51,3 +52,11 @@ export const GetTop5Products = async (): Promise<GetTop5ProductsResponse[]> => {
   );
   return response.data;
 };
+
+export const GetInventoryTurnover =
+  async (): Promise<GetInventoryTurnoverResponse> => {
+    const response = await api.get<GetInventoryTurnoverResponse>(
+      "/sales/stock-turnover",
+    );
+    return response.data;
+  };

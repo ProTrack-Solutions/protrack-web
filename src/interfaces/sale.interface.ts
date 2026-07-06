@@ -99,3 +99,7 @@ export interface GetTop5ProductsResponse {
   product_real_profit: number;
   total_sale: number;
 }
+
+export interface GetInventoryTurnoverResponse {
+  inventory_turnover: number;
+}
