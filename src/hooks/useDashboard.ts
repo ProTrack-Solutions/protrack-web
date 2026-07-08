@@ -9,6 +9,7 @@ import { GetTotalInStock } from "@/service/products.service";
 import { GetPaymentMethodsStats } from "@/service/payment-methods.service";
 import { GetBillsPayableSummary } from "@/service/bills-payable.service";
 import { GetCashFlow } from "@/service/cash-flow.service";
+import { ListAnnouncements } from "@/service/announcements.service";
 
 export const useDashboard = () => {
   const { data, isLoading, isError, refetch } = useQuery({
@@ -23,6 +24,7 @@ export const useDashboard = () => {
         billsPayableSummary,
         cashFlow,
         inventoryTurnover,
+        announcements,
       ] = await Promise.all([
         GetSalesSummary(),
         GetTotalValuePendding(),
@@ -32,6 +34,7 @@ export const useDashboard = () => {
         GetBillsPayableSummary(),
         GetCashFlow(),
         GetInventoryTurnover(),
+        ListAnnouncements(),
       ]);
 
       return {
@@ -43,6 +46,7 @@ export const useDashboard = () => {
         billsPayableSummary,
         cashFlow,
         inventoryTurnover,
+        announcements,
       };
     },
     refetchInterval: 10000,
@@ -58,6 +62,7 @@ export const useDashboard = () => {
     billsPayableSummary: data?.billsPayableSummary,
     cashFlow: data?.cashFlow,
     inventoryTurnover: data?.inventoryTurnover,
+    announcements: data?.announcements,
     loading: isLoading,
     error: isError
       ? "Erro ao carregar dados do dashboard. Por favor, tente novamente."

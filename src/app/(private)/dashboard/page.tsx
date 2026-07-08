@@ -13,16 +13,6 @@ import { useDashboard } from "@/hooks/useDashboard";
 import { Loading } from "@/components/Loading";
 
 export default function DashBoard() {
-  const alertas = [
-    { tipo: "vencimento", mensagem: "5 contas vencem hoje", urgencia: "alta" },
-    {
-      tipo: "estoque",
-      mensagem: "3 produtos com estoque crítico",
-      urgencia: "media",
-    },
-    { tipo: "receber", mensagem: "R$ 8.500 em atraso", urgencia: "alta" },
-  ];
-
   const {
     loading,
     totalSalesPedding,
@@ -33,6 +23,7 @@ export default function DashBoard() {
     billsPayableSummary,
     cashFlow,
     inventoryTurnover,
+    announcements,
   } = useDashboard();
 
   console.log("cashFlow", cashFlow);
@@ -63,7 +54,7 @@ export default function DashBoard() {
             }
           }
         />
-        <AlertsCard data={alertas} />
+        <AlertsCard announcements={announcements ?? []} />
       </div>
 
       {/* Grid: Seção de Gráficos Analíticos */}
