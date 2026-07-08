@@ -62,7 +62,7 @@ export const useDashboard = () => {
     billsPayableSummary: data?.billsPayableSummary,
     cashFlow: data?.cashFlow,
     inventoryTurnover: data?.inventoryTurnover,
-    announcements: data?.announcements,
+    announcements: data?.announcements.data,
     loading: isLoading,
     error: isError
       ? "Erro ao carregar dados do dashboard. Por favor, tente novamente."
