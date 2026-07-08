@@ -76,5 +76,4 @@ export interface CreateProductParams {
 
 export interface GetTotalInStockResponse {
   cost_total: number;
-  inventory_turnover: number;
 }
