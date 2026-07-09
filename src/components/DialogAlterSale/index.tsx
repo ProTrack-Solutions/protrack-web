@@ -39,12 +39,14 @@ import {
   Clock,
   AlertTriangle,
 } from "lucide-react";
-import { ListSalesWithInstallmentsResponse } from "@/interfaces/sales-list.interface";
 import { PaymentMethod } from "@/enum/methodPayments";
 import { getPaymentMethodLabel } from "@/app/utils/paymentMethodFormat";
 import { formatCurrency } from "@/app/utils/currencyFormat";
 
-import { UpdateSaleParams } from "@/interfaces/sale.interface";
+import {
+  ListSalesWithInstallmentsResponse,
+  UpdateSaleParams,
+} from "@/interfaces/sale.interface";
 import { getSaleStatusLabel } from "@/app/utils/salesStatus";
 import { UpdateSale } from "@/service/sale.service";
 import { toast } from "sonner";

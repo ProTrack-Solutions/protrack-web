@@ -82,8 +82,8 @@ export function PrivateLayout({ children }: { children: React.ReactNode }) {
         <SidebarItem
           icon={<BanknoteArrowUp size={18} />}
           text="Contas a Pagar"
-          router="/contasPagar"
-          active={currentPath === "/contasPagar"}
+          router="/accounts-payable"
+          active={currentPath === "/accounts-payable"}
           requiredRoles={["admin", "financeiro"]}
         />
         <SidebarItem
