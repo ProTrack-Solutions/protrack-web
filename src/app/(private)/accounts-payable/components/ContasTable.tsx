@@ -10,11 +10,11 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Check, Clock, CreditCard } from "lucide-react";
-import { ContaPagar } from "../page";
 import { ContaPagarStatusBadge } from "./StatusBadge";
+import { BillsPayable } from "@/interfaces/bills-payable.interface";
 
 interface ContasPagarTableProps {
-  contas: ContaPagar[];
+  contas: BillsPayable[];
   onMarcarPago: (contaId: string) => void;
   onAgendarPagamento: (contaId: string) => void;
   onGerarPagamento: (contaId: string) => void;
@@ -49,24 +49,24 @@ export function ContasPagarTable({
             {contas.map((conta) => (
               <TableRow key={conta.id}>
                 <TableCell className="font-medium">
-                  {conta.fornecedor}
+                  {conta.vendor_name}
                 </TableCell>
-                <TableCell>{conta.descricao}</TableCell>
+                <TableCell>{conta.description}</TableCell>
                 <TableCell>
-                  <Badge variant="outline">{conta.categoria}</Badge>
+                  <Badge variant="outline">{conta.category_name}</Badge>
                 </TableCell>
                 <TableCell>
                   R${" "}
-                  {conta.valor.toLocaleString("pt-BR", {
+                  {conta.amount.toLocaleString("pt-BR", {
                     minimumFractionDigits: 2,
                   })}
                 </TableCell>
                 <TableCell>
-                  {new Date(conta.dataVencimento).toLocaleDateString("pt-BR")}
-                  {conta.dataAgendamento && (
+                  {new Date(conta.due_date).toLocaleDateString("pt-BR")}
+                  {conta.scheduled_date && (
                     <div className="text-xs text-muted-foreground">
                       Agendado:{" "}
-                      {new Date(conta.dataAgendamento).toLocaleDateString(
+                      {new Date(conta.scheduled_date).toLocaleDateString(
                         "pt-BR",
                       )}
                     </div>
@@ -76,9 +76,9 @@ export function ContasPagarTable({
                   <ContaPagarStatusBadge status={conta.status} />
                 </TableCell>
                 <TableCell>
-                  {conta.diasAtraso > 0 ? (
+                  {1 > 0 ? (
                     <span className="text-destructive font-medium">
-                      {conta.diasAtraso} dias
+                      {1} dias
                     </span>
                   ) : (
                     <span className="text-muted-foreground">-</span>
