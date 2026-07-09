@@ -24,23 +24,41 @@ import {
   FormItem,
   FormMessage,
 } from "@/components/ui/form";
-import { VendaForm } from "@/@types/sale.type";
-import { produtos as produtosList } from "../sale.data";
+import { CreateSaleParams } from "@/interfaces/sale.interface";
+import { Product } from "@/interfaces/products.interface";
+import { useState } from "react";
 
-export function SaleProductsTable() {
-  const { control, setValue } = useFormContext<VendaForm>();
+interface Props {
+  products: Product[];
+}
+
+export function SaleProductsTable({ products }: Props) {
+  const { control, setValue } = useFormContext<CreateSaleParams>();
 
   const { fields, append, remove } = useFieldArray({
     control,
-    name: "produtos",
+    name: "items",
   });
 
-  const watchedProdutos = useWatch({ control, name: "produtos" }) ?? [];
+  const watchedProdutos = useWatch({ control, name: "items" }) ?? [];
+
+  const [valoresProdutos, setValoresProdutos] = useState<
+    Record<string, number>
+  >({});
+
+  console.log("valoresProdutos", valoresProdutos);
+
 
   const handleProdutoChange = (index: number, produtoId: string) => {
-    const produto = produtosList.find((p) => p.id === produtoId);
+    const produto = products.find((p) => p.id === produtoId);
     if (produto) {
-      setValue(`produtos.${index}.precoUnitario`, produto.preco);
+      setValue(`items.${index}.product_id`, produto.id);
+      const i = `items.${index}.product_id`;
+
+      setValoresProdutos((prev) => ({
+        ...prev,
+        [i]: produto.sale_price,
+      }));
     }
   };
 
@@ -51,9 +69,7 @@ export function SaleProductsTable() {
         <Button
           type="button"
           size="sm"
-          onClick={() =>
-            append({ produtoId: "", quantidade: 1, precoUnitario: 0 })
-          }
+          onClick={() => append({ product_id: "", quantity: 1 })}
         >
           <Plus className="h-4 w-4 mr-2" />
           Adicionar Produto
@@ -76,7 +92,7 @@ export function SaleProductsTable() {
                 <TableCell>
                   <FormField
                     control={control}
-                    name={`produtos.${index}.produtoId`}
+                    name={`items.${index}.product_id`}
                     render={({ field }) => (
                       <FormItem>
                         <Select
@@ -92,10 +108,11 @@ export function SaleProductsTable() {
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            {produtosList.map((produto) => (
+                            {products.map((produto) => (
                               <SelectItem key={produto.id} value={produto.id}>
-                                {produto.nome} - R$ {produto.preco.toFixed(2)}{" "}
-                                (Est: {produto.estoque})
+                                {produto.name} - R${" "}
+                                {produto.sale_price.toFixed(2)} (Est:{" "}
+                                {produto.quantity})
                               </SelectItem>
                             ))}
                           </SelectContent>
@@ -109,7 +126,7 @@ export function SaleProductsTable() {
                 <TableCell>
                   <FormField
                     control={control}
-                    name={`produtos.${index}.quantidade`}
+                    name={`items.${index}.quantity`}
                     render={({ field }) => (
                       <FormItem>
                         <FormControl>
@@ -129,25 +146,13 @@ export function SaleProductsTable() {
                 </TableCell>
 
                 <TableCell>
-                  <FormField
-                    control={control}
-                    name={`produtos.${index}.precoUnitario`}
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormControl>
-                          <Input
-                            type="number"
-                            step="0.01"
-                            min="0"
-                            {...field}
-                            onChange={(e) =>
-                              field.onChange(Number(e.target.value))
-                            }
-                          />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
+                  <Input
+                    type="number"
+                    step="0.01"
+                    min="0"
+                    {...field}
+                    value={valoresProdutos[`items.${index}.product_id`] || ""}
+                    disabled
                   />
                 </TableCell>
 
@@ -155,8 +160,8 @@ export function SaleProductsTable() {
                   <span className="font-medium">
                     R${" "}
                     {(
-                      (watchedProdutos[index]?.quantidade || 0) *
-                      (watchedProdutos[index]?.precoUnitario || 0)
+                      (watchedProdutos[index]?.quantity || 0) *
+                      (valoresProdutos[`items.${index}.product_id`] || 0)
                     ).toFixed(2)}
                   </span>
                 </TableCell>

@@ -2,11 +2,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Boxes, Ruler } from "lucide-react";
 import { CardSection } from "./CardSection";
-import { ProductFormData } from "@/@types/product-registration.type";
+import { CreateProductParams } from "@/interfaces/products.interface";
 
 interface FormEstoqueProps {
-  formData: ProductFormData;
-  onChange: (field: keyof ProductFormData, value: string) => void;
+  formData: CreateProductParams;
+  onChange: (field: keyof CreateProductParams, value: string) => void;
 }
 
 export function FormEstoque({ formData, onChange }: FormEstoqueProps) {
@@ -27,8 +27,8 @@ export function FormEstoque({ formData, onChange }: FormEstoqueProps) {
             type="number"
             min="0"
             placeholder="0"
-            value={formData.quantidade}
-            onChange={(e) => onChange("quantidade", e.target.value)}
+            value={formData.quantity}
+            onChange={(e) => onChange("quantity", e.target.value)}
             className="h-11"
           />
         </div>
@@ -44,8 +44,8 @@ export function FormEstoque({ formData, onChange }: FormEstoqueProps) {
           <Input
             id="tamanho"
             placeholder="P, M, G, GG, 42, Único..."
-            value={formData.tamanho}
-            onChange={(e) => onChange("tamanho", e.target.value)}
+            value={formData.size}
+            onChange={(e) => onChange("size", e.target.value)}
             className="h-11"
           />
         </div>

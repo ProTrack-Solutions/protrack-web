@@ -2,12 +2,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { DollarSign, Percent, TrendingUp } from "lucide-react";
 import { CardSection } from "./CardSection";
-import { ProductFormData } from "@/@types/product-registration.type";
+
 import { useMargem } from "@/hooks/useMargem";
+import { CreateProductParams } from "@/interfaces/products.interface";
 
 interface FormPrecificacaoProps {
-  formData: ProductFormData;
-  onChange: (field: keyof ProductFormData, value: string) => void;
+  formData: CreateProductParams;
+  onChange: (field: keyof CreateProductParams, value: string) => void;
 }
 
 export function FormPrecificacao({
@@ -15,8 +16,8 @@ export function FormPrecificacao({
   onChange,
 }: FormPrecificacaoProps) {
   const { margemValor, margemPercent, margemTone } = useMargem(
-    formData.precoCusto,
-    formData.precoVenda,
+    formData.cost_price,
+    formData.sale_price,
   );
 
   return (
@@ -41,8 +42,8 @@ export function FormPrecificacao({
               step="0.01"
               min="0"
               placeholder="0,00"
-              value={formData.precoCusto}
-              onChange={(e) => onChange("precoCusto", e.target.value)}
+              value={formData.cost_price}
+              onChange={(e) => onChange("cost_price", e.target.value)}
               className="h-11 pl-10"
             />
           </div>
@@ -62,8 +63,8 @@ export function FormPrecificacao({
               step="0.01"
               min="0"
               placeholder="0,00"
-              value={formData.precoVenda}
-              onChange={(e) => onChange("precoVenda", e.target.value)}
+              value={formData.sale_price}
+              onChange={(e) => onChange("sale_price", e.target.value)}
               className="h-11 pl-10"
             />
           </div>

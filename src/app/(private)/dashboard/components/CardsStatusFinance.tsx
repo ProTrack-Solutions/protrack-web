@@ -1,11 +1,15 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { DollarSign, CreditCard, TrendingUp } from "lucide-react";
 
-export const CardsStatusFinance = () => {
+interface Props {
+  totalSalesPedding: number;
+}
+
+export const CardsStatusFinance = ({ totalSalesPedding }: Props) => {
   const saldoAtual = {
     caixa: 15400.5,
     banco: 45200.3,
-    contasReceber: 28500.0,
+    contasReceber: totalSalesPedding,
     contasPagar: 12800.75,
   };
 

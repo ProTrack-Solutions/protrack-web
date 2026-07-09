@@ -10,14 +10,17 @@ import {
 } from "@/components/ui/select";
 import { Barcode, Info } from "lucide-react";
 import { CardSection } from "./CardSection";
-import { ProductFormData } from "@/@types/product-registration.type";
+import { useProductsCategories } from "@/hooks/useProductsCategories";
+import { CreateProductParams } from "@/interfaces/products.interface";
 
 interface FormInfoBasicaProps {
-  formData: ProductFormData;
-  onChange: (field: keyof ProductFormData, value: string) => void;
+  formData: CreateProductParams;
+  onChange: (field: keyof CreateProductParams, value: string) => void;
 }
 
 export function FormInfoBasica({ formData, onChange }: FormInfoBasicaProps) {
+  const { productsCategories } = useProductsCategories();
+
   return (
     <CardSection
       icon={Info}
@@ -33,8 +36,8 @@ export function FormInfoBasica({ formData, onChange }: FormInfoBasicaProps) {
           <Input
             id="nome"
             placeholder="Ex: Camiseta Premium Algodão"
-            value={formData.nome}
-            onChange={(e) => onChange("nome", e.target.value)}
+            value={formData.name}
+            onChange={(e) => onChange("name", e.target.value)}
             className="h-11"
           />
         </div>
@@ -43,18 +46,24 @@ export function FormInfoBasica({ formData, onChange }: FormInfoBasicaProps) {
           <Label htmlFor="categoria" className="text-sm font-medium">
             Categoria <span className="text-rose-500">*</span>
           </Label>
+
           <Select
-            value={formData.categoria}
-            onValueChange={(v) => onChange("categoria", v)}
+            value={formData.category_id}
+            onValueChange={(v) => onChange("category_id", v)}
           >
             <SelectTrigger id="categoria" className="h-11">
               <SelectValue placeholder="Selecione" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="Vestimenta">Vestimenta</SelectItem>
-              <SelectItem value="Calçados">Calçados</SelectItem>
-              <SelectItem value="Acessórios">Acessórios</SelectItem>
-              <SelectItem value="Outros">Outros</SelectItem>
+              {Array.isArray(productsCategories) &&
+                productsCategories.map((category) => (
+                  <SelectItem
+                    key={category.id || category.name}
+                    value={category.id}
+                  >
+                    {category.name}
+                  </SelectItem>
+                ))}
             </SelectContent>
           </Select>
         </div>
@@ -70,8 +79,8 @@ export function FormInfoBasica({ formData, onChange }: FormInfoBasicaProps) {
           <Input
             id="codigoBarras"
             placeholder="0000000000000"
-            value={formData.codigoBarras}
-            onChange={(e) => onChange("codigoBarras", e.target.value)}
+            value={formData.barcode}
+            onChange={(e) => onChange("barcode", e.target.value)}
             className="h-11 font-mono"
           />
         </div>
@@ -83,8 +92,8 @@ export function FormInfoBasica({ formData, onChange }: FormInfoBasicaProps) {
           <Textarea
             id="descricao"
             placeholder="Detalhes do produto, características, material..."
-            value={formData.descricao}
-            onChange={(e) => onChange("descricao", e.target.value)}
+            value={formData.description}
+            onChange={(e) => onChange("description", e.target.value)}
             className="min-h-[100px] resize-none"
           />
         </div>

@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { AppInput } from "@/components/AppInput";
 import { AppButton } from "@/components/AppButton";
 import { signIn } from "next-auth/react";
-import { LoginParams } from "@/@types/auth.type";
+import { LoginParams } from "@/interfaces/auth.interface";
 
 export default function Login() {
   const [loginParams, setLoginParams] = useState<LoginParams>({
@@ -37,6 +37,7 @@ export default function Login() {
 
       if (!result || result.error) {
         setError("Credenciais inválidas ou erro ao conectar com o servidor.");
+        console.log("Login", result.error);
       } else {
         router.push("/dashboard");
         router.refresh();

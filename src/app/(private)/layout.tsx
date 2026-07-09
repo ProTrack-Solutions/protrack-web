@@ -1,5 +1,6 @@
 "use client";
 
+import { Toaster } from "@/components/ui/sonner";
 import { PrivateLayout } from "@/layout/PrivateLayout";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
@@ -15,6 +16,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   return (
     <QueryClientProvider client={queryClient}>
       <PrivateLayout>{children}</PrivateLayout>
+      <Toaster theme="light" richColors closeButton position="top-right" />
     </QueryClientProvider>
   );
 }

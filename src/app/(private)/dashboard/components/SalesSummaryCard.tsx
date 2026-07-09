@@ -3,16 +3,15 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { TrendingUp } from "lucide-react";
+import { GetSalesSummaryResponse } from "@/interfaces/sale.interface";
+import { formatCurrency } from "@/app/utils/currencyFormat";
 
-interface SalesSummaryProps {
-  data: {
-    mesAtual: number;
-    mesAnterior: number;
-    crescimento: number;
-  };
+interface Props {
+  salesSummaryData: GetSalesSummaryResponse;
 }
 
-export function SalesSummaryCard({ data }: SalesSummaryProps) {
+export function SalesSummaryCard({ salesSummaryData }: Props) {
+  console.log("salesSummaryData", salesSummaryData);
   return (
     <Card className="lg:col-span-2">
       <CardHeader>
@@ -26,14 +25,11 @@ export function SalesSummaryCard({ data }: SalesSummaryProps) {
           <div>
             <p className="text-sm text-muted-foreground">Vendas do Mês</p>
             <p className="text-2xl font-bold text-foreground">
-              R${" "}
-              {data.mesAtual.toLocaleString("pt-BR", {
-                minimumFractionDigits: 2,
-              })}
+              R$ {formatCurrency(salesSummaryData.current_month_st ?? 0)}
             </p>
             <div className="flex items-center gap-2 mt-2">
               <Badge variant="secondary" className="text-white">
-                +{data.crescimento}%
+                +{salesSummaryData.growth_percentage}%
               </Badge>
               <span className="text-sm text-muted-foreground">
                 vs mês anterior
@@ -43,10 +39,7 @@ export function SalesSummaryCard({ data }: SalesSummaryProps) {
           <div>
             <p className="text-sm text-muted-foreground">Mês Anterior</p>
             <p className="text-xl font-semibold text-muted-foreground">
-              R${" "}
-              {data.mesAnterior.toLocaleString("pt-BR", {
-                minimumFractionDigits: 2,
-              })}
+              R$ {formatCurrency(salesSummaryData.last_month_st ?? 0)}
             </p>
           </div>
         </div>

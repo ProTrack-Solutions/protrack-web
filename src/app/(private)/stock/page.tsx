@@ -1,12 +1,12 @@
 "use client";
 
-import { Product } from "@/@types/stock.type";
 import { useMemo, useState } from "react";
 import { EstoqueSearch } from "./components/EstoqueSearch";
 import { EstoqueStats } from "./components/EstoqueStats";
 import { EstoqueTable } from "./components/EstoqueTable";
 import { Header } from "@/components/Header";
 import { useProducts } from "@/hooks/useProducts";
+import { Loading } from "@/components/Loading";
 
 export default function Stock() {
   const {
@@ -33,7 +33,11 @@ export default function Stock() {
   );
 
   if (loading) {
-    return <div>Carregando...</div>;
+    return (
+      <div className="flex justify-center items-center w-full h-full">
+        <Loading />
+      </div>
+    );
   }
 
   if (error) {
