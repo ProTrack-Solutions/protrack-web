@@ -1,4 +1,7 @@
-import { GetBillsPayableSummaryResponse } from "@/interfaces/bills-payable.interface";
+import {
+  GetBillsPayableSummaryResponse,
+  ListBillsPayableResponse,
+} from "@/interfaces/bills-payable.interface";
 import { api } from "./api";
 
 export const GetBillsPayableSummary =
@@ -8,3 +11,10 @@ export const GetBillsPayableSummary =
     );
     return response.data;
   };
+
+export const ListBillsPayable = async (): Promise<ListBillsPayableResponse> => {
+  const response = await api.get<ListBillsPayableResponse>(
+    "/bills-payable/list",
+  );
+  return response.data;
+};

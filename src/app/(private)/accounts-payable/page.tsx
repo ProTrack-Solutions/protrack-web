@@ -2,13 +2,11 @@
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { ContasPagarTable } from "./components/ContasTable";
-import {
-  useContasPagar,
-  CATEGORIAS_CONTAS_PAGAR,
-} from "@/hooks/useAccountsPayable";
 import { ContasPagarFiltrosPesquisa } from "./components/FiltrosPesquisa";
 import { ContasPagarResumoCards } from "./components/ResumoCards";
 import { useRouter } from "next/navigation";
+import { useBillsPayable } from "@/hooks/useBillsPayable";
+import { Loading } from "@/components/Loading";
 
 export interface ContaPagar {
   id: string;
@@ -25,20 +23,17 @@ export interface ContaPagar {
 export default function AccountsPayable() {
   const route = useRouter();
   const {
-    searchTerm,
-    setSearchTerm,
-    statusFilter,
-    setStatusFilter,
-    categoriaFilter,
-    setCategoriaFilter,
-    filteredContas,
-    totalPendente,
-    totalVencido,
-    totalAgendado,
-    handleMarcarPago,
-    handleGerarPagamento,
-    handleAgendarPagamento,
-  } = useContasPagar();
+    billsPayable,
+    billsPayableCount,
+    loading,
+    totalOverdue,
+    totalPayable,
+    totalScheduled,
+  } = useBillsPayable();
+
+  if (loading) {
+    return <Loading />;
+  }
 
   return (
     <div className="p-6 space-y-6">
@@ -58,27 +53,27 @@ export default function AccountsPayable() {
       </div>
 
       <ContasPagarResumoCards
-        totalPendente={totalPendente}
-        totalVencido={totalVencido}
-        totalAgendado={totalAgendado}
-        totalContas={filteredContas.length}
+        totalPendente={totalPayable}
+        totalVencido={totalOverdue}
+        totalAgendado={totalScheduled}
+        totalContas={billsPayableCount}
       />
 
       <ContasPagarFiltrosPesquisa
-        searchTerm={searchTerm}
-        onSearchTermChange={setSearchTerm}
-        statusFilter={statusFilter}
-        onStatusFilterChange={setStatusFilter}
-        categoriaFilter={categoriaFilter}
-        onCategoriaFilterChange={setCategoriaFilter}
-        categorias={CATEGORIAS_CONTAS_PAGAR}
+        searchTerm={""}
+        onSearchTermChange={() => {}}
+        statusFilter={""}
+        onStatusFilterChange={() => {}}
+        categoriaFilter={""}
+        onCategoriaFilterChange={() => {}}
+        categorias={[]}
       />
 
       <ContasPagarTable
-        contas={filteredContas}
-        onMarcarPago={handleMarcarPago}
-        onAgendarPagamento={handleAgendarPagamento}
-        onGerarPagamento={handleGerarPagamento}
+        contas={billsPayable}
+        onMarcarPago={() => {}}
+        onAgendarPagamento={() => {}}
+        onGerarPagamento={() => {}}
       />
     </div>
   );

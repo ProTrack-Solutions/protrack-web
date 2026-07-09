@@ -2,7 +2,7 @@ import { Badge } from "@/components/ui/badge";
 import { ContaPagar } from "../page";
 
 interface ContaPagarStatusBadgeProps {
-  status: ContaPagar["status"];
+  status: string;
 }
 
 export function ContaPagarStatusBadge({ status }: ContaPagarStatusBadgeProps) {
