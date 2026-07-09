@@ -14,6 +14,7 @@ export function SaleSummaryCard({ products }: Props) {
 
   const desconto = useWatch({ control, name: "discount_amount" });
 
+
   const totalItens = produtos.length;
   const totalQuantidade = produtos.reduce(
     (sum, p) => sum + (p.quantity || 0),
