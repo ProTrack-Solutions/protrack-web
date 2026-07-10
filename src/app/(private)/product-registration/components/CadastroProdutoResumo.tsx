@@ -29,7 +29,7 @@ export function CadastroProdutoResumo({
     <Card className="border-border/50 sticky top-6">
       <CardContent className="p-6 space-y-5">
         <div className="flex items-center gap-3 pb-2 border-b border-border/50">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500/10 to-indigo-500/10 border border-blue-500/20 flex items-center justify-center">
+          <div className="w-10 h-10 rounded-xl bg-linear-to-br from-blue-500/10 to-indigo-500/10 border border-blue-500/20 flex items-center justify-center">
             <Tag className="w-5 h-5 text-blue-600 dark:text-blue-400" />
           </div>
           <div>
@@ -43,7 +43,7 @@ export function CadastroProdutoResumo({
             <p className="text-xs text-muted-foreground uppercase tracking-wider font-medium">
               Produto
             </p>
-            <p className="text-sm font-semibold text-foreground mt-1 break-words">
+            <p className="text-sm font-semibold text-foreground mt-1 wrap-break-words">
               {formData.name || "—"}
             </p>
           </div>

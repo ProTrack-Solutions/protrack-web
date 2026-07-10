@@ -1,3 +1,5 @@
+import { BillsPayableStatus } from "@/enum/billsPayableStatus.enum";
+
 export interface GetBillsPayableSummaryResponse {
   general_status: string;
   total_overdue: number;
@@ -36,4 +38,20 @@ export interface ListBillsPayableResponse {
   total_payable: number;
   total_rows: number;
   total_scheduled: number;
+}
+
+export interface CreateBillsPayableParams {
+  amount: number;
+  category_id: string;
+  description: string;
+  due_date: string;
+  notes: string;
+  payment_method_id: string;
+  vendor_id: string;
+}
+
+export interface PaymentBillParams {
+  amount_paid: number;
+  payment_date: string;
+  payment_method_id: string;
 }

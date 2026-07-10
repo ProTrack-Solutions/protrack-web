@@ -1,5 +1,4 @@
 import { Badge } from "@/components/ui/badge";
-import { ContaPagar } from "../page";
 
 interface ContaPagarStatusBadgeProps {
   status: string;
@@ -7,7 +6,7 @@ interface ContaPagarStatusBadgeProps {
 
 export function ContaPagarStatusBadge({ status }: ContaPagarStatusBadgeProps) {
   switch (status) {
-    case "pago":
+    case "paid":
       return (
         <Badge
           variant="secondary"
@@ -16,13 +15,13 @@ export function ContaPagarStatusBadge({ status }: ContaPagarStatusBadgeProps) {
           Pago
         </Badge>
       );
-    case "agendado":
+    case "scheduled":
       return (
         <Badge variant="outline" className="border-primary text-primary">
           Agendado
         </Badge>
       );
-    case "vencido":
+    case "overdue":
       return <Badge variant="destructive">Vencido</Badge>;
     default:
       return <Badge variant="outline">Pendente</Badge>;
