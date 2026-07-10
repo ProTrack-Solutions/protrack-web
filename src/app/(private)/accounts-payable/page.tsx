@@ -4,24 +4,12 @@ import { Plus } from "lucide-react";
 import { ContasPagarTable } from "./components/ContasTable";
 import { ContasPagarFiltrosPesquisa } from "./components/FiltrosPesquisa";
 import { ContasPagarResumoCards } from "./components/ResumoCards";
-import { useRouter } from "next/navigation";
 import { useBillsPayable } from "@/hooks/useBillsPayable";
 import { Loading } from "@/components/Loading";
-
-export interface ContaPagar {
-  id: string;
-  fornecedor: string;
-  valor: number;
-  dataVencimento: string;
-  diasAtraso: number;
-  status: "pendente" | "pago" | "vencido" | "agendado";
-  categoria: string;
-  descricao: string;
-  dataAgendamento?: string;
-}
+import { DialogNewAccountsPayable } from "@/components/DialogAccountsPayable";
+import { useState } from "react";
 
 export default function AccountsPayable() {
-  const route = useRouter();
   const {
     billsPayable,
     billsPayableCount,
@@ -30,6 +18,10 @@ export default function AccountsPayable() {
     totalPayable,
     totalScheduled,
   } = useBillsPayable();
+
+  console.log("billsPayable", billsPayable);
+
+  const [newOpenDialog, setNewOpenDialog] = useState(false);
 
   if (loading) {
     return <Loading />;
@@ -46,7 +38,10 @@ export default function AccountsPayable() {
             Gerencie as contas e pagamentos a fornecedores
           </p>
         </div>
-        <Button onClick={() => route.push("/contas-pagar/cadastro")}>
+        <Button
+          onClick={() => setNewOpenDialog(true)}
+          className="cursor-pointer"
+        >
           <Plus className="h-4 w-4 mr-2" />
           Nova Conta
         </Button>
@@ -71,9 +66,13 @@ export default function AccountsPayable() {
 
       <ContasPagarTable
         contas={billsPayable}
-        onMarcarPago={() => {}}
         onAgendarPagamento={() => {}}
         onGerarPagamento={() => {}}
+      />
+
+      <DialogNewAccountsPayable
+        open={newOpenDialog}
+        onOpenChange={setNewOpenDialog}
       />
     </div>
   );

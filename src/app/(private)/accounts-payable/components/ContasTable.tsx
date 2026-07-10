@@ -9,23 +9,32 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Check, Clock, CreditCard } from "lucide-react";
+import { EllipsisVertical } from "lucide-react";
 import { ContaPagarStatusBadge } from "./StatusBadge";
 import { BillsPayable } from "@/interfaces/bills-payable.interface";
+import { DialogPaymentBill } from "@/components/DialogPaymentBill";
+import { useState } from "react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 interface ContasPagarTableProps {
   contas: BillsPayable[];
-  onMarcarPago: (contaId: string) => void;
   onAgendarPagamento: (contaId: string) => void;
   onGerarPagamento: (contaId: string) => void;
 }
 
-export function ContasPagarTable({
-  contas,
-  onMarcarPago,
-  onAgendarPagamento,
-  onGerarPagamento,
-}: ContasPagarTableProps) {
+export function ContasPagarTable({ contas }: ContasPagarTableProps) {
+  const [paymentBillModal, setPaymentBillModal] = useState(false);
+  const [selectPaymentBill, setSelectPaymentBill] = useState<BillsPayable>(
+    {} as BillsPayable,
+  );
+
   return (
     <Card>
       <CardHeader>
@@ -87,35 +96,34 @@ export function ContasPagarTable({
                 <TableCell>
                   <div className="flex gap-2">
                     {conta.status !== "pago" && (
-                      <>
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => onMarcarPago(conta.id)}
-                        >
-                          <Check className="h-4 w-4 mr-1" />
-                          Pagar
-                        </Button>
-                        {conta.status !== "agendado" && (
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => onAgendarPagamento(conta.id)}
-                          >
-                            <Clock className="h-4 w-4 mr-1" />
-                            Agendar
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="outline" className="cursor-pointer">
+                            <EllipsisVertical />
                           </Button>
-                        )}
-                      </>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent>
+                          <DropdownMenuGroup>
+                            <DropdownMenuLabel>Ações</DropdownMenuLabel>
+                            <DropdownMenuItem
+                              className="cursor-pointer"
+                              onClick={() => {
+                                setSelectPaymentBill(conta);
+                                setPaymentBillModal(true);
+                              }}
+                            >
+                              Pagar
+                            </DropdownMenuItem>
+                            <DropdownMenuItem className="cursor-pointer">
+                              Agendar
+                            </DropdownMenuItem>
+                            <DropdownMenuItem className="cursor-pointer">
+                              Gerar comprovante
+                            </DropdownMenuItem>
+                          </DropdownMenuGroup>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
                     )}
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => onGerarPagamento(conta.id)}
-                    >
-                      <CreditCard className="h-4 w-4 mr-1" />
-                      Comprovante
-                    </Button>
                   </div>
                 </TableCell>
               </TableRow>
@@ -123,6 +131,11 @@ export function ContasPagarTable({
           </TableBody>
         </Table>
       </CardContent>
+      <DialogPaymentBill
+        open={paymentBillModal}
+        onOpenChange={setPaymentBillModal}
+        conta={selectPaymentBill}
+      />
     </Card>
   );
 }

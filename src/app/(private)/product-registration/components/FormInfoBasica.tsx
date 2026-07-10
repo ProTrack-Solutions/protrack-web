@@ -94,7 +94,7 @@ export function FormInfoBasica({ formData, onChange }: FormInfoBasicaProps) {
             placeholder="Detalhes do produto, características, material..."
             value={formData.description}
             onChange={(e) => onChange("description", e.target.value)}
-            className="min-h-[100px] resize-none"
+            className="min-h-25 resize-none"
           />
         </div>
       </div>
