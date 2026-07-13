@@ -8,3 +8,7 @@ export const ListBillsCategories = async (): Promise<
     await api.get<ListBillsCategoriesResponse[]>("/bill-categories");
   return response.data;
 };
+
+export const DeleteBillCategory = async (billId: string): Promise<void> => {
+  await api.delete(`/bill-categories/${billId}`);
+};

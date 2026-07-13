@@ -1,6 +1,9 @@
 "use client";
 
-import { getPaymentMethodColor } from "@/app/utils/paymentMethodFormat";
+import {
+  getPaymentMethodColor,
+  getPaymentMethodLabel,
+} from "@/app/utils/paymentMethodFormat";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { GetPaymentMethodsStatsResponse } from "@/interfaces/payment-methods.interface";
 import { ResponsiveContainer, PieChart, Pie, Cell, Tooltip } from "recharts";
@@ -49,7 +52,8 @@ export function PaymentMethodsChart({ paymentMethodsStats }: Props) {
                 }}
               />
               <span className="text-sm text-muted-foreground">
-                {item.payment_method}: {item.percentage_method}%
+                {getPaymentMethodLabel(item.payment_method)}:{" "}
+                {item.percentage_method}%
               </span>
             </div>
           ))}
