@@ -3,6 +3,7 @@ import {
   GetBillsPayableSummaryResponse,
   ListBillsPayableResponse,
   PaymentBillParams,
+  SheduleBillParams,
 } from "@/interfaces/bills-payable.interface";
 import { api } from "./api";
 
@@ -32,4 +33,11 @@ export const PaymentBill = async (
   params: PaymentBillParams,
 ) => {
   await api.put(`/bills-payable/pay/${billPayableId}`, params);
+};
+
+export const SheduleBill = async (
+  billPayableId: string,
+  params: SheduleBillParams,
+) => {
+  await api.put(`/bills-payable/schedule/${billPayableId}`, params);
 };

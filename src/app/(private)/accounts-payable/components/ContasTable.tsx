@@ -22,6 +22,9 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { BillsPayableStatus } from "@/enum/billsPayableStatus.enum";
+import { DialogSheduledBill } from "@/components/DialogScheduleBill";
+import { formatDate } from "@/app/utils/dateFormat";
 
 interface ContasPagarTableProps {
   contas: BillsPayable[];
@@ -31,6 +34,7 @@ interface ContasPagarTableProps {
 
 export function ContasPagarTable({ contas }: ContasPagarTableProps) {
   const [paymentBillModal, setPaymentBillModal] = useState(false);
+  const [sheduleBillModal, setScheduleBillModal] = useState(false);
   const [selectPaymentBill, setSelectPaymentBill] = useState<BillsPayable>(
     {} as BillsPayable,
   );
@@ -74,10 +78,7 @@ export function ContasPagarTable({ contas }: ContasPagarTableProps) {
                   {new Date(conta.due_date).toLocaleDateString("pt-BR")}
                   {conta.scheduled_date && (
                     <div className="text-xs text-muted-foreground">
-                      Agendado:{" "}
-                      {new Date(conta.scheduled_date).toLocaleDateString(
-                        "pt-BR",
-                      )}
+                      Agendado: {formatDate(conta.scheduled_date)}
                     </div>
                   )}
                 </TableCell>
@@ -105,21 +106,54 @@ export function ContasPagarTable({ contas }: ContasPagarTableProps) {
                         <DropdownMenuContent>
                           <DropdownMenuGroup>
                             <DropdownMenuLabel>Ações</DropdownMenuLabel>
-                            <DropdownMenuItem
-                              className="cursor-pointer"
-                              onClick={() => {
-                                setSelectPaymentBill(conta);
-                                setPaymentBillModal(true);
-                              }}
-                            >
-                              Pagar
-                            </DropdownMenuItem>
-                            <DropdownMenuItem className="cursor-pointer">
-                              Agendar
-                            </DropdownMenuItem>
-                            <DropdownMenuItem className="cursor-pointer">
-                              Gerar comprovante
-                            </DropdownMenuItem>
+
+                            <>
+                              {conta.status ===
+                                BillsPayableStatus.StatusPaid && (
+                                <DropdownMenuItem className="cursor-pointer">
+                                  Comprovante
+                                </DropdownMenuItem>
+                              )}
+
+                              {conta.status ===
+                                BillsPayableStatus.StatusScheduled && (
+                                <DropdownMenuItem
+                                  className="cursor-pointer"
+                                  onClick={() => {
+                                    setSelectPaymentBill(conta);
+                                    setPaymentBillModal(true);
+                                  }}
+                                >
+                                  Pagar
+                                </DropdownMenuItem>
+                              )}
+
+                              {conta.status !== BillsPayableStatus.StatusPaid &&
+                                conta.status !==
+                                  BillsPayableStatus.StatusScheduled && (
+                                  <>
+                                    <DropdownMenuItem
+                                      className="cursor-pointer"
+                                      onClick={() => {
+                                        setSelectPaymentBill(conta);
+                                        setPaymentBillModal(true);
+                                      }}
+                                    >
+                                      Pagar
+                                    </DropdownMenuItem>
+
+                                    <DropdownMenuItem
+                                      className="cursor-pointer"
+                                      onClick={() => {
+                                        setSelectPaymentBill(conta);
+                                        setScheduleBillModal(true);
+                                      }}
+                                    >
+                                      Agendar
+                                    </DropdownMenuItem>
+                                  </>
+                                )}
+                            </>
                           </DropdownMenuGroup>
                         </DropdownMenuContent>
                       </DropdownMenu>
@@ -135,6 +169,11 @@ export function ContasPagarTable({ contas }: ContasPagarTableProps) {
         open={paymentBillModal}
         onOpenChange={setPaymentBillModal}
         conta={selectPaymentBill}
+      />
+      <DialogSheduledBill
+        conta={selectPaymentBill}
+        open={sheduleBillModal}
+        onOpenChange={setScheduleBillModal}
       />
     </Card>
   );
