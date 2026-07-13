@@ -99,7 +99,7 @@ export function Sidebar({ children }: SidebarProps) {
               <DropdownMenuContent align="end">
                 {
                   <DropdownMenuItem
-                    onClick={() => router.push("/config/user")} // Alterado para o push do Next
+                    onClick={() => router.push("/config/financial")}
                     className="cursor-pointer"
                   >
                     Configurações

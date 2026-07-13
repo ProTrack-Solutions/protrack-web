@@ -13,3 +13,8 @@ export interface ProductCategoriesResponse {
   updated_at: Date;
   deleted_at: Date;
 }
+
+export interface CreateProductCategoryParams {
+  color: string;
+  name: string;
+}
