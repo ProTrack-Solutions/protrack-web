@@ -55,3 +55,7 @@ export interface PaymentBillParams {
   payment_date: string;
   payment_method_id: string;
 }
+
+export interface SheduleBillParams {
+  scheduled_date: string;
+}

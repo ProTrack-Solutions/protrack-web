@@ -85,7 +85,7 @@ export const DialogNewAccountsPayable = ({
       }
 
       await CreateBillsPayable(formData);
-      toast.success("conta Cadastrada com sucesso!");
+      toast.success("Conta cadastrada com sucesso!");
     } catch (error) {
       console.log(error);
       toast.error("Erro ao cadastrar conta!");

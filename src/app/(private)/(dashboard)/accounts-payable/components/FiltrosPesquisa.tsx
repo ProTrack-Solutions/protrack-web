@@ -48,7 +48,7 @@ export function ContasPagarFiltrosPesquisa({
             </div>
           </div>
           <Select value={statusFilter} onValueChange={onStatusFilterChange}>
-            <SelectTrigger className="w-[180px]">
+            <SelectTrigger className="w-45">
               <SelectValue placeholder="Status" />
             </SelectTrigger>
             <SelectContent>
@@ -63,7 +63,7 @@ export function ContasPagarFiltrosPesquisa({
             value={categoriaFilter}
             onValueChange={onCategoriaFilterChange}
           >
-            <SelectTrigger className="w-[180px]">
+            <SelectTrigger className="w-45">
               <SelectValue placeholder="Categoria" />
             </SelectTrigger>
             <SelectContent>
