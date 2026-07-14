@@ -13,3 +13,12 @@ export interface ListPaymentMethodsResponse {
   type: string;
   updated_at: string;
 }
+
+export interface CreatePaymentMethodsParams {
+  name: string;
+  type: string;
+}
+
+export interface TogglePaymentMethodParams {
+  is_active: boolean;
+}
