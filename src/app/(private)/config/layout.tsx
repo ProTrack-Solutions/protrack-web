@@ -14,6 +14,7 @@ import {
   Globe,
   Package,
   ArrowLeft,
+  Truck,
 } from "lucide-react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "sonner";
@@ -27,6 +28,13 @@ export default function ConfigLayout({
   const router = useRouter();
 
   const menuConfiguracoes = [
+    {
+      id: "usuario",
+      href: "/config/user",
+      titulo: "Usuário",
+      icone: User,
+      descricao: "Perfil, preferências e dados pessoais",
+    },
     {
       id: "financeiras",
       href: "/config/financial",
@@ -42,11 +50,11 @@ export default function ConfigLayout({
       descricao: "Cadastro e gestão de categorias",
     },
     {
-      id: "usuario",
-      href: "/config/user",
-      titulo: "Usuário",
-      icone: User,
-      descricao: "Perfil, preferências e dados pessoais",
+      id: "fornecedores",
+      href: "/config/vendors",
+      titulo: "Fornecedores",
+      icone: Truck,
+      descricao: "Cadastro e gerenciamento de fornecedores",
     },
     {
       id: "sistema",

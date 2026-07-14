@@ -13,6 +13,7 @@ import { CategoriesCard } from "./components/CategoriesCard";
 import { LimitsCard, LimitsData } from "./components/LimitsCard";
 import { AlertsCard, AlertsData } from "./components/AlertsCard";
 import { useBillsCategories } from "@/hooks/useBillsCategories";
+import { HeaderConfig } from "@/components/HeaderConfig";
 
 export default function FinancialConfigPage() {
   const { billsCategories } = useBillsCategories();
@@ -88,14 +89,10 @@ export default function FinancialConfigPage() {
 
   return (
     <div className="space-y-6">
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold text-foreground mb-2">
-          Configurações Financeiras
-        </h1>
-        <p className="text-muted-foreground">
-          Configure contas, métodos de pagamento, categorias e alertas
-        </p>
-      </div>
+      <HeaderConfig
+        title="Configurações Financeiras"
+        description="Configure contas, métodos de pagamento, categorias e alertas"
+      />
 
       <BankAccountsCard
         accounts={bankAccounts}

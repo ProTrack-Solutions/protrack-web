@@ -10,6 +10,7 @@ import { Package, Plus, Edit, Trash2, Check, X } from "lucide-react";
 import { toast } from "sonner";
 import { useProductsCategories } from "@/hooks/useProductsCategories";
 import { CreateProductCategory } from "@/service/products-categories.service";
+import { HeaderConfig } from "@/components/HeaderConfig";
 
 export default function ProductCategoriesConfigPage() {
   // Estados para categorias de produto
@@ -54,14 +55,10 @@ export default function ProductCategoriesConfigPage() {
 
   return (
     <div className="space-y-6">
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold text-foreground mb-2">
-          Categorias de Produto
-        </h1>
-        <p className="text-muted-foreground">
-          Cadastre e gerencie as categorias dos seus produtos
-        </p>
-      </div>
+      <HeaderConfig
+        title="Categorias de Produto"
+        description="Cadastre e gerencie as categorias dos seus produtos"
+      />
 
       {/* Adicionar nova categoria */}
       <Card>
