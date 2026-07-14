@@ -5,10 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Save } from "lucide-react";
 import { toast } from "sonner";
 import { BankAccount, BankAccountsCard } from "./components/BankAccountsCard";
-import {
-  PaymentMethod,
-  PaymentMethodsCard,
-} from "./components/PaymentMethodsCard";
+import { PaymentMethodsCard } from "./components/PaymentMethodsCard";
 import { CategoriesCard } from "./components/CategoriesCard";
 import { LimitsCard, LimitsData } from "./components/LimitsCard";
 import { AlertsCard, AlertsData } from "./components/AlertsCard";
@@ -36,19 +33,6 @@ export default function FinancialConfigPage() {
       conta: "67890-1",
       saldo: 18500.5,
       ativa: true,
-    },
-  ]);
-
-  const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([
-    { id: "1", nome: "Dinheiro", tipo: "dinheiro", ativo: true },
-    { id: "2", nome: "Cartão de Débito", tipo: "cartao", ativo: true },
-    { id: "3", nome: "Cartão de Crédito", tipo: "cartao", ativo: true },
-    { id: "4", nome: "PIX", tipo: "pix", ativo: true },
-    {
-      id: "5",
-      nome: "Transferência Bancária",
-      tipo: "transferencia",
-      ativo: false,
     },
   ]);
 
@@ -81,12 +65,6 @@ export default function FinancialConfigPage() {
     toast("A conta bancária foi removida com sucesso.");
   };
 
-  const handleToggleMethod = (id: string) => {
-    setPaymentMethods((methods) =>
-      methods.map((m) => (m.id === id ? { ...m, ativo: !m.ativo } : m)),
-    );
-  };
-
   return (
     <div className="space-y-6">
       <HeaderConfig
@@ -101,10 +79,7 @@ export default function FinancialConfigPage() {
         onDelete={handleDeleteAccount}
       />
 
-      <PaymentMethodsCard
-        methods={paymentMethods}
-        onToggle={handleToggleMethod}
-      />
+      <PaymentMethodsCard />
 
       <CategoriesCard
         categories={billsCategories ?? []}
