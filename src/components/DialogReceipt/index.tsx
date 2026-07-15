@@ -28,25 +28,13 @@ import {
   Wallet,
   X,
   HandCoins,
+  MessageCircle,
 } from "lucide-react";
 import { toast } from "sonner";
 import { useClients } from "@/hooks/useClients";
 import { usePaymentMethods } from "@/hooks/usePaymentMethods";
-
-export interface BaixaReceberData {
-  conta_id: string;
-  amount_paid: number;
-  payment_date: string;
-  payment_method_id: string;
-}
-
-export interface ContaReceberOption {
-  id: string;
-  cliente: string;
-  descricao: string;
-  valor: number;
-  valorPago: number;
-}
+import { Textarea } from "../ui/textarea";
+import { Payment } from "@/service/payments.service";
 
 interface DialogBaixaReceberProps {
   open: boolean;
@@ -59,16 +47,22 @@ export const DialogReceipt = ({
   open,
   onOpenChange,
 }: DialogBaixaReceberProps) => {
-  const [contaId, setContaId] = useState<string>("");
   const [amountPaid, setAmountPaid] = useState<number>(0);
   const [paymentDate, setPaymentDate] = useState<string>(todayISO());
   const [paymentMethodId, setPaymentMethodId] = useState<string>("");
+  const [note, setNote] = useState("");
+  const [clientId, setClientId] = useState("");
 
   const { clients } = useClients();
 
+  const selectedClient = clients?.find((c) => c.id === clientId);
+  const diferenca = selectedClient
+    ? selectedClient.balance_due - amountPaid
+    : 0;
+
   const { paymentMethods } = usePaymentMethods();
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (amountPaid <= 0) {
       toast("Informe um valor maior que zero.");
       return;
@@ -82,12 +76,28 @@ export const DialogReceipt = ({
       return;
     }
 
-    toast(
-      `Recebimento de R$ ${amountPaid.toLocaleString("pt-BR", {
-        minimumFractionDigits: 2,
-      })} confirmado.`,
-    );
-    onOpenChange(false);
+    try {
+      await Payment({
+        amount_paid: amountPaid,
+        customer_id: clientId,
+        notes: note,
+        payment_method_id: paymentMethodId,
+      });
+      toast.success(
+        `Recebimento de R$ ${amountPaid.toLocaleString("pt-BR", {
+          minimumFractionDigits: 2,
+        })} confirmado.`,
+      );
+    } catch (error) {
+      console.log(error);
+      toast.error("Erro ao registrar o pagamento");
+    } finally {
+      onOpenChange(false);
+      setClientId("");
+      setNote("");
+      setPaymentMethodId("");
+      setAmountPaid(0);
+    }
   };
 
   return (
@@ -125,7 +135,7 @@ export const DialogReceipt = ({
               <Label htmlFor="conta_id">
                 Selecionar Cliente <span className="text-destructive">*</span>
               </Label>
-              <Select value={contaId} onValueChange={setContaId}>
+              <Select value={clientId} onValueChange={setClientId}>
                 <SelectTrigger id="conta_id">
                   <SelectValue placeholder="Escolha o cliente/conta a receber" />
                 </SelectTrigger>
@@ -169,13 +179,14 @@ export const DialogReceipt = ({
                     }
                     className="pl-9"
                     placeholder="0,00"
+                    onWheel={(e) => e.currentTarget.blur()}
                   />
                 </div>
               </div>
 
               <div className="space-y-2">
                 <Label htmlFor="payment_date">
-                  Data do recebimento{" "}
+                  Data do recebimento
                   <span className="text-destructive">*</span>
                 </Label>
                 <div className="relative">
@@ -186,6 +197,7 @@ export const DialogReceipt = ({
                     value={paymentDate}
                     onChange={(e) => setPaymentDate(e.target.value)}
                     className="pl-9"
+                    disabled
                   />
                 </div>
               </div>
@@ -213,9 +225,55 @@ export const DialogReceipt = ({
               </div>
             </div>
           </div>
+          <div className="space-y-4">
+            <div className="flex items-center gap-2">
+              <MessageCircle className="h-4 w-4 text-primary" />
+              <h3 className="text-sm font-semibold text-foreground">
+                Observação
+              </h3>
+            </div>
+            <div className="space-y-2">
+              <div className="relative">
+                <Textarea
+                  id="payment_date"
+                  value={note}
+                  onChange={(e) => setNote(e.target.value)}
+                  className="p-2"
+                  placeholder="Observação..."
+                />
+              </div>
+            </div>
+          </div>
+          {clientId && amountPaid > 0 && selectedClient && (
+            <div className="rounded-lg border p-4 flex items-center justify-between border-primary/30 bg-primary/5">
+              <div className="flex items-center gap-2">
+                <CheckCircle2 className="h-5 w-5 text-emerald-600" />
 
-          {amountPaid > 0 && (
-            <div>
+                <div>
+                  <p className="text-sm font-medium text-foreground">
+                    {diferenca === 0
+                      ? "Baixa completa"
+                      : `Baixa parcial (Falta R$ ${diferenca.toFixed(2)})`}
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    {diferenca === 0
+                      ? "Valor exato do saldo devedor"
+                      : diferenca > 0
+                        ? `Excedente de R$ ${Math.abs(diferenca).toLocaleString(
+                            "pt-BR",
+                            {
+                              minimumFractionDigits: 2,
+                            },
+                          )}`
+                        : `Restam R$ ${Math.abs(diferenca).toLocaleString(
+                            "pt-BR",
+                            {
+                              minimumFractionDigits: 2,
+                            },
+                          )}`}
+                  </p>
+                </div>
+              </div>
               <div className="text-right">
                 <p className="text-xs text-muted-foreground">Total recebido</p>
                 <p className="text-lg font-bold text-foreground">
@@ -229,12 +287,12 @@ export const DialogReceipt = ({
           )}
         </div>
 
-        <DialogFooter className="px-6 py-4 border-t bg-muted/20 gap-2">
+        <DialogFooter className="px-6 py-4 bg-transparent border-t  gap-2">
           <Button variant="outline" onClick={() => onOpenChange(false)}>
             <X className="h-4 w-4 mr-2" />
             Cancelar
           </Button>
-          <Button onClick={handleSubmit}>
+          <Button onClick={handleSubmit} className="cursor-pointer">
             <CheckCircle2 className="h-4 w-4 mr-2" />
             Confirmar Baixa
           </Button>
