@@ -1,13 +1,13 @@
 import { Badge } from "@/components/ui/badge";
-import { StatusConta } from "../page";
+import { BillsPayableStatus } from "@/enum/billsPayableStatus.enum";
 
 interface StatusBadgeProps {
-  status: StatusConta;
+  status: string;
 }
 
 export function StatusBadge({ status }: StatusBadgeProps) {
   switch (status) {
-    case "pago":
+    case BillsPayableStatus.StatusPaid:
       return (
         <Badge
           variant="secondary"
@@ -16,13 +16,13 @@ export function StatusBadge({ status }: StatusBadgeProps) {
           Pago
         </Badge>
       );
-    case "parcial":
+    case BillsPayableStatus.StatusPartial:
       return (
         <Badge variant="outline" className="border-secondary text-secondary">
           Parcial
         </Badge>
       );
-    case "vencido":
+    case BillsPayableStatus.StatusOverdue:
       return <Badge variant="destructive">Vencido</Badge>;
     default:
       return <Badge variant="outline">Pendente</Badge>;

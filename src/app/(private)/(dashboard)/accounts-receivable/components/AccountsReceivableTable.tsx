@@ -10,11 +10,11 @@ import {
 } from "@/components/ui/table";
 import { Check, Mail } from "lucide-react";
 
-import { ContaReceber } from "../page";
 import { StatusBadge } from "./StatusBadge";
+import { AccountsReceivable } from "@/interfaces/accounts-receivable.interface";
 
 interface ContasReceberTableProps {
-  contas: ContaReceber[];
+  contas: AccountsReceivable[];
   onBaixarPagamento: (contaId: string) => void;
   onEnviarLembrete: (contaId: string) => void;
 }
@@ -34,9 +34,8 @@ export function AccountsReceivableTable({
           <TableHeader>
             <TableRow>
               <TableHead>Cliente</TableHead>
-              <TableHead>Descrição</TableHead>
               <TableHead>Valor</TableHead>
-              <TableHead>Valor Pago</TableHead>
+              <TableHead>Valor Restante</TableHead>
               <TableHead>Vencimento</TableHead>
               <TableHead>Status</TableHead>
               <TableHead>Dias em Atraso</TableHead>
@@ -46,30 +45,31 @@ export function AccountsReceivableTable({
           <TableBody>
             {contas.map((conta) => (
               <TableRow key={conta.id}>
-                <TableCell className="font-medium">{conta.cliente}</TableCell>
-                <TableCell>{conta.descricao}</TableCell>
+                <TableCell className="font-medium">
+                  {conta.customer_name}
+                </TableCell>
                 <TableCell>
                   R${" "}
-                  {conta.valor.toLocaleString("pt-BR", {
+                  {conta.total_amount.toLocaleString("pt-BR", {
                     minimumFractionDigits: 2,
                   })}
                 </TableCell>
                 <TableCell>
                   R${" "}
-                  {conta.valorPago.toLocaleString("pt-BR", {
+                  {conta.balance.toLocaleString("pt-BR", {
                     minimumFractionDigits: 2,
                   })}
                 </TableCell>
                 <TableCell>
-                  {new Date(conta.dataVencimento).toLocaleDateString("pt-BR")}
+                  {new Date(conta.due_date).toLocaleDateString("pt-BR")}
                 </TableCell>
                 <TableCell>
                   <StatusBadge status={conta.status} />
                 </TableCell>
                 <TableCell>
-                  {conta.diasAtraso > 0 ? (
+                  {conta.days_overdue > 0 ? (
                     <span className="text-destructive font-medium">
-                      {conta.diasAtraso} dias
+                      {conta.days_overdue} dias
                     </span>
                   ) : (
                     <span className="text-muted-foreground">-</span>
