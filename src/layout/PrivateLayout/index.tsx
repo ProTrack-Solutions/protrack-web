@@ -41,7 +41,7 @@ export function PrivateLayout({ children }: { children: React.ReactNode }) {
       <Sidebar>
         <SidebarSectionLabel text="Visão Geral" />
         <SidebarItem
-          icon={<Calculator size={18} />}
+          icon={<Calculator size={20} />}
           text="Dashboard"
           router="/dashboard"
           active={currentPath === "/dashboard"}
@@ -50,13 +50,13 @@ export function PrivateLayout({ children }: { children: React.ReactNode }) {
 
         <SidebarSectionLabel text="Gestão" />
         <SidebarItem
-          icon={<PackageSearch size={18} />}
+          icon={<PackageSearch size={20} />}
           text="Produtos"
           router="/stock"
           active={currentPath === "/stock"}
         />
         <SidebarItem
-          icon={<UserSearch size={18} />}
+          icon={<UserSearch size={20} />}
           text="Clientes"
           router="/clients"
           active={currentPath === "/clients"}
@@ -64,14 +64,14 @@ export function PrivateLayout({ children }: { children: React.ReactNode }) {
 
         <SidebarSectionLabel text="Vendas" />
         <SidebarItem
-          icon={<Store size={18} />}
+          icon={<Store size={20} />}
           text="Nova Venda"
           router="/sale"
           active={currentPath === "/sale"}
           requiredRoles={["admin", "vendedor"]}
         />
         <SidebarItem
-          icon={<ShoppingCart size={18} />}
+          icon={<ShoppingCart size={20} />}
           text="Histórico de Vendas"
           router="/sales-list"
           active={currentPath === "/sales-list"}
@@ -80,28 +80,28 @@ export function PrivateLayout({ children }: { children: React.ReactNode }) {
 
         <SidebarSectionLabel text="Financeiro" />
         <SidebarItem
-          icon={<BanknoteArrowUp size={18} />}
+          icon={<BanknoteArrowUp size={20} />}
           text="Contas a Pagar"
           router="/accounts-payable"
           active={currentPath === "/accounts-payable"}
           requiredRoles={["admin", "financeiro"]}
         />
         <SidebarItem
-          icon={<BanknoteArrowDown size={18} />}
+          icon={<BanknoteArrowDown size={20} />}
           text="Contas a Receber"
           router="/accounts-receivable"
           active={currentPath === "/accounts-receivable"}
           requiredRoles={["admin", "financeiro"]}
         />
         <SidebarItem
-          icon={<TrendingUp size={18} />}
+          icon={<TrendingUp size={20} />}
           text="Fluxo de Caixa"
-          router="/flucoCaixa"
+          router="/cash-flow"
           active={currentPath === "/flucoCaixa"}
           requiredRoles={["admin", "financeiro"]}
         />
         <SidebarItem
-          icon={<BarChart3 size={18} />}
+          icon={<BarChart3 size={20} />}
           text="Relatórios"
           router="/relatorio"
           active={currentPath === "/relatorio"}
@@ -110,14 +110,14 @@ export function PrivateLayout({ children }: { children: React.ReactNode }) {
 
         <SidebarSectionLabel text="Cadastros" />
         <SidebarItem
-          icon={<PackagePlus size={18} />}
+          icon={<PackagePlus size={20} />}
           text="Novo Produto"
           router="/product-registration"
           active={currentPath === "/product-registration"}
           requiredRoles={["admin", "operador"]}
         />
         <SidebarItem
-          icon={<UserPlus size={18} />}
+          icon={<UserPlus size={20} />}
           text="Novo Cliente"
           router="/client-registration"
           active={currentPath === "/client-registration"}
