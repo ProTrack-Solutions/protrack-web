@@ -10,6 +10,13 @@ import { useCashFlow } from "@/hooks/useCashFlow";
 import { translateVisualizacao } from "@/app/utils/formatVisualizacao";
 import { Loading } from "@/components/Loading";
 
+export interface ComparativoPeriodo {
+  periodo: string;
+  entradas: number;
+  saidas: number;
+  saldo: number;
+}
+
 export type Periodo = "7" | "15" | "30" | "90";
 export type TipoVisualizacao = "diario" | "semanal" | "mensal";
 
