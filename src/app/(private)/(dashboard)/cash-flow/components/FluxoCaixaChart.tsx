@@ -10,10 +10,10 @@ import {
   CartesianGrid,
   Tooltip,
 } from "recharts";
-import { FluxoCaixaDia } from "../page";
+import { Summary } from "@/interfaces/cash-flow.interface";
 
 interface FluxoCaixaChartProps {
-  dados: FluxoCaixaDia[];
+  dados: Summary[];
 }
 
 export function FluxoCaixaChart({ dados }: FluxoCaixaChartProps) {
@@ -32,24 +32,24 @@ export function FluxoCaixaChart({ dados }: FluxoCaixaChartProps) {
         <ResponsiveContainer width="100%" height={400}>
           <ComposedChart data={dados}>
             <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
-            <XAxis dataKey="data" />
+            <XAxis dataKey="period" />
             <YAxis />
             <Tooltip />
             <Area
               type="monotone"
-              dataKey="saldo"
+              dataKey="total_period"
               fill="hsl(var(--primary) / 0.1)"
               stroke="hsl(var(--primary))"
               strokeWidth={2}
               name="Saldo Acumulado"
             />
             <Bar
-              dataKey="entradas"
+              dataKey="total_period_inflow"
               fill="hsl(var(--secondary))"
               name="Entradas"
             />
             <Bar
-              dataKey="saidas"
+              dataKey="total_period_outflow"
               fill="hsl(var(--destructive))"
               name="Saídas"
             />

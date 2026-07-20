@@ -1,16 +1,8 @@
 import { Card, CardContent } from "@/components/ui/card";
-import {
-  TrendingUp,
-  TrendingDown,
-  DollarSign,
-  ArrowUpRight,
-  ArrowDownRight,
-  Calendar,
-} from "lucide-react";
+import { TrendingUp, TrendingDown, DollarSign, Calendar } from "lucide-react";
 
 interface ResumoCardsProps {
   saldoAtual: number;
-  crescimento: number;
   totalEntradas: number;
   totalSaidas: number;
   previsao5Dias: number;
@@ -22,7 +14,6 @@ function formatarMoeda(valor: number) {
 
 export function ResumoCards({
   saldoAtual,
-  crescimento,
   totalEntradas,
   totalSaidas,
   previsao5Dias,
@@ -37,16 +28,6 @@ export function ResumoCards({
               <h3 className="text-2xl font-bold">
                 R$ {formatarMoeda(saldoAtual)}
               </h3>
-              <div className="flex items-center gap-1 mt-2">
-                {crescimento >= 0 ? (
-                  <ArrowUpRight className="h-4 w-4" />
-                ) : (
-                  <ArrowDownRight className="h-4 w-4" />
-                )}
-                <span className="text-sm opacity-90">
-                  {Math.abs(crescimento).toFixed(1)}% vs mês anterior
-                </span>
-              </div>
             </div>
             <DollarSign className="h-8 w-8 opacity-80" />
           </div>

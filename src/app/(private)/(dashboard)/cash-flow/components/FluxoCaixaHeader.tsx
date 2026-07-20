@@ -39,10 +39,10 @@ export function FluxoCaixaHeader({
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="7dias">7 dias</SelectItem>
-            <SelectItem value="30dias">30 dias</SelectItem>
-            <SelectItem value="90dias">90 dias</SelectItem>
-            <SelectItem value="1ano">1 ano</SelectItem>
+            <SelectItem value="7">7 {tipoVisualizacao}</SelectItem>
+            <SelectItem value="15">15 {tipoVisualizacao}</SelectItem>
+            <SelectItem value="30">30 {tipoVisualizacao}</SelectItem>
+            <SelectItem value="90">90 {tipoVisualizacao}</SelectItem>
           </SelectContent>
         </Select>
         <Select
