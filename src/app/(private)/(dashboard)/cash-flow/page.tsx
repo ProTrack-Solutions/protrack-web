@@ -52,7 +52,7 @@ export default function FluxoCaixa() {
         saldoAtual={cashFlowTotalSummary?.total ?? 0}
         totalEntradas={cashFlowTotalSummary?.total_inflow ?? 0}
         totalSaidas={cashFlowTotalSummary?.total_outflow ?? 0}
-        previsao5Dias={cashFlowTotalSummary?.forecast ?? 0}
+        previsao5Dias={cashFlowTotalSummary?.projection ?? 0}
       />
 
       <FluxoCaixaChart dados={cashFlowTotalSummary?.summary ?? []} />

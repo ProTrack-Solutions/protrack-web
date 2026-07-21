@@ -66,7 +66,7 @@ export function ResumoCards({
         <CardContent className="p-6">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-muted-foreground">Previsão 5 dias</p>
+              <p className="text-sm text-muted-foreground">Previsão</p>
               <h3 className="text-2xl font-bold text-foreground">
                 R$ {formatarMoeda(previsao5Dias)}
               </h3>
