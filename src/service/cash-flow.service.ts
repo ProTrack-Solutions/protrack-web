@@ -1,5 +1,6 @@
 import {
   GetCashFlowResponse,
+  GetSummaryMonthResponse,
   GetTotalSummaryParams,
   GetTotalSummaryResponse,
 } from "@/interfaces/cash-flow.interface";
@@ -15,6 +16,13 @@ export const GetTotalSummary = async (
 ): Promise<GetTotalSummaryResponse> => {
   const response = await api.get<GetTotalSummaryResponse>(
     `/cash-flow/total-summary?period=${params.period}&quantity=${params.quantity}`,
+  );
+  return response.data;
+};
+
+export const GetSummaryMonth = async (): Promise<GetSummaryMonthResponse[]> => {
+  const response = await api.get<GetSummaryMonthResponse[]>(
+    "/cash-flow/summary-month",
   );
   return response.data;
 };
