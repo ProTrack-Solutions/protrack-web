@@ -35,7 +35,7 @@ export interface GetTotalSummaryResponse {
   total_outflow: number;
   total_inflow: number;
   total: number;
-  forecast: number;
+  projection: number;
 }
 
 export interface GetSummaryMonthResponse {
