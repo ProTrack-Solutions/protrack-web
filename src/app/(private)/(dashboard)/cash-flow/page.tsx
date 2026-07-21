@@ -6,9 +6,9 @@ import { ResumoCards } from "./components/ResumoCards";
 import { FluxoCaixaChart } from "./components/FluxoCaixaChart";
 import { CategoriaCard } from "./components/CategoriaCard";
 import { ComparativoPeriodos } from "./components/ComparativoPeriodos";
-import { useCashFlow } from "@/hooks/useCashFlow";
 import { translateVisualizacao } from "@/app/utils/transalate";
 import { Loading } from "@/components/Loading";
+import { useCashFlow } from "@/hooks/useCashFlow";
 
 export interface ComparativoPeriodo {
   periodo: string;
