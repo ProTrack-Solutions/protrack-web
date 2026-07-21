@@ -23,7 +23,7 @@ import { Badge } from "@/components/ui/badge";
 import { CreditCard, Wallet, CalendarDays, Percent } from "lucide-react";
 import { CreateSaleParams } from "@/interfaces/sale.interface";
 import { PaymentMethod } from "@/enum/methodPayments";
-import { getPaymentMethodLabel } from "@/app/utils/paymentMethodFormat";
+import { getPaymentMethodLabel } from "@/utils/paymentMethodFormat";
 
 const metodosAPrazo: PaymentMethod[] = [
   PaymentMethod.CreditCard,

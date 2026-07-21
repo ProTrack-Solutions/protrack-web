@@ -89,7 +89,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     }),
   ],
   callbacks: {
-    async jwt({ token, user }): Promise<JWT> {
+    async jwt({ token, user, trigger, session }): Promise<JWT> {
       // Primeiro login: popula o token
       if (user) {
         return {
@@ -98,6 +98,13 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           refreshToken: user.refreshToken,
           accessTokenExpires: user.accessTokenExpires,
           hasCompany: user.hasCompany,
+        };
+      }
+
+      if (trigger === "update" && session?.hasCompany !== undefined) {
+        return {
+          ...token,
+          hasCompany: session.hasCompany,
         };
       }
 

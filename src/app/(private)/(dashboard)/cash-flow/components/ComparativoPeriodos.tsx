@@ -1,4 +1,4 @@
-import { translateMount } from "@/app/utils/transalate";
+import { translateMount } from "@/utils/transalate";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { GetSummaryMonthResponse } from "@/interfaces/cash-flow.interface";
 

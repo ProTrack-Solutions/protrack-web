@@ -23,15 +23,13 @@ export default auth((req) => {
 
   // 2. Se estiver logado e tentar ir para o login, redireciona de acordo com o vínculo da empresa
   if (isLoggedIn && isAuthRoute) {
-    return NextResponse.redirect(
-      new URL(hasCompany ? "/dashboard" : "/create-company", nextUrl),
-    );
+    return NextResponse.redirect(new URL("/dashboard", nextUrl));
   }
 
-  // 3. Se estiver logado, mas não tiver empresa cadastrada e tentar acessar o dashboard
-  if (isLoggedIn && !hasCompany && nextUrl.pathname.startsWith("/dashboard")) {
-    return NextResponse.redirect(new URL("/create-company", nextUrl));
-  }
+  // // 3. Se estiver logado, mas não tiver empresa cadastrada e tentar acessar o dashboard
+  // if (isLoggedIn && !hasCompany && nextUrl.pathname.startsWith("/dashboard")) {
+  //   return NextResponse.redirect(new URL("/create-company", nextUrl));
+  // }
 
   return NextResponse.next();
 });

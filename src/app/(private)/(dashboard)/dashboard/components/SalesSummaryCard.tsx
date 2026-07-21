@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { TrendingUp } from "lucide-react";
 import { GetSalesSummaryResponse } from "@/interfaces/sale.interface";
-import { formatCurrency } from "@/app/utils/currencyFormat";
+import { formatCurrency } from "@/utils/currencyFormat";
 
 interface Props {
   salesSummaryData: GetSalesSummaryResponse;

@@ -6,7 +6,7 @@ import { ResumoCards } from "./components/ResumoCards";
 import { FluxoCaixaChart } from "./components/FluxoCaixaChart";
 import { CategoriaCard } from "./components/CategoriaCard";
 import { ComparativoPeriodos } from "./components/ComparativoPeriodos";
-import { translateVisualizacao } from "@/app/utils/transalate";
+import { translateVisualizacao } from "@/utils/transalate";
 import { Loading } from "@/components/Loading";
 import { useCashFlow } from "@/hooks/useCashFlow";
 

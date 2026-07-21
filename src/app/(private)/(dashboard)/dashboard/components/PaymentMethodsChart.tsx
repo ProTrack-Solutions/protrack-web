@@ -3,7 +3,7 @@
 import {
   getPaymentMethodColor,
   getPaymentMethodLabel,
-} from "@/app/utils/paymentMethodFormat";
+} from "@/utils/paymentMethodFormat";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { GetPaymentMethodsStatsResponse } from "@/interfaces/payment-methods.interface";
 import { ResponsiveContainer, PieChart, Pie, Cell, Tooltip } from "recharts";
