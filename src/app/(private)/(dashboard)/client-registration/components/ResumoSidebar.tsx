@@ -1,4 +1,4 @@
-import { GenderFormatPtBR } from "@/app/utils/genderFormat";
+import { GenderFormatPtBR } from "@/utils/genderFormat";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ClienteFormData } from "@/interfaces/client.interface";

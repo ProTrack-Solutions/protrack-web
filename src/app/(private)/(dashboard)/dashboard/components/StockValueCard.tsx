@@ -5,7 +5,7 @@ import { Progress } from "@/components/ui/progress";
 import { Button } from "@/components/ui/button";
 import { Package } from "lucide-react";
 import { GetTotalInStockResponse } from "@/interfaces/products.interface";
-import { formatCurrency } from "@/app/utils/currencyFormat";
+import { formatCurrency } from "@/utils/currencyFormat";
 import { GetInventoryTurnoverResponse } from "@/interfaces/sale.interface";
 
 interface Props {

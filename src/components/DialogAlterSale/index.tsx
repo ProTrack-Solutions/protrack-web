@@ -40,14 +40,14 @@ import {
   AlertTriangle,
 } from "lucide-react";
 import { PaymentMethod } from "@/enum/methodPayments";
-import { getPaymentMethodLabel } from "@/app/utils/paymentMethodFormat";
-import { formatCurrency } from "@/app/utils/currencyFormat";
+import { getPaymentMethodLabel } from "@/utils/paymentMethodFormat";
+import { formatCurrency } from "@/utils/currencyFormat";
 
 import {
   ListSalesWithInstallmentsResponse,
   UpdateSaleParams,
 } from "@/interfaces/sale.interface";
-import { getSaleStatusLabel } from "@/app/utils/salesStatus";
+import { getSaleStatusLabel } from "@/utils/salesStatus";
 import { UpdateSale } from "@/service/sale.service";
 import { toast } from "sonner";
 interface DialogAlterVendaProps {

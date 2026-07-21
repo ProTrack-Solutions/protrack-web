@@ -24,7 +24,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { BillsPayableStatus } from "@/enum/billsPayableStatus.enum";
 import { DialogSheduledBill } from "@/components/DialogScheduleBill";
-import { formatDate } from "@/app/utils/dateFormat";
+import { formatDate } from "@/utils/dateFormat";
 
 interface ContasPagarTableProps {
   contas: BillsPayable[];

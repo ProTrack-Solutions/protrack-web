@@ -11,6 +11,8 @@ import { AccountsPayableCard } from "./components/AccountsPayableCard";
 import { Header } from "@/components/Header";
 import { useDashboard } from "@/hooks/useDashboard";
 import { Loading } from "@/components/Loading";
+import { DialogCompanyRegister } from "@/components/DialogCompanyRegister";
+import { useSession } from "next-auth/react";
 
 export default function DashBoard() {
   const {
@@ -26,7 +28,9 @@ export default function DashBoard() {
     announcements,
   } = useDashboard();
 
-  console.log("cashFlow", cashFlow);
+  const { data: session } = useSession();
+
+  const hasCompany = session?.hasCompany;
 
   if (loading) {
     return <Loading />;
@@ -90,6 +94,7 @@ export default function DashBoard() {
           }
         />
       </div>
+      <DialogCompanyRegister open={!hasCompany} />
     </div>
   );
 }

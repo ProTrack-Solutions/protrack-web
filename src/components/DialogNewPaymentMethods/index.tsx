@@ -23,7 +23,7 @@ import { Separator } from "@/components/ui/separator";
 import { CreditCard, Save, X } from "lucide-react";
 import { toast } from "sonner";
 import { PaymentMethod } from "@/enum/methodPayments";
-import { getPaymentMethodLabel } from "@/app/utils/paymentMethodFormat";
+import { getPaymentMethodLabel } from "@/utils/paymentMethodFormat";
 import { CreatePaymentMethodsParams } from "@/interfaces/payment-methods.interface";
 import { CreatePaymentMethods } from "@/service/payment-methods.service";
 

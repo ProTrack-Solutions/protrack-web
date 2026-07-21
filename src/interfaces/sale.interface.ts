@@ -1,4 +1,4 @@
-import { SaleStatus } from "@/app/utils/statusSales";
+import { SaleStatus } from "@/utils/statusSales";
 import { PaymentMethod } from "@/enum/methodPayments";
 
 export const initialSaleFormData: CreateSaleParams = {

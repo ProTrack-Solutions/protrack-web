@@ -12,11 +12,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 
-import { getPaymentMethodLabel } from "@/app/utils/paymentMethodFormat";
-import {
-  getSaleStatusLabel,
-  getSaleStatusVariant,
-} from "@/app/utils/salesStatus";
+import { getPaymentMethodLabel } from "@/utils/paymentMethodFormat";
+import { getSaleStatusLabel, getSaleStatusVariant } from "@/utils/salesStatus";
 import { DialogAlterSale } from "@/components/DialogAlterSale";
 import { ListSalesWithInstallmentsResponse } from "@/interfaces/sale.interface";
 

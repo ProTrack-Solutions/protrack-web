@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "lucide-react";
 import { GetBillsPayableSummaryResponse } from "@/interfaces/bills-payable.interface";
-import { formatCurrency } from "@/app/utils/currencyFormat";
+import { formatCurrency } from "@/utils/currencyFormat";
 
 interface AccountsPayableCardProps {
   billsPayableSummary: GetBillsPayableSummaryResponse;
