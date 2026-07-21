@@ -7,7 +7,7 @@ import { FluxoCaixaChart } from "./components/FluxoCaixaChart";
 import { CategoriaCard } from "./components/CategoriaCard";
 import { ComparativoPeriodos } from "./components/ComparativoPeriodos";
 import { useCashFlow } from "@/hooks/useCashFlow";
-import { translateVisualizacao } from "@/app/utils/formatVisualizacao";
+import { translateVisualizacao } from "@/app/utils/transalate";
 import { Loading } from "@/components/Loading";
 
 export interface ComparativoPeriodo {
@@ -25,10 +25,11 @@ export default function FluxoCaixa() {
   const [tipoVisualizacao, setTipoVisualizacao] =
     useState<TipoVisualizacao>("diario");
 
-  const { cashFlowTotalSummary, refetch, loading } = useCashFlow({
-    period: translateVisualizacao(tipoVisualizacao),
-    quantity: Number(periodo),
-  });
+  const { cashFlowTotalSummary, cashFlowSummaryMonth, refetch, loading } =
+    useCashFlow({
+      period: translateVisualizacao(tipoVisualizacao),
+      quantity: Number(periodo),
+    });
 
   useEffect(() => {
     refetch();
@@ -69,7 +70,7 @@ export default function FluxoCaixa() {
         />
       </div>
 
-      <ComparativoPeriodos dados={[]} />
+      <ComparativoPeriodos dados={cashFlowSummaryMonth ?? []} />
     </div>
   );
 }
