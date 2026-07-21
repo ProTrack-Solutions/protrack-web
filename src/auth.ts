@@ -2,6 +2,35 @@ import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import axios from "axios";
 import { cookies } from "next/headers";
+import { JWT } from "next-auth/jwt";
+
+async function refreshAccessToken(token: JWT): Promise<JWT> {
+  try {
+    const response = await axios.post(
+      `${process.env.NEXT_PUBLIC_API_URL}/auth/refresh`,
+      {
+        refresh_token: token.refreshToken,
+      },
+    );
+
+    const data = response.data;
+
+    return {
+      ...token,
+      accessToken: data.access_token,
+      // Se o backend rotacionar o refresh token, usa o novo; senão mantém o atual
+      refreshToken: data.refresh_token ?? token.refreshToken,
+      accessTokenExpires: Date.now() + data.expires_in * 1000,
+      error: undefined,
+    };
+  } catch (error) {
+    console.error("Erro ao renovar access token:", error);
+    return {
+      ...token,
+      error: "RefreshAccessTokenError",
+    };
+  }
+}
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   providers: [
@@ -45,6 +74,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             return {
               id: "1", // NextAuth precisa de uma string ID
               accessToken: data.access_token,
+              refreshToken: data.refresh_token,
+              accessTokenExpires: Date.now() + data.expires_in * 1000,
               hasCompany: data.has_company,
             };
           }
@@ -58,18 +89,33 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     }),
   ],
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user }): Promise<JWT> {
+      // Primeiro login: popula o token
       if (user) {
-        token.accessToken = user.accessToken;
-        token.hasCompany = user.hasCompany;
+        return {
+          ...token,
+          accessToken: user.accessToken,
+          refreshToken: user.refreshToken,
+          accessTokenExpires: user.accessTokenExpires,
+          hasCompany: user.hasCompany,
+        };
       }
-      return token;
+
+      // Token ainda válido (com margem de 30s pra evitar corrida)
+      if (
+        token.accessTokenExpires &&
+        Date.now() < (token.accessTokenExpires as number) - 30_000
+      ) {
+        return token;
+      }
+
+      // Token expirado: tenta renovar
+      return refreshAccessToken(token);
     },
     async session({ session, token }) {
-      if (token) {
-        session.accessToken = token.accessToken;
-        session.hasCompany = token.hasCompany;
-      }
+      session.accessToken = token.accessToken as string;
+      session.hasCompany = token.hasCompany as boolean;
+      session.error = token.error as string | undefined;
       return session;
     },
   },
