@@ -7,11 +7,20 @@ export interface User {
   status: string;
   company_id: string;
   department_id: string;
-  last_login_at: string;
+  last_login_at: Date;
   created_by: string;
   updated_by: string;
   deleted_by: string;
-  created_at: string;
-  updated_at: string;
-  deleted_at: string;
+  created_at: Date;
+  updated_at: Date;
+  deleted_at: Date;
+}
+
+export interface UpdateUserParams {
+  department_id: string;
+  email: string;
+  name: string;
+  role: string;
+  status: string;
+  username: string;
 }
