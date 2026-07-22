@@ -39,10 +39,7 @@ export default function DashBoard() {
   return (
     <div className="p-6 space-y-6">
       {/* Título da Página */}
-      <Header
-        title="Dashboard Financeiro"
-        text="Visão geral da situação financeira da empresa"
-      />
+      <Header title="Dashboard" text="Visão geral da situação da empresa" />
 
       {/* Cards Superiores de Status Geral */}
       <CardsStatusFinance totalSalesPedding={totalSalesPedding ?? 0} />

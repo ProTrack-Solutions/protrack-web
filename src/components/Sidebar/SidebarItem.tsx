@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { useSidebar } from "../../context/SidebarContext";
+import { useMe } from "@/hooks/useMe";
 
 type SidebarItemProps = {
   active?: boolean;
@@ -16,8 +17,23 @@ export function SidebarItem({
   text,
   alert = false,
   router,
+  requiredRoles,
 }: SidebarItemProps) {
   const { expanded } = useSidebar();
+  const { user, loading } = useMe();
+
+  if (requiredRoles && requiredRoles.length > 0) {
+    if (loading) return null;
+
+    const userRoles = Array.isArray(user?.role) ? user.role : [user?.role];
+    const hasPermission = requiredRoles.some((role) =>
+      userRoles.includes(role),
+    );
+
+    if (!hasPermission) {
+      return null;
+    }
+  }
 
   const content = (
     <>
