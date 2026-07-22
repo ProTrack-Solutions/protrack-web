@@ -1,9 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
 import {
   Card,
   CardContent,
@@ -34,41 +32,10 @@ import {
 } from "@/components/ui/select";
 import { Shield, Building, Clock } from "lucide-react";
 import { toast } from "sonner";
-
-const perfilSchema = z.object({
-  name: z.string().min(2, "Nome deve ter pelo menos 2 caracteres"),
-  email: z.string().email("Email inválido"),
-  username: z
-    .string()
-    .min(3, "Username deve ter pelo menos 3 caracteres")
-    .optional(),
-  role: z.string(),
-  departamento_id: z.string().optional(),
-});
-
-type PerfilFormData = z.infer<typeof perfilSchema>;
-
-// Dados mock do usuário
-const mockUser = {
-  id: 1,
-  name: "João Silva",
-  email: "joao.silva@empresa.com",
-  username: "joaosilva",
-  role: "admin",
-  status: "ativo",
-  empresa_id: 1,
-  departamento_id: 2,
-  ultimo_login: "2024-01-15T10:30:00",
-  created_at: "2023-06-15T09:00:00",
-  updated_at: "2024-01-10T14:20:00",
-};
-
-const roles = [
-  { value: "admin", label: "Administrador" },
-  { value: "financeiro", label: "Financeiro" },
-  { value: "vendas", label: "Vendas" },
-  { value: "user", label: "Usuário" },
-];
+import { useMe } from "@/hooks/useMe";
+import { UpdateUserParams } from "@/interfaces/user.interface";
+import { formatDate, formatDateTime } from "@/utils/dateFormat";
+import { UpdateUser } from "@/service/user.service";
 
 const departamentos = [
   { value: "1", label: "Administrativo" },
@@ -80,21 +47,40 @@ const departamentos = [
 export default function Perfil() {
   const [isEditing, setIsEditing] = useState(false);
 
-  const form = useForm<PerfilFormData>({
-    resolver: zodResolver(perfilSchema),
+  const { user } = useMe();
+
+  const form = useForm<UpdateUserParams>({
     defaultValues: {
-      name: mockUser.name,
-      email: mockUser.email,
-      username: mockUser.username,
-      role: mockUser.role,
-      departamento_id: mockUser.departamento_id?.toString(),
+      name: "",
+      email: "",
+      username: "",
+      role: "",
+      department_id: "",
     },
   });
 
-  const onSubmit = (data: PerfilFormData) => {
-    console.log("Dados do perfil:", data);
-    toast.success("Suas informações foram atualizadas com sucesso.");
-    setIsEditing(false);
+  useEffect(() => {
+    if (user) {
+      form.reset({
+        name: user.name ?? "",
+        email: user.email ?? "",
+        username: user.username ?? "",
+        role: user.role ?? "",
+        department_id: user.department_id ? String(user.department_id) : "",
+      });
+    }
+  }, [user, form]);
+
+  const onSubmit = async (data: UpdateUserParams) => {
+    try {
+      UpdateUser(user?.id ?? "", data);
+      toast.success("Dados do usuario atualizado!");
+    } catch (error) {
+      console.log(error);
+      toast.error("Erro ao atualizar dados do usuario");
+    } finally {
+      setIsEditing(false);
+    }
   };
 
   const getStatusColor = (status: string) => {
@@ -108,17 +94,6 @@ export default function Perfil() {
       default:
         return "bg-secondary text-secondary-foreground";
     }
-  };
-
-  const getRoleLabel = (role: string) => {
-    return roles.find((r) => r.value === role)?.label || role;
-  };
-
-  const getDepartamentoLabel = (departamentoId: number) => {
-    return (
-      departamentos.find((d) => d.value === departamentoId.toString())?.label ||
-      "Não informado"
-    );
   };
 
   return (
@@ -139,35 +114,32 @@ export default function Perfil() {
             <Avatar className="w-24 h-24 mx-auto">
               <AvatarImage src="/placeholder-avatar.jpg" />
               <AvatarFallback className="text-2xl">
-                {mockUser.name
+                {user?.name
                   .split(" ")
                   .map((n) => n[0])
                   .join("")
                   .toUpperCase()}
               </AvatarFallback>
             </Avatar>
-            <CardTitle className="text-xl">{mockUser.name}</CardTitle>
-            <CardDescription>{mockUser.email}</CardDescription>
-            <Badge className={getStatusColor(mockUser.status)}>
-              {mockUser.status.toUpperCase()}
+            <CardTitle className="text-xl">{user?.name}</CardTitle>
+            <CardDescription>{user?.email}</CardDescription>
+            <Badge className={getStatusColor(user?.status ?? "")}>
+              {user?.status}
             </Badge>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex items-center gap-2">
               <Shield className="w-4 h-4 text-muted-foreground" />
-              <span className="text-sm">{getRoleLabel(mockUser.role)}</span>
+              <span className="text-sm">{user?.role}</span>
             </div>
             <div className="flex items-center gap-2">
               <Building className="w-4 h-4 text-muted-foreground" />
-              <span className="text-sm">
-                {getDepartamentoLabel(mockUser.departamento_id!)}
-              </span>
+              <span className="text-sm">{user?.department_id}</span>
             </div>
             <div className="flex items-center gap-2">
               <Clock className="w-4 h-4 text-muted-foreground" />
               <span className="text-sm">
-                Último login:{" "}
-                {new Date(mockUser.ultimo_login).toLocaleString("pt-BR")}
+                Último login: {formatDateTime(user?.last_login_at ?? "")}
               </span>
             </div>
           </CardContent>
@@ -248,36 +220,7 @@ export default function Perfil() {
 
                   <FormField
                     control={form.control}
-                    name="role"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Função</FormLabel>
-                        <Select
-                          onValueChange={field.onChange}
-                          defaultValue={field.value}
-                          disabled={!isEditing}
-                        >
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Selecione a função" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            {roles.map((role) => (
-                              <SelectItem key={role.value} value={role.value}>
-                                {role.label}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="departamento_id"
+                    name="department_id"
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Departamento</FormLabel>
@@ -328,18 +271,18 @@ export default function Perfil() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                 <div>
                   <Label className="text-muted-foreground">ID do Usuário</Label>
-                  <p className="font-medium">#{mockUser.id}</p>
+                  <p className="font-medium">#{user?.id}</p>
                 </div>
                 <div>
                   <Label className="text-muted-foreground">Status</Label>
-                  <p className="font-medium capitalize">{mockUser.status}</p>
+                  <p className="font-medium capitalize">{user?.status}</p>
                 </div>
                 <div>
                   <Label className="text-muted-foreground">
                     Data de Cadastro
                   </Label>
                   <p className="font-medium">
-                    {new Date(mockUser.created_at).toLocaleDateString("pt-BR")}
+                    {formatDate(user?.created_at ?? "")}
                   </p>
                 </div>
                 <div>
@@ -347,7 +290,7 @@ export default function Perfil() {
                     Última Atualização
                   </Label>
                   <p className="font-medium">
-                    {new Date(mockUser.updated_at).toLocaleDateString("pt-BR")}
+                    {formatDate(user?.updated_at ?? "")}
                   </p>
                 </div>
               </div>
