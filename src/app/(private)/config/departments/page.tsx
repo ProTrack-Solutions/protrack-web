@@ -21,6 +21,8 @@ import {
   Table,
 } from "@/components/ui/table";
 import { useDepartments } from "@/hooks/useDepartments";
+import { GetDepartmentsResponse } from "@/interfaces/departments.interface";
+import { UpdateStatusDepartments } from "@/service/departments.service";
 import {
   Building2,
   Plus,
@@ -32,11 +34,29 @@ import {
   Trash2,
 } from "lucide-react";
 import { useState } from "react";
+import { toast } from "sonner";
 
 export default function Departments() {
-  const { departments } = useDepartments();
+  const { departments, refetch } = useDepartments();
 
   const [openNewDepartments, setOpenNewDepartments] = useState(false);
+  const [selectDepartment, setSelectDepartment] =
+    useState<GetDepartmentsResponse | null>();
+
+  const handleToggleStatus = async (departmentId: string, status: string) => {
+    try {
+      await UpdateStatusDepartments(departmentId, {
+        Status: status,
+      });
+
+      toast.success("Status atualizado!");
+    } catch (error) {
+      console.log(error);
+      toast.error("Erro ao alterar status do departamento!");
+    } finally {
+      refetch();
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -114,7 +134,7 @@ export default function Departments() {
                           </div>
                         </TableCell>
                         <TableCell>
-                          {d.status ? (
+                          {d.status === "ACTIVE" ? (
                             <Badge className="gap-1 bg-emerald-600 hover:bg-emerald-700">
                               <CheckCircle2 className="h-3 w-3" /> Ativo
                             </Badge>
@@ -127,13 +147,33 @@ export default function Departments() {
                         <TableCell className="text-right">
                           <div className="flex justify-end gap-1">
                             <Button
+                              className="cursor-pointer"
                               variant="ghost"
                               size="icon"
-                              title={d.status ? "ACTIVE" : "DESACTIVE"}
+                              title={d.status ? "ACTIVE" : "INACTIVE"}
+                              onClick={() => {
+                                const novoStatus =
+                                  d.status === "ACTIVE" ? "INACTIVE" : "ACTIVE";
+                                handleToggleStatus(d.id, novoStatus);
+                              }}
                             >
-                              <Power className="h-4 w-4" />
+                              <Power
+                                className={`h-4 w-4 ${
+                                  d.status === "ACTIVE"
+                                    ? "text-red-500"
+                                    : "text-emerald-500"
+                                }`}
+                              />
                             </Button>
-                            <Button variant="ghost" size="icon">
+                            <Button
+                              className="cursor-pointer"
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => {
+                                setSelectDepartment(d);
+                                setOpenNewDepartments(true);
+                              }}
+                            >
                               <Pencil className="h-4 w-4" />
                             </Button>
                             <Button
@@ -155,7 +195,10 @@ export default function Departments() {
 
         <DialogNewDepartments
           onOpenChange={setOpenNewDepartments}
+          setSelectDepartment={setSelectDepartment}
           open={openNewDepartments}
+          departamento={selectDepartment}
+          key={selectDepartment?.id}
         />
       </Card>
     </div>

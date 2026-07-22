@@ -10,3 +10,17 @@ export interface GetDepartmentsResponse {
   updated_at: Date;
   updated_by: string;
 }
+
+export interface CreateDepartmentsParams {
+  description: string;
+  name: string;
+}
+
+export interface UpdateStatusDepartmentParams {
+  Status: string;
+}
+
+export interface UpdateDepartmentParams {
+  description: string;
+  name: string;
+}
