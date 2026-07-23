@@ -40,6 +40,7 @@ interface DialogNewDepartamentoProps {
   onOpenChange: (open: boolean) => void;
   departamento?: GetDepartmentsResponse | null;
   setSelectDepartment: (params: GetDepartmentsResponse | null) => void;
+  refetch: () => void;
 }
 
 export function DialogNewDepartments({
@@ -47,6 +48,7 @@ export function DialogNewDepartments({
   onOpenChange,
   departamento,
   setSelectDepartment,
+  refetch,
 }: DialogNewDepartamentoProps) {
   const [form, setForm] = useState<GetDepartmentsResponse>(
     departamento ?? emptyDepartamento,
@@ -81,6 +83,8 @@ export function DialogNewDepartments({
       }
     } finally {
       onOpenChange(false);
+      refetch();
+      setForm(emptyDepartamento);
     }
   };
 
