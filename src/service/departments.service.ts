@@ -30,3 +30,7 @@ export const UpdateDepartments = async (
 ): Promise<void> => {
   await api.put(`/departments/${departmentId}`, params);
 };
+
+export const DeleteDepartment = async (departmentId: string): Promise<void> => {
+  await api.delete(`/departments/${departmentId}`);
+};

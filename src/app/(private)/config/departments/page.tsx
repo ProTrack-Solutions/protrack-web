@@ -1,5 +1,6 @@
 "use client";
 
+import { DialogConfirm } from "@/components/DialogConfirm";
 import { DialogNewDepartments } from "@/components/DialogNewDepartments";
 import { HeaderConfig } from "@/components/HeaderConfig";
 import { Badge } from "@/components/ui/badge";
@@ -22,7 +23,10 @@ import {
 } from "@/components/ui/table";
 import { useDepartments } from "@/hooks/useDepartments";
 import { GetDepartmentsResponse } from "@/interfaces/departments.interface";
-import { UpdateStatusDepartments } from "@/service/departments.service";
+import {
+  DeleteDepartment,
+  UpdateStatusDepartments,
+} from "@/service/departments.service";
 import {
   Building2,
   Plus,
@@ -40,6 +44,7 @@ export default function Departments() {
   const { departments, refetch } = useDepartments();
 
   const [openNewDepartments, setOpenNewDepartments] = useState(false);
+  const [confirmOpen, setConfirmOpen] = useState(false);
   const [selectDepartment, setSelectDepartment] =
     useState<GetDepartmentsResponse | null>();
 
@@ -55,6 +60,19 @@ export default function Departments() {
       toast.error("Erro ao alterar status do departamento!");
     } finally {
       refetch();
+    }
+  };
+
+  const handleDelete = async (departmentId: string) => {
+    try {
+      DeleteDepartment(departmentId);
+      toast.success("Departamento removido com sucesso!");
+    } catch (error) {
+      console.log(error);
+      toast.error("Erro ao remover departamento!");
+    } finally {
+      refetch();
+      setSelectDepartment(null);
     }
   };
 
@@ -179,7 +197,11 @@ export default function Departments() {
                             <Button
                               variant="ghost"
                               size="icon"
-                              className="text-destructive hover:text-destructive"
+                              className="text-destructive hover:text-destructive cursor-pointer"
+                              onClick={() => {
+                                setSelectDepartment(d);
+                                setConfirmOpen(true);
+                              }}
                             >
                               <Trash2 className="h-4 w-4" />
                             </Button>
@@ -199,6 +221,16 @@ export default function Departments() {
           open={openNewDepartments}
           departamento={selectDepartment}
           key={selectDepartment?.id}
+          refetch={refetch}
+        />
+
+        <DialogConfirm
+          description="Esta ação não pode ser desfeita. O método não estará mais disponível para novas vendas."
+          title="Remover método de pagamento?"
+          onDelete={handleDelete}
+          open={confirmOpen}
+          onOpenChange={setConfirmOpen}
+          id={selectDepartment?.id ?? ""}
         />
       </Card>
     </div>

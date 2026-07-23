@@ -23,26 +23,12 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Shield, Building, Clock } from "lucide-react";
 import { toast } from "sonner";
 import { useMe } from "@/hooks/useMe";
 import { UpdateUserParams } from "@/interfaces/user.interface";
 import { formatDate, formatDateTime } from "@/utils/dateFormat";
 import { UpdateUser } from "@/service/user.service";
-
-const departamentos = [
-  { value: "1", label: "Administrativo" },
-  { value: "2", label: "Financeiro" },
-  { value: "3", label: "Vendas" },
-  { value: "4", label: "Estoque" },
-];
 
 export default function Perfil() {
   const [isEditing, setIsEditing] = useState(false);
@@ -134,7 +120,7 @@ export default function Perfil() {
             </div>
             <div className="flex items-center gap-2">
               <Building className="w-4 h-4 text-muted-foreground" />
-              <span className="text-sm">{user?.department_id}</span>
+              <span className="text-sm">{user?.department_name}</span>
             </div>
             <div className="flex items-center gap-2">
               <Clock className="w-4 h-4 text-muted-foreground" />
@@ -213,35 +199,6 @@ export default function Perfil() {
                         <FormControl>
                           <Input {...field} disabled={!isEditing} />
                         </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-
-                  <FormField
-                    control={form.control}
-                    name="department_id"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Departamento</FormLabel>
-                        <Select
-                          onValueChange={field.onChange}
-                          defaultValue={field.value}
-                          disabled={!isEditing}
-                        >
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Selecione o departamento" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            {departamentos.map((dept) => (
-                              <SelectItem key={dept.value} value={dept.value}>
-                                {dept.label}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
                         <FormMessage />
                       </FormItem>
                     )}
