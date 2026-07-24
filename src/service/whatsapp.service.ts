@@ -21,3 +21,10 @@ export const ConnectionState = async (): Promise<ConnectionsStateResponse> => {
 export const DeleteInstance = async (): Promise<void> => {
   await api.delete("/whatsapp/instance/delete");
 };
+
+export const ConnectInstance = async (): Promise<CreateInstanceResponse> => {
+  const response = await api.get<CreateInstanceResponse>(
+    "/whatsapp/instance/connect",
+  );
+  return response.data;
+};
