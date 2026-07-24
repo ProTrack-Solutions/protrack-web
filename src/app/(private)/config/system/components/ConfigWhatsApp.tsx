@@ -10,7 +10,11 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
-import { CreateInstance, DeleteInstance } from "@/service/whatsapp.service";
+import {
+  ConnectInstance,
+  CreateInstance,
+  DeleteInstance,
+} from "@/service/whatsapp.service";
 import {
   MessageCircle,
   CheckCircle2,
@@ -36,12 +40,18 @@ export const ConfigWhatsApp = () => {
 
   const { connectionsState, loading, refetch, pausePolling } = useWhatsApp();
 
-  const handleGenerateQR = async () => {
+  const handleGenerateQR = async (status: string) => {
     try {
-      pausePolling(15000);
       setIsLoading(true);
-      const qrCode = await CreateInstance();
-      setQrCodeResp(qrCode.qr_code);
+      if (status == "not_created") {
+        pausePolling(15000);
+        const qrCode = await CreateInstance();
+        setQrCodeResp(qrCode.qr_code);
+      } else {
+        pausePolling(5000);
+        const qrCode = await ConnectInstance();
+        setQrCodeResp(qrCode.qr_code);
+      }
 
       toast.success("QR Code gerado. Escaneie com seu WhatsApp.");
     } catch (error) {
@@ -63,11 +73,17 @@ export const ConfigWhatsApp = () => {
     }
   }, [qrCodeResp]);
 
-  const handleRefreshQR = () => {
-    setQrCode(
-      `https://api.qrserver.com/v1/create-qr-code/?size=260x260&data=whatsapp-session-${Date.now()}`,
-    );
-    toast.success("QR Code atualizado.");
+  const handleRefreshQR = async () => {
+    try {
+      const qrCode = await ConnectInstance();
+      setQrCodeResp(qrCode.qr_code);
+      toast.success("QR Code atualizado.");
+    } catch (error) {
+      console.log(error);
+      toast.error("Erro ao atualizar qrCode");
+    } finally {
+      refetch();
+    }
   };
 
   const handleDisconnect = async () => {
@@ -79,6 +95,7 @@ export const ConfigWhatsApp = () => {
       toast.error("Erro ao se desconectar!");
     } finally {
       refetch();
+      setQrCodeResp("");
     }
   };
 
@@ -223,8 +240,8 @@ export const ConfigWhatsApp = () => {
                 </div>
               </div>
             ) : (
-              connectionsState?.state == "not_created" ||
-              (connectionsState?.state == "close" && (
+              (connectionsState?.state == "not_created" ||
+                connectionsState?.state == "close") && (
                 <div className="flex flex-col items-center justify-center py-12 space-y-4 border-2 border-dashed rounded-lg">
                   <div className="p-4 rounded-full bg-muted">
                     <QrCode className="h-12 w-12 text-muted-foreground" />
@@ -237,8 +254,8 @@ export const ConfigWhatsApp = () => {
                     </p>
                   </div>
                   <Button
-                    onClick={handleGenerateQR}
-                    className="gap-2"
+                    onClick={() => handleGenerateQR(connectionsState?.state)}
+                    className=" cursor-pointer"
                     disabled={isLoading}
                   >
                     {isLoading ? (
@@ -250,7 +267,7 @@ export const ConfigWhatsApp = () => {
                     )}
                   </Button>
                 </div>
-              ))
+              )
             )}
           </CardContent>
         )}
