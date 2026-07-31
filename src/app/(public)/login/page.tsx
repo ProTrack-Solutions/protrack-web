@@ -61,7 +61,7 @@ export default function Login() {
             <strong className="text-3xl text-blue-800">
               Sistema de gestão empresarial
             </strong>
-            <strong className="text-3xl bg-gradient-to-r from-blue-600 to-purple-400 bg-clip-text text-transparent">
+            <strong className="text-3xl bg-linear-to-r from-blue-600 to-purple-400 bg-clip-text text-transparent">
               Pro Track
             </strong>
             <span className="text-zinc-500 font-semibold">
