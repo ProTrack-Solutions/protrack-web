@@ -20,7 +20,6 @@ import {
   CheckCircle,
   TrendingUp,
   Clock,
-  Eye,
   Smartphone,
   Globe,
   HeartHandshake,
@@ -100,19 +99,9 @@ export default function Ladingpage() {
                   size="lg"
                   className="text-lg px-8 py-6 h-auto hover-scale"
                 >
-                  <Link href="/estoque">
-                    Começar Gratuitamente
+                  <Link href="/register">
+                    Começar Agora
                     <ArrowRight className="w-5 h-5 ml-2" />
-                  </Link>
-                </Button>
-                <Button
-                  asChild
-                  size="lg"
-                  className="text-lg text-zinc-700 px-8 py-6 h-auto hover-scale bg-zinc-200 hover:opacity-60 hover:bg-zinc-200"
-                >
-                  <Link href="/dashboard-financeiro">
-                    <Eye className="w-5 h-5 mr-2" />
-                    Demo ao Vivo
                   </Link>
                 </Button>
               </div>

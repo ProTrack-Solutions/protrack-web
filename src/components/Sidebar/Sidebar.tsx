@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/dropdown-menu"; // shadcn/ui
 import { useRouter } from "next/navigation"; // Hook de navegação correto para o Next.js
 import { signOut } from "next-auth/react";
+import { useMe } from "@/hooks/useMe";
 
 type SidebarProps = {
   children: React.ReactNode;
@@ -21,6 +22,7 @@ type SidebarProps = {
 export function Sidebar({ children }: SidebarProps) {
   const [expanded, setExpanded] = useState(false);
   const router = useRouter(); // Instanciando o roteador do Next.js
+  const { user } = useMe();
 
   const handleLogout = async () => {
     try {
@@ -71,7 +73,7 @@ export function Sidebar({ children }: SidebarProps) {
         <div className="border-t flex p-2.5 relative">
           <Image
             src={`https://ui-avatars.com/api/?background=c7d2fe&color=3730a3&bold=true&name=${encodeURIComponent(
-              "User",
+              user?.username ?? "",
             )}`}
             alt="Avatar"
             width={36} // Largura explícita exigida pelo Next.js (w-9 equivaleria a 36px)
@@ -85,8 +87,8 @@ export function Sidebar({ children }: SidebarProps) {
             }`}
           >
             <div className="leading-4">
-              <h4 className="font-semibold">{"Usuário"}</h4>
-              <span className="text-xs text-gray-600">email@exemplo.com</span>
+              <h4 className="font-semibold">{user?.username}</h4>
+              <span className="text-xs text-gray-600">{user?.email}</span>
             </div>
 
             {/* Dropdown de Configurações */}
@@ -99,7 +101,7 @@ export function Sidebar({ children }: SidebarProps) {
               <DropdownMenuContent align="end">
                 {
                   <DropdownMenuItem
-                    onClick={() => router.push("/config/user")} // Alterado para o push do Next
+                    onClick={() => router.push("/config/user")}
                     className="cursor-pointer"
                   >
                     Configurações

@@ -1,9 +1,9 @@
 import axios from "axios";
-import { getSession } from "next-auth/react";
+import { getSession, signOut } from "next-auth/react";
 
 export const api = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL,
-  timeout: 5000,
+  timeout: 30000,
   withCredentials: true,
   headers: {
     "Content-Type": "application/json",
@@ -13,6 +13,12 @@ export const api = axios.create({
 api.interceptors.request.use(
   async (config) => {
     const session = await getSession();
+
+    if (session?.error === "RefreshAccessTokenError") {
+      await signOut({ callbackUrl: "/login" });
+      return Promise.reject(new Error("Sessão expirada"));
+    }
+
     if (session?.accessToken) {
       config.headers.Authorization = `Bearer ${session?.accessToken}`;
     }

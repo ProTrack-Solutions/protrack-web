@@ -1,4 +1,7 @@
-import { ProductCategoriesResponse } from "@/interfaces/product-categories.interface";
+import {
+  CreateProductCategoryParams,
+  ProductCategoriesResponse,
+} from "@/interfaces/product-categories.interface";
 import { api } from "./api";
 
 export const GetProductsCategories = async (): Promise<
@@ -8,4 +11,10 @@ export const GetProductsCategories = async (): Promise<
     "/products-categories/list/company",
   );
   return response.data;
+};
+
+export const CreateProductCategory = async (
+  params: CreateProductCategoryParams,
+): Promise<void> => {
+  await api.post("/products-categories", params);
 };
