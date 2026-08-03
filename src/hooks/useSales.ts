@@ -1,10 +1,11 @@
+import { Pagination } from "@/interfaces/pagination.interface";
 import { GetSales } from "@/service/sale.service";
 import { useQuery } from "@tanstack/react-query";
 
-export const useSales = () => {
+export const useSales = (pagination: Pagination) => {
   const { data, isLoading, isError, refetch } = useQuery({
     queryKey: ["sales"],
-    queryFn: () => GetSales(),
+    queryFn: () => GetSales(pagination),
 
     refetchInterval: 10000,
     refetchOnWindowFocus: true,
@@ -16,6 +17,7 @@ export const useSales = () => {
     totalInvoiced: data?.total_invoiced,
     totalPending: data?.total_pending,
     salesCanceled: data?.sales_canceled,
+    totalPages: data?.total_pages || 0,
     loading: isLoading,
     error: isError
       ? "Erro ao carregar os clientes. Por favor, tente novamente."

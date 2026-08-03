@@ -7,10 +7,12 @@ import {
 } from "@/interfaces/products.interface";
 import { api } from "./api";
 
-export const GetProducts = async (): Promise<ProductResponse> => {
+export const GetProducts = async (
+  PaginationParams: Pagination,
+): Promise<ProductResponse> => {
   const response = await api.get<ProductResponse>("/product/company", {
     headers: {
-      Page: 1,
+      Page: PaginationParams.Page,
       PerPage: 10,
     },
   });
