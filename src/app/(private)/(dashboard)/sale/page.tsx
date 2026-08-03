@@ -2,6 +2,7 @@
 
 import { useForm } from "react-hook-form";
 import { Form } from "@/components/ui/form";
+
 import { SaleFormActions } from "./components/saleFormAction";
 import { SaleInfoCard } from "./components/saleInfoCard";
 import { SaleProductsTable } from "./components/saleProductTable";
@@ -22,6 +23,7 @@ export default function Sale() {
   const form = useForm<CreateSaleParams>({
     defaultValues: initialSaleFormData,
   });
+
 
   const { products, loading: loadingProducts } = useProducts();
 

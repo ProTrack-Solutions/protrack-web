@@ -48,6 +48,7 @@ export function SaleProductsTable({ products }: Props) {
 
   console.log("valoresProdutos", valoresProdutos);
 
+
   const handleProdutoChange = (index: number, produtoId: string) => {
     const produto = products.find((p) => p.id === produtoId);
     if (produto) {
