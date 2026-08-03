@@ -193,7 +193,7 @@ export default function Register() {
           name: user.name,
           email: user.email,
           username: user.username,
-          password: user.password, // sem confirmPassword aqui!
+          password: user.password,
           document: user.document,
         },
         payment: {
@@ -205,6 +205,7 @@ export default function Register() {
           plan_id: selectedPlan?.id ?? "",
           type: "card",
         },
+        idempotency_key: crypto.randomUUID(), // Gera um UUID para idempotência
       };
 
       await register(payload);

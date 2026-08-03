@@ -83,4 +83,5 @@ export interface RegisterParams {
     password: string;
     username: string;
   };
+  idempotency_key: string;
 }
