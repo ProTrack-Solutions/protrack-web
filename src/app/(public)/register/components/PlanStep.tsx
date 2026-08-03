@@ -65,10 +65,10 @@ export default function PlanStep({
                   <div className="flex flex-wrap gap-x-3 gap-y-1">
                     {p.features?.map((f) => (
                       <span
-                        key={f}
+                        key={f.id}
                         className="text-xs text-muted-foreground flex items-center gap-1"
                       >
-                        <Check className="h-3 w-3 text-blue-600" /> {f}
+                        <Check className="h-3 w-3 text-blue-600" /> {f.name}
                       </span>
                     ))}
                   </div>

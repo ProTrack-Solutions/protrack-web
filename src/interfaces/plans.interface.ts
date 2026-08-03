@@ -11,5 +11,15 @@ export interface PlansResponse {
   external_id: string;
   highlight: boolean;
   icon: string;
-  features: string[];
+  features: PlanFeature[];
+}
+
+export interface PlanFeature {
+  created_at: string;
+  display_order: number;
+  id: string;
+  is_enabled: boolean;
+  name: string;
+  plan_id: string;
+  updated_at: string;
 }
