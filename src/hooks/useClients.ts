@@ -2,9 +2,11 @@ import { useQuery } from "@tanstack/react-query";
 import { GetClient } from "@/service/clients.service";
 import { Pagination } from "@/interfaces/pagination.interface";
 
-export const useClients = (pagination: Pagination) => {
+export const useClients = (paginationParams?: Pagination) => {
+  const pagination = paginationParams ?? { Page: 1, PerPage: 10 };
+
   const { data, isLoading, isError, refetch } = useQuery({
-    queryKey: ["clients"],
+    queryKey: ["clients", pagination.Page, pagination.PerPage],
     queryFn: () => GetClient(pagination),
 
     refetchInterval: 10000,
