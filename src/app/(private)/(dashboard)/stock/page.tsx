@@ -1,14 +1,27 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { EstoqueSearch } from "./components/EstoqueSearch";
 import { EstoqueStats } from "./components/EstoqueStats";
 import { EstoqueTable } from "./components/EstoqueTable";
 import { Header } from "@/components/Header";
 import { useProducts } from "@/hooks/useProducts";
 import { Loading } from "@/components/Loading";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationPrevious,
+  PaginationEllipsis,
+  PaginationLink,
+  PaginationNext,
+} from "@/components/ui/pagination";
+import { getPageRange } from "@/utils/pagination";
 
 export default function Stock() {
+  const [currentPage, setCurrentPage] = useState(1);
+  console.log("currentPage", currentPage);
+
   const {
     products,
     error,
@@ -17,7 +30,28 @@ export default function Stock() {
     lowItensInStock,
     productsCount,
     totalValueInStock,
-  } = useProducts();
+    totalPages,
+    refetch,
+  } = useProducts({
+    Page: currentPage,
+    PerPage: 10,
+  });
+
+  console.log("totalPages", totalPages);
+
+  useEffect(() => {
+    refetch();
+  }, [currentPage, refetch]);
+
+  const pageRange = useMemo(
+    () => getPageRange(currentPage, totalPages),
+    [currentPage, totalPages],
+  );
+
+  function goToPage(page: number) {
+    if (page < 1 || page > totalPages) return;
+    setCurrentPage(page);
+  }
 
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -59,6 +93,61 @@ export default function Stock() {
         />
         <EstoqueSearch searchTerm={searchTerm} onSearchChange={setSearchTerm} />
         <EstoqueTable products={filteredProducts} />
+        <Pagination className="py-4">
+          <PaginationContent>
+            <PaginationItem>
+              <PaginationPrevious
+                href="#"
+                onClick={(e) => {
+                  e.preventDefault();
+                  goToPage(currentPage - 1);
+                }}
+                className={
+                  currentPage === 1
+                    ? "pointer-events-none opacity-50"
+                    : "cursor-pointer"
+                }
+              />
+            </PaginationItem>
+
+            {pageRange.map((page, idx) =>
+              page === "ellipsis" ? (
+                <PaginationItem key={`ellipsis-${idx}`}>
+                  <PaginationEllipsis />
+                </PaginationItem>
+              ) : (
+                <PaginationItem key={page}>
+                  <PaginationLink
+                    href="#"
+                    isActive={page === currentPage}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      goToPage(page);
+                    }}
+                    className="cursor-pointer"
+                  >
+                    {page}
+                  </PaginationLink>
+                </PaginationItem>
+              ),
+            )}
+
+            <PaginationItem>
+              <PaginationNext
+                href="#"
+                onClick={(e) => {
+                  e.preventDefault();
+                  goToPage(currentPage + 1);
+                }}
+                className={
+                  currentPage === totalPages
+                    ? "pointer-events-none opacity-50"
+                    : "cursor-pointer"
+                }
+              />
+            </PaginationItem>
+          </PaginationContent>
+        </Pagination>
       </div>
     </div>
   );

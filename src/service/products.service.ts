@@ -6,12 +6,15 @@ import {
   GetTotalInStockResponse,
 } from "@/interfaces/products.interface";
 import { api } from "./api";
+import { Pagination } from "@/interfaces/pagination.interface";
 
-export const GetProducts = async (): Promise<ProductResponse> => {
+export const GetProducts = async (
+  PaginationParams: Pagination,
+): Promise<ProductResponse> => {
   const response = await api.get<ProductResponse>("/product/company", {
     headers: {
-      Page: 1,
-      PerPage: 10,
+      Page: PaginationParams.Page,
+      PerPage: PaginationParams.PerPage,
     },
   });
   return response.data;

@@ -1,3 +1,4 @@
+import { Pagination } from "@/interfaces/pagination.interface";
 import { api } from "./api";
 import {
   CreateSaleParams,
@@ -9,11 +10,13 @@ import {
   UpdateSaleParams,
 } from "@/interfaces/sale.interface";
 
-export const GetSales = async (): Promise<SaleListResponse> => {
+export const GetSales = async (
+  pagination: Pagination,
+): Promise<SaleListResponse> => {
   const response = await api.get<SaleListResponse>("/sales/complete", {
     headers: {
-      Page: 1,
-      PerPage: 20,
+      Page: pagination.Page,
+      PerPage: pagination.PerPage,
     },
   });
 

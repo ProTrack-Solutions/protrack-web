@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -10,11 +10,23 @@ import { SaleListTable } from "./components/SaleListTable";
 import { useSales } from "@/hooks/useSales";
 import { Loading } from "@/components/Loading";
 import { Header } from "@/components/Header";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationPrevious,
+  PaginationEllipsis,
+  PaginationLink,
+  PaginationNext,
+} from "@/components/ui/pagination";
+import { getPageRange } from "@/utils/pagination";
 
 export default function SalesList() {
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("todos");
   const [expandedId, setExpandedId] = useState<string | null>(null);
+
+  const [currentPage, setCurrentPage] = useState(1);
 
   const {
     sales,
@@ -23,7 +35,26 @@ export default function SalesList() {
     totalInvoiced,
     totalPending,
     loading,
-  } = useSales();
+    totalPages,
+    refetch,
+  } = useSales({
+    Page: currentPage,
+    PerPage: 10,
+  });
+
+  useEffect(() => {
+    refetch();
+  }, [currentPage, refetch]);
+
+  const pageRange = useMemo(
+    () => getPageRange(currentPage, totalPages),
+    [currentPage, totalPages],
+  );
+
+  function goToPage(page: number) {
+    if (page < 1 || page > totalPages) return;
+    setCurrentPage(page);
+  }
 
   const filteredVendas = useMemo(() => {
     return sales.filter((v) => {
@@ -74,6 +105,61 @@ export default function SalesList() {
         expandedId={expandedId}
         setExpandedId={setExpandedId}
       />
+      <Pagination className="py-4">
+        <PaginationContent>
+          <PaginationItem>
+            <PaginationPrevious
+              href="#"
+              onClick={(e) => {
+                e.preventDefault();
+                goToPage(currentPage - 1);
+              }}
+              className={
+                currentPage === 1
+                  ? "pointer-events-none opacity-50"
+                  : "cursor-pointer"
+              }
+            />
+          </PaginationItem>
+
+          {pageRange.map((page, idx) =>
+            page === "ellipsis" ? (
+              <PaginationItem key={`ellipsis-${idx}`}>
+                <PaginationEllipsis />
+              </PaginationItem>
+            ) : (
+              <PaginationItem key={page}>
+                <PaginationLink
+                  href="#"
+                  isActive={page === currentPage}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    goToPage(page);
+                  }}
+                  className="cursor-pointer"
+                >
+                  {page}
+                </PaginationLink>
+              </PaginationItem>
+            ),
+          )}
+
+          <PaginationItem>
+            <PaginationNext
+              href="#"
+              onClick={(e) => {
+                e.preventDefault();
+                goToPage(currentPage + 1);
+              }}
+              className={
+                currentPage === totalPages
+                  ? "pointer-events-none opacity-50"
+                  : "cursor-pointer"
+              }
+            />
+          </PaginationItem>
+        </PaginationContent>
+      </Pagination>
     </div>
   );
 }

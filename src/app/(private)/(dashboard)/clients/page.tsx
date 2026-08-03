@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   Edit,
   UserX,
@@ -35,11 +35,40 @@ import { DialogEditClients } from "@/components/DialogAlterClients";
 import { Client } from "@/interfaces/client.interface";
 import { DeleteClient } from "@/service/clients.service";
 import { toast } from "sonner";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationPrevious,
+  PaginationEllipsis,
+  PaginationLink,
+  PaginationNext,
+} from "@/components/ui/pagination";
+import { getPageRange } from "@/utils/pagination";
 
 export default function Clientes() {
   const [searchTerm, setSearchTerm] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  console.log("currentPage", currentPage);
 
-  const { clients, loading, refetch } = useClients();
+  const { clients, totalPages, loading, refetch } = useClients({
+    Page: currentPage,
+    PerPage: 10,
+  });
+
+  useEffect(() => {
+    refetch();
+  }, [currentPage, refetch]);
+
+  const pageRange = useMemo(
+    () => getPageRange(currentPage, totalPages),
+    [currentPage, totalPages],
+  );
+
+  function goToPage(page: number) {
+    if (page < 1 || page > totalPages) return;
+    setCurrentPage(page);
+  }
 
   const [clientsSelected, setClientsSelected] = useState<Client>({} as Client);
   const [openDialog, setOpenDialog] = useState(false);
@@ -194,6 +223,62 @@ export default function Clientes() {
           </div>
         )}
       </Card>
+
+      <Pagination className="py-4">
+        <PaginationContent>
+          <PaginationItem>
+            <PaginationPrevious
+              href="#"
+              onClick={(e) => {
+                e.preventDefault();
+                goToPage(currentPage - 1);
+              }}
+              className={
+                currentPage === 1
+                  ? "pointer-events-none opacity-50"
+                  : "cursor-pointer"
+              }
+            />
+          </PaginationItem>
+
+          {pageRange.map((page, idx) =>
+            page === "ellipsis" ? (
+              <PaginationItem key={`ellipsis-${idx}`}>
+                <PaginationEllipsis />
+              </PaginationItem>
+            ) : (
+              <PaginationItem key={page}>
+                <PaginationLink
+                  href="#"
+                  isActive={page === currentPage}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    goToPage(page);
+                  }}
+                  className="cursor-pointer"
+                >
+                  {page}
+                </PaginationLink>
+              </PaginationItem>
+            ),
+          )}
+
+          <PaginationItem>
+            <PaginationNext
+              href="#"
+              onClick={(e) => {
+                e.preventDefault();
+                goToPage(currentPage + 1);
+              }}
+              className={
+                currentPage === totalPages
+                  ? "pointer-events-none opacity-50"
+                  : "cursor-pointer"
+              }
+            />
+          </PaginationItem>
+        </PaginationContent>
+      </Pagination>
 
       <DialogEditClients
         key={clientsSelected?.id}
