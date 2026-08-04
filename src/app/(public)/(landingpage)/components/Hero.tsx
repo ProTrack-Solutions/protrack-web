@@ -23,7 +23,7 @@ export function Hero({ offset }: HeroProps) {
     <section className="relative flex min-h-svh items-end overflow-hidden">
       <div className="absolute inset-0 z-0">
         <Image
-          src={heroImage.src}
+          src={heroImage}
           alt="Painel de gestão empresarial iluminado sobre uma cidade brasileira à noite"
           width={1920}
           height={1088}

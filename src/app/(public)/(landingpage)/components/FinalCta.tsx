@@ -10,7 +10,7 @@ export function FinalCta() {
     <section className="relative overflow-hidden border-t border-border py-28">
       <div className="pointer-events-none absolute inset-0 z-0">
         <Image
-          src={heroImage.src}
+          src={heroImage}
           alt=""
           aria-hidden="true"
           loading="lazy"
