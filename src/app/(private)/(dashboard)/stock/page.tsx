@@ -7,19 +7,13 @@ import { EstoqueTable } from "./components/EstoqueTable";
 import { Header } from "@/components/Header";
 import { useProducts } from "@/hooks/useProducts";
 import { Loading } from "@/components/Loading";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationPrevious,
-  PaginationEllipsis,
-  PaginationLink,
-  PaginationNext,
-} from "@/components/ui/pagination";
-import { getPageRange } from "@/utils/pagination";
+import { DataPagination } from "@/components/DataPagination";
+import { usePagination } from "@/hooks/usePagination";
 
 export default function Stock() {
-  const [currentPage, setCurrentPage] = useState(1);
+  const { currentPage, goToPage, pageRange } = usePagination({
+    totalPages: 1,
+  });
   console.log("currentPage", currentPage);
 
   const {
@@ -42,16 +36,6 @@ export default function Stock() {
   useEffect(() => {
     refetch();
   }, [currentPage, refetch]);
-
-  const pageRange = useMemo(
-    () => getPageRange(currentPage, totalPages),
-    [currentPage, totalPages],
-  );
-
-  function goToPage(page: number) {
-    if (page < 1 || page > totalPages) return;
-    setCurrentPage(page);
-  }
 
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -93,61 +77,12 @@ export default function Stock() {
         />
         <EstoqueSearch searchTerm={searchTerm} onSearchChange={setSearchTerm} />
         <EstoqueTable products={filteredProducts} />
-        <Pagination className="py-4">
-          <PaginationContent>
-            <PaginationItem>
-              <PaginationPrevious
-                href="#"
-                onClick={(e) => {
-                  e.preventDefault();
-                  goToPage(currentPage - 1);
-                }}
-                className={
-                  currentPage === 1
-                    ? "pointer-events-none opacity-50"
-                    : "cursor-pointer"
-                }
-              />
-            </PaginationItem>
-
-            {pageRange.map((page, idx) =>
-              page === "ellipsis" ? (
-                <PaginationItem key={`ellipsis-${idx}`}>
-                  <PaginationEllipsis />
-                </PaginationItem>
-              ) : (
-                <PaginationItem key={page}>
-                  <PaginationLink
-                    href="#"
-                    isActive={page === currentPage}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      goToPage(page);
-                    }}
-                    className="cursor-pointer"
-                  >
-                    {page}
-                  </PaginationLink>
-                </PaginationItem>
-              ),
-            )}
-
-            <PaginationItem>
-              <PaginationNext
-                href="#"
-                onClick={(e) => {
-                  e.preventDefault();
-                  goToPage(currentPage + 1);
-                }}
-                className={
-                  currentPage === totalPages
-                    ? "pointer-events-none opacity-50"
-                    : "cursor-pointer"
-                }
-              />
-            </PaginationItem>
-          </PaginationContent>
-        </Pagination>
+        <DataPagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          pageRange={pageRange}
+          goToPage={goToPage}
+        />
       </div>
     </div>
   );

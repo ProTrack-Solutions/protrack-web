@@ -3,7 +3,7 @@ import { PaymentMethod } from "@/enum/methodPayments";
 
 export const initialSaleFormData: CreateSaleParams = {
   customer_id: "",
-  discount_amount: "",
+  discount_amount: 0,
   due_days: 0,
   payment_method: PaymentMethod.Cash,
   installments_count: 0,
@@ -13,7 +13,7 @@ export const initialSaleFormData: CreateSaleParams = {
 
 export interface CreateSaleParams {
   customer_id: string;
-  discount_amount: string;
+  discount_amount: number;
   due_days: number;
   payment_method: PaymentMethod;
   installments_count: number;

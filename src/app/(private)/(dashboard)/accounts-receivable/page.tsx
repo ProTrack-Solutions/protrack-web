@@ -9,10 +9,22 @@ import { Loading } from "@/components/Loading";
 import { Button } from "@/components/ui/button";
 import { HandCoins } from "lucide-react";
 import { DialogReceipt } from "@/components/DialogReceipt";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { DataPagination } from "@/components/DataPagination";
+import { usePagination } from "@/hooks/usePagination";
 
 export default function AccountsReceivable() {
-  const { accountsReceivable, loading } = useAccountsReceivable();
+  const { currentPage, pageRange, goToPage } = usePagination({
+    totalPages: 1,
+  });
+  const { accountsReceivable, loading, refetch } = useAccountsReceivable({
+    Page: currentPage,
+    PerPage: 10,
+  });
+
+  useEffect(() => {
+    refetch();
+  }, [currentPage, refetch]);
 
   const [dialogOpen, setDialogOpen] = useState(false);
 
@@ -65,6 +77,13 @@ export default function AccountsReceivable() {
         contas={accountsReceivable?.data ?? []}
         onBaixarPagamento={handleBaixarPagamento}
         onEnviarLembrete={handleEnviarLembrete}
+      />
+
+      <DataPagination
+        currentPage={currentPage}
+        totalPages={accountsReceivable?.total_pages || 1}
+        pageRange={pageRange}
+        goToPage={goToPage}
       />
 
       <DialogReceipt open={dialogOpen} onOpenChange={setDialogOpen} />

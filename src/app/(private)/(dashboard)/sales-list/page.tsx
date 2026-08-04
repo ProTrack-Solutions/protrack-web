@@ -10,23 +10,17 @@ import { SaleListTable } from "./components/SaleListTable";
 import { useSales } from "@/hooks/useSales";
 import { Loading } from "@/components/Loading";
 import { Header } from "@/components/Header";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationPrevious,
-  PaginationEllipsis,
-  PaginationLink,
-  PaginationNext,
-} from "@/components/ui/pagination";
-import { getPageRange } from "@/utils/pagination";
+import { DataPagination } from "@/components/DataPagination";
+import { usePagination } from "@/hooks/usePagination";
 
 export default function SalesList() {
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("todos");
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
-  const [currentPage, setCurrentPage] = useState(1);
+  const { currentPage, pageRange, goToPage } = usePagination({
+    totalPages: 1,
+  });
 
   const {
     sales,
@@ -45,16 +39,6 @@ export default function SalesList() {
   useEffect(() => {
     refetch();
   }, [currentPage, refetch]);
-
-  const pageRange = useMemo(
-    () => getPageRange(currentPage, totalPages),
-    [currentPage, totalPages],
-  );
-
-  function goToPage(page: number) {
-    if (page < 1 || page > totalPages) return;
-    setCurrentPage(page);
-  }
 
   const filteredVendas = useMemo(() => {
     return sales.filter((v) => {
@@ -105,61 +89,12 @@ export default function SalesList() {
         expandedId={expandedId}
         setExpandedId={setExpandedId}
       />
-      <Pagination className="py-4">
-        <PaginationContent>
-          <PaginationItem>
-            <PaginationPrevious
-              href="#"
-              onClick={(e) => {
-                e.preventDefault();
-                goToPage(currentPage - 1);
-              }}
-              className={
-                currentPage === 1
-                  ? "pointer-events-none opacity-50"
-                  : "cursor-pointer"
-              }
-            />
-          </PaginationItem>
-
-          {pageRange.map((page, idx) =>
-            page === "ellipsis" ? (
-              <PaginationItem key={`ellipsis-${idx}`}>
-                <PaginationEllipsis />
-              </PaginationItem>
-            ) : (
-              <PaginationItem key={page}>
-                <PaginationLink
-                  href="#"
-                  isActive={page === currentPage}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    goToPage(page);
-                  }}
-                  className="cursor-pointer"
-                >
-                  {page}
-                </PaginationLink>
-              </PaginationItem>
-            ),
-          )}
-
-          <PaginationItem>
-            <PaginationNext
-              href="#"
-              onClick={(e) => {
-                e.preventDefault();
-                goToPage(currentPage + 1);
-              }}
-              className={
-                currentPage === totalPages
-                  ? "pointer-events-none opacity-50"
-                  : "cursor-pointer"
-              }
-            />
-          </PaginationItem>
-        </PaginationContent>
-      </Pagination>
+      <DataPagination
+        currentPage={currentPage}
+        totalPages={totalPages || 1}
+        pageRange={pageRange}
+        goToPage={goToPage}
+      />
     </div>
   );
 }

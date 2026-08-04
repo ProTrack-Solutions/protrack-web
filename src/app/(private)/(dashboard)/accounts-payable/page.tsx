@@ -7,9 +7,14 @@ import { ContasPagarResumoCards } from "./components/ResumoCards";
 import { useBillsPayable } from "@/hooks/useBillsPayable";
 import { Loading } from "@/components/Loading";
 import { DialogNewAccountsPayable } from "@/components/DialogAccountsPayable";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { DataPagination } from "@/components/DataPagination";
+import { usePagination } from "@/hooks/usePagination";
 
 export default function AccountsPayable() {
+  const { currentPage, pageRange, goToPage } = usePagination({
+    totalPages: 1,
+  });
   const {
     billsPayable,
     billsPayableCount,
@@ -17,9 +22,13 @@ export default function AccountsPayable() {
     totalOverdue,
     totalPayable,
     totalScheduled,
-  } = useBillsPayable();
+    totalPages,
+    refetch,
+  } = useBillsPayable({ Page: currentPage, PerPage: 10 });
 
-  console.log("billsPayable", billsPayable);
+  useEffect(() => {
+    refetch();
+  }, [currentPage, refetch]);
 
   const [newOpenDialog, setNewOpenDialog] = useState(false);
 
@@ -68,6 +77,13 @@ export default function AccountsPayable() {
         contas={billsPayable}
         onAgendarPagamento={() => {}}
         onGerarPagamento={() => {}}
+      />
+
+      <DataPagination
+        currentPage={currentPage}
+        totalPages={totalPages || 1}
+        pageRange={pageRange}
+        goToPage={goToPage}
       />
 
       <DialogNewAccountsPayable
