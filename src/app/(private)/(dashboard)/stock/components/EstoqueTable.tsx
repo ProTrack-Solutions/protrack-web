@@ -78,7 +78,7 @@ export function EstoqueTable({ products }: EstoqueTableProps) {
                 >
                   <TableCell className="py-4">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-500/10 to-indigo-500/10 border border-blue-500/20 flex items-center justify-center">
+                      <div className="w-10 h-10 rounded-lg bg-linear-to-br from-blue-500/10 to-indigo-500/10 border border-blue-500/20 flex items-center justify-center">
                         <Package className="w-4 h-4 text-blue-600 dark:text-blue-400" />
                       </div>
                       <span className="font-medium text-foreground">
@@ -99,7 +99,7 @@ export function EstoqueTable({ products }: EstoqueTableProps) {
                     </Badge>
                   </TableCell>
                   <TableCell>
-                    <span className="inline-flex items-center justify-center min-w-[2.5rem] h-7 px-2 rounded-md border border-border bg-muted/50 text-sm font-semibold">
+                    <span className="inline-flex items-center justify-center min-w-7 h-7 px-2 rounded-md border border-border bg-muted/50 text-sm font-semibold">
                       {product.size}
                     </span>
                   </TableCell>
@@ -109,7 +109,7 @@ export function EstoqueTable({ products }: EstoqueTableProps) {
                   <TableCell className="text-center">
                     <Badge
                       variant="outline"
-                      className={`${getQuantityStyle(product.quantity)} font-semibold min-w-[3rem] justify-center`}
+                      className={`${getQuantityStyle(product.quantity)} font-semibold min-w-12 justify-center`}
                     >
                       {product.quantity} un
                     </Badge>

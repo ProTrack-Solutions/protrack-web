@@ -1,14 +1,21 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { EstoqueSearch } from "./components/EstoqueSearch";
 import { EstoqueStats } from "./components/EstoqueStats";
 import { EstoqueTable } from "./components/EstoqueTable";
 import { Header } from "@/components/Header";
 import { useProducts } from "@/hooks/useProducts";
 import { Loading } from "@/components/Loading";
+import { DataPagination } from "@/components/DataPagination";
+import { usePagination } from "@/hooks/usePagination";
 
 export default function Stock() {
+  const { currentPage, goToPage, pageRange } = usePagination({
+    totalPages: 1,
+  });
+  console.log("currentPage", currentPage);
+
   const {
     products,
     error,
@@ -17,7 +24,18 @@ export default function Stock() {
     lowItensInStock,
     productsCount,
     totalValueInStock,
-  } = useProducts();
+    totalPages,
+    refetch,
+  } = useProducts({
+    Page: currentPage,
+    PerPage: 10,
+  });
+
+  console.log("totalPages", totalPages);
+
+  useEffect(() => {
+    refetch();
+  }, [currentPage, refetch]);
 
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -59,6 +77,12 @@ export default function Stock() {
         />
         <EstoqueSearch searchTerm={searchTerm} onSearchChange={setSearchTerm} />
         <EstoqueTable products={filteredProducts} />
+        <DataPagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          pageRange={pageRange}
+          goToPage={goToPage}
+        />
       </div>
     </div>
   );

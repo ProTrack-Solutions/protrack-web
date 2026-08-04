@@ -1,10 +1,13 @@
 import { useQuery } from "@tanstack/react-query";
 import { GetClient } from "@/service/clients.service";
+import { Pagination } from "@/interfaces/pagination.interface";
 
-export const useClients = () => {
+export const useClients = (paginationParams?: Pagination) => {
+  const pagination = paginationParams ?? { Page: 1, PerPage: 10 };
+
   const { data, isLoading, isError, refetch } = useQuery({
-    queryKey: ["clients"],
-    queryFn: () => GetClient(),
+    queryKey: ["clients", pagination.Page, pagination.PerPage],
+    queryFn: () => GetClient(pagination),
 
     refetchInterval: 10000,
     refetchOnWindowFocus: true,
@@ -13,6 +16,7 @@ export const useClients = () => {
   return {
     clients: data?.data || [],
     clientsCount: data?.total_rows || 0,
+    totalPages: data?.total_pages || 0,
     loading: isLoading,
     error: isError
       ? "Erro ao carregar os clientes. Por favor, tente novamente."

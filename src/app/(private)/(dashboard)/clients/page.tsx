@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Edit,
   UserX,
@@ -36,10 +36,24 @@ import { Client } from "@/interfaces/client.interface";
 import { DeleteClient } from "@/service/clients.service";
 import { toast } from "sonner";
 
+import { DataPagination } from "@/components/DataPagination";
+import { usePagination } from "@/hooks/usePagination";
+
 export default function Clientes() {
   const [searchTerm, setSearchTerm] = useState("");
+  const { currentPage, goToPage, pageRange } = usePagination({
+    totalPages: 1,
+  });
+  console.log("currentPage", currentPage);
 
-  const { clients, loading, refetch } = useClients();
+  const { clients, totalPages, loading, refetch } = useClients({
+    Page: currentPage,
+    PerPage: 10,
+  });
+
+  useEffect(() => {
+    refetch();
+  }, [currentPage, refetch]);
 
   const [clientsSelected, setClientsSelected] = useState<Client>({} as Client);
   const [openDialog, setOpenDialog] = useState(false);
@@ -194,6 +208,13 @@ export default function Clientes() {
           </div>
         )}
       </Card>
+
+      <DataPagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        pageRange={pageRange}
+        goToPage={goToPage}
+      />
 
       <DialogEditClients
         key={clientsSelected?.id}
