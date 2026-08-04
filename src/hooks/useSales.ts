@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 
 export const useSales = (pagination: Pagination) => {
   const { data, isLoading, isError, refetch } = useQuery({
-    queryKey: ["sales"],
+    queryKey: ["sales", pagination.Page, pagination.PerPage],
     queryFn: () => GetSales(pagination),
 
     refetchInterval: 10000,

@@ -5,6 +5,7 @@ import {
   PaymentBillParams,
   SheduleBillParams,
 } from "@/interfaces/bills-payable.interface";
+import { Pagination } from "@/interfaces/pagination.interface";
 import { api } from "./api";
 
 export const GetBillsPayableSummary =
@@ -15,9 +16,17 @@ export const GetBillsPayableSummary =
     return response.data;
   };
 
-export const ListBillsPayable = async (): Promise<ListBillsPayableResponse> => {
+export const ListBillsPayable = async (
+  pagination: Pagination,
+): Promise<ListBillsPayableResponse> => {
   const response = await api.get<ListBillsPayableResponse>(
     "/bills-payable/list",
+    {
+      headers: {
+        Page: pagination.Page,
+        PerPage: pagination.PerPage,
+      },
+    },
   );
   return response.data;
 };
