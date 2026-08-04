@@ -1,0 +1,162 @@
+/* ============================================================
+   Pro Track — Tema claro/pastel
+   Paleta base: azul suave (Estoque) + verde suave (Financeiro)
+   + pêssego suave (Vendas) como terceira cor complementar
+   ============================================================ */
+
+.landing-light {
+  /* --- Superfícies --- */
+  --background: 210 50% 98%; /* #F6FAFE — Ligeiramente mais claro e límpido */
+  --foreground: 222 35% 15%; /* #171E2D — Texto principal mais escuro */
+
+  --card: 0 0% 100%; /* branco puro - mantido para máximo contraste */
+  --card-foreground: 222 35% 15%;
+  --secondary: 210 40% 96%; /* #EDF3F9 — Ligeiramente mais claro */
+  --secondary-foreground: 222 30% 20%;
+
+  --muted: 210 35% 94%;
+  --muted-foreground: 220 16% 40%; /* #555C6A — Texto secundário mais escuro */
+
+  --border: 213 30% 85%; /* #D1DDEB — Ligeiramente mais definida */
+
+  /* --- Marca --- */
+  /* Azul e Verde mantêm o tom (H) e saturação (S), mas reduzem a luminosidade (L) sutilmente */
+  --primary: 211 79% 60%; /* #4F94E5 — Mais profundo, melhor leitura */
+  --primary-foreground: 0 0% 100%;
+
+  --accent-green: 155 55% 45%; /* #31A16C — Mais profundo, melhor leitura */
+  --accent-green-foreground: 0 0% 100%;
+
+  --accent-peach: 21 90% 65%; /* #F08E58 — Levemente mais saturado e escuro */
+  --accent-peach-foreground: 20 45% 15%; /* Texto sobre pêssego bem mais escuro */
+
+  --accent-lilac: 255 60% 75%; /* #AB94EE — Levemente mais vivo */
+
+  --ring: 211 79% 60%;
+
+  color-scheme: light;
+}
+
+.landing-light body,
+.landing-light {
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
+}
+
+/* --- Utilitários de marca --- */
+.landing-light .bg-gradient-primary {
+  background-image: linear-gradient(
+    135deg,
+    hsl(211 79% 65%) 0%,
+    hsl(155 55% 50%) 100%
+  );
+}
+
+.landing-light .text-gradient {
+  background-image: linear-gradient(
+    135deg,
+    hsl(211 79% 55%) 0%,
+    hsl(155 55% 42%) 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Painel com leve blur usado no header/menu mobile */
+.landing-light .glass-panel {
+  background-color: hsl(0 0% 100% / 0.75);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-color: hsl(var(--border));
+}
+
+/* Véu sutil sobre imagens (hero, tiles, cta final) — clareado para o tema light */
+.landing-light .veil {
+  background-image: linear-gradient(
+    180deg,
+    hsl(210 45% 97% / 0.15) 0%,
+    hsl(210 45% 97% / 0.55) 65%,
+    hsl(210 45% 97% / 0.92) 100%
+  );
+}
+
+/* Brilho ambiente atrás da seção de recursos, agora em azul/verde pastel */
+.landing-light .ambient-glow {
+  background: radial-gradient(
+    closest-side,
+    hsl(211 79% 70% / 0.35),
+    hsl(155 55% 60% / 0.18) 60%,
+    transparent 80%
+  );
+}
+
+/* Cartões por cor de módulo — usados no ModulesSection */
+.landing-light .chip-blue {
+  background-color: hsl(211 79% 63% / 0.12);
+  color: hsl(211 65% 42%);
+}
+.landing-light .chip-green {
+  background-color: hsl(155 55% 48% / 0.14);
+  color: hsl(155 55% 30%);
+}
+.landing-light .chip-peach {
+  background-color: hsl(21 88% 68% / 0.16);
+  color: hsl(21 70% 40%);
+}
+
+/* --- Animações mantidas do design original --- */
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+.animate-marquee {
+  animation: marquee 28s linear infinite;
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+.animate-float {
+  animation: float 4s ease-in-out infinite;
+}
+
+@keyframes glow {
+  0%,
+  100% {
+    opacity: 0.6;
+    transform: translate(-50%, 0) scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: translate(-50%, 0) scale(1.08);
+  }
+}
+.animate-glow {
+  animation: glow 6s ease-in-out infinite;
+}
+
+@keyframes scroll-hint {
+  0%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.4;
+  }
+  50% {
+    transform: translateY(6px);
+    opacity: 1;
+  }
+}
+.animate-scroll-hint {
+  animation: scroll-hint 1.8s ease-in-out infinite;
+}
