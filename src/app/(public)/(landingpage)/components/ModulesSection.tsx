@@ -30,7 +30,7 @@ export function ModulesSection() {
                 className="group relative block h-130 overflow-hidden rounded-2xl border border-border bg-card shadow-sm transition-shadow duration-500 hover:shadow-lg"
               >
                 <Image
-                  src={m.image.src}
+                  src={m.image}
                   alt={`Módulo de ${m.title}`}
                   loading="lazy"
                   width={1024}
