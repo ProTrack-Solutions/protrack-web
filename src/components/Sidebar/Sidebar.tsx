@@ -88,7 +88,6 @@ export function Sidebar({ children }: SidebarProps) {
           >
             <div className="leading-4">
               <h4 className="font-semibold">{user?.username}</h4>
-              <span className="text-xs text-gray-600">{user?.email}</span>
             </div>
 
             {/* Dropdown de Configurações */}
