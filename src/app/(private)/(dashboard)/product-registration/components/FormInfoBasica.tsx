@@ -12,14 +12,19 @@ import { Barcode, Info } from "lucide-react";
 import { CardSection } from "./CardSection";
 import { useProductsCategories } from "@/hooks/useProductsCategories";
 import { CreateProductParams } from "@/interfaces/products.interface";
+import { Field, FieldGroup } from "@/components/ui/field";
+import { Checkbox } from "@/components/ui/checkbox";
+import { useState } from "react";
 
 interface FormInfoBasicaProps {
   formData: CreateProductParams;
-  onChange: (field: keyof CreateProductParams, value: string) => void;
+  onChange: (field: keyof CreateProductParams, value: string | boolean) => void;
 }
 
 export function FormInfoBasica({ formData, onChange }: FormInfoBasicaProps) {
   const { productsCategories } = useProductsCategories();
+
+  const [isBarCode, setIsBarCode] = useState(false);
 
   return (
     <CardSection
@@ -71,10 +76,32 @@ export function FormInfoBasica({ formData, onChange }: FormInfoBasicaProps) {
         <div className="space-y-2">
           <Label
             htmlFor="codigoBarras"
-            className="text-sm font-medium flex items-center gap-1.5"
+            className="text-sm font-medium flex-col items-start gap-1.5"
           >
-            <Barcode className="w-3.5 h-3.5 text-muted-foreground" />
-            Código de barras
+            <div className="flex items-center gap-1.5 ">
+              <Barcode className="w-3.5 h-3.5 text-muted-foreground" />
+              Código de barras
+            </div>
+            <FieldGroup className="max-w-sm">
+              <Field orientation="horizontal">
+                <Checkbox
+                  id="not_barcode"
+                  name="not_barcode"
+                  className="size-4"
+                  onClick={() => setIsBarCode((prev) => !prev)}
+                  checked={formData.not_barcode}
+                  onCheckedChange={(checked) =>
+                    onChange("not_barcode", !!checked)
+                  }
+                />
+                <Label
+                  htmlFor="not_barcode"
+                  className="text-muted-foreground text-[12px] font-medium "
+                >
+                  Producto sem código de barras
+                </Label>
+              </Field>
+            </FieldGroup>
           </Label>
           <Input
             id="codigoBarras"
@@ -82,6 +109,7 @@ export function FormInfoBasica({ formData, onChange }: FormInfoBasicaProps) {
             value={formData.barcode}
             onChange={(e) => onChange("barcode", e.target.value)}
             className="h-11 font-mono"
+            disabled={isBarCode}
           />
         </div>
 

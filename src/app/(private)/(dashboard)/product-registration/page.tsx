@@ -20,19 +20,27 @@ export default function ProductRegistration() {
 
   const handleChange = (
     field: keyof CreateProductParams,
-    value: string | number,
+    value: string | number | boolean,
   ) => {
     const numericFields: (keyof CreateProductParams)[] = [
       "quantity",
       "cost_price",
       "sale_price",
     ];
+    const booleansFields: (keyof CreateProductParams)[] = [
+      "not_barcode",
+      "sell_in_bulk",
+    ];
 
-    const finalValue = numericFields.includes(field)
-      ? value === ""
-        ? 0
-        : Number(value)
-      : value;
+    let finalValue: string | number | boolean = value;
+
+    if (numericFields.includes(field)) {
+      finalValue = value === "" ? 0 : Number(value);
+    } else if (booleansFields.includes(field)) {
+      // Converts "true"/"false" strings or truthy/falsy values to a strict boolean
+      finalValue =
+        typeof value === "string" ? value === "true" : Boolean(value);
+    }
 
     setFormData((prev) => ({ ...prev, [field]: finalValue }));
   };
