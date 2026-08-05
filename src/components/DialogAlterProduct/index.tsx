@@ -207,41 +207,65 @@ export const DialogEditProduct = ({
               </div>
             </div>
             <Separator />
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="edit-quantity" className="text-sm font-medium">
-                  Quantidade em estoque
-                </Label>
-                <Input
-                  id="edit-quantity"
-                  type="number"
-                  min="0"
-                  placeholder="0"
-                  value={formData.quantity}
-                  onChange={(e) =>
-                    handleChange("quantity", parseInt(e.target.value) || 0)
-                  }
-                  className="h-11"
-                />
+            {product.sell_in_bulk ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label
+                    htmlFor="unit"
+                    className="text-sm font-medium flex items-center gap-1.5"
+                  >
+                    <Ruler className="w-3.5 h-3.5 text-muted-foreground" />
+                    Unidade
+                  </Label>
+                  <Input
+                    id="unit"
+                    placeholder="G, KG, ML..."
+                    value={formData.unit}
+                    onChange={(e) => handleChange("unit", e.target.value)}
+                    className="h-11"
+                  />
+                </div>
               </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label
+                    htmlFor="edit-quantity"
+                    className="text-sm font-medium"
+                  >
+                    Quantidade em estoque
+                  </Label>
+                  <Input
+                    id="edit-quantity"
+                    type="number"
+                    min="0"
+                    placeholder="0"
+                    value={formData.quantity}
+                    onChange={(e) =>
+                      handleChange("quantity", parseInt(e.target.value) || 0)
+                    }
+                    className="h-11"
+                  />
+                </div>
 
-              <div className="space-y-2">
-                <Label
-                  htmlFor="edit-size"
-                  className="text-sm font-medium flex items-center gap-1.5"
-                >
-                  <Ruler className="w-3.5 h-3.5 text-muted-foreground" />
-                  Tamanho
-                </Label>
-                <Input
-                  id="edit-size"
-                  placeholder="P, M, G, GG, 42, Único..."
-                  value={formData.size}
-                  onChange={(e) => handleChange("size", e.target.value)}
-                  className="h-11"
-                />
+                <div className="space-y-2">
+                  <Label
+                    htmlFor="edit-size"
+                    className="text-sm font-medium flex items-center gap-1.5"
+                  >
+                    <Ruler className="w-3.5 h-3.5 text-muted-foreground" />
+                    Tamanho
+                  </Label>
+                  <Input
+                    id="edit-size"
+                    placeholder="P, M, G, GG, 42, Único..."
+                    value={formData.size}
+                    onChange={(e) => handleChange("size", e.target.value)}
+                    className="h-11"
+                  />
+                </div>
               </div>
-            </div>
+            )}
           </div>
 
           {/* Precificação */}

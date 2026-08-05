@@ -15,6 +15,8 @@ export interface Product {
   created_at: string;
   updated_at: string;
   deleted_at: string | null;
+  sell_in_bulk: boolean;
+  unit: string;
 }
 
 export interface ProductResponse {
@@ -44,6 +46,7 @@ export interface ProductUpdateParams {
   quantity: number;
   sale_price: number;
   size: string;
+  unit: string;
 }
 
 export interface GetTopProductsResponse {
@@ -61,17 +64,23 @@ export const initialFormData: CreateProductParams = {
   size: "",
   cost_price: 0,
   sale_price: 0,
+  not_barcode: false,
+  sell_in_bulk: false,
+  unit: "",
 };
 
 export interface CreateProductParams {
   name: string;
   description: string;
   category_id: string;
-  barcode: string;
-  quantity: number;
+  barcode?: string;
+  quantity?: number;
   size: string;
   cost_price: number;
   sale_price: number;
+  sell_in_bulk: boolean;
+  unit: string;
+  not_barcode: boolean;
 }
 
 export interface GetTotalInStockResponse {
