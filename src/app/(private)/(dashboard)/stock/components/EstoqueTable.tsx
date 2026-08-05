@@ -16,17 +16,10 @@ import { Button } from "@/components/ui/button";
 import { useProductsCategories } from "@/hooks/useProductsCategories";
 import { useState } from "react";
 import { DialogEditProduct } from "@/components/DialogAlterProduct";
+import { getQuantityStyle, getUnitBadgeStyle } from "@/utils/productsQuantity";
 
 interface EstoqueTableProps {
   products: Product[];
-}
-
-function getQuantityStyle(quantity: number): string {
-  if (quantity >= 10)
-    return "bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-500/10 dark:text-emerald-400";
-  if (quantity >= 5)
-    return "bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-500/10 dark:text-amber-400";
-  return "bg-rose-50 text-rose-700 border-rose-200 dark:bg-rose-500/10 dark:text-rose-400";
 }
 
 export function EstoqueTable({ products }: EstoqueTableProps) {
@@ -100,18 +93,24 @@ export function EstoqueTable({ products }: EstoqueTableProps) {
                   </TableCell>
                   <TableCell>
                     <span className="inline-flex items-center justify-center min-w-7 h-7 px-2 rounded-md border border-border bg-muted/50 text-sm font-semibold">
-                      {product.size}
+                      {product.size ? product.size : "..."}
                     </span>
                   </TableCell>
                   <TableCell className="text-right font-semibold text-foreground">
-                    R$ {product.sale_price.toFixed(2).replace(".", ",")}
+                    R${" "}
+                    {product.sell_in_bulk
+                      ? product.sale_price.toFixed(2).replace(".", ",") +
+                        product.unit
+                      : product.sale_price.toFixed(2).replace(".", ",")}
                   </TableCell>
                   <TableCell className="text-center">
                     <Badge
                       variant="outline"
-                      className={`${getQuantityStyle(product.quantity)} font-semibold min-w-12 justify-center`}
+                      className={`${product.sell_in_bulk ? getUnitBadgeStyle(product.unit) : getQuantityStyle(product.quantity)} font-semibold min-w-12 justify-center`}
                     >
-                      {product.quantity} un
+                      {product.sell_in_bulk
+                        ? product.unit
+                        : product.quantity + "un"}
                     </Badge>
                   </TableCell>
                   <TableCell className="text-right">
