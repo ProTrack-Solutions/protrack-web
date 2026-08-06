@@ -9,6 +9,8 @@ import { useProducts } from "@/hooks/useProducts";
 import { Loading } from "@/components/Loading";
 import { DataPagination } from "@/components/DataPagination";
 import { usePagination } from "@/hooks/usePagination";
+import { GenerateLabel } from "@/service/label.service";
+import { toast } from "sonner";
 
 export default function Stock() {
   const { currentPage, goToPage, pageRange } = usePagination({
@@ -30,6 +32,21 @@ export default function Stock() {
     Page: currentPage,
     PerPage: 10,
   });
+
+  const [selectedRows, setSelectedRows] = useState<Set<string>>(new Set(["1"]));
+
+  const handleGenerateLabel = async () => {
+    const payload = Array.from(selectedRows).map((id) => ({
+      product_id: id,
+    }));
+    try {
+      await GenerateLabel(payload);
+      toast.success("Etiquetas geradas com suscesso!");
+    } catch (error) {
+      console.log(error);
+      toast.error("Erro ao gerar etiquetas!");
+    }
+  };
 
   console.log("totalPages", totalPages);
 
@@ -75,8 +92,16 @@ export default function Stock() {
           productsCount={productsCount}
           totalValueInStock={totalValueInStock}
         />
-        <EstoqueSearch searchTerm={searchTerm} onSearchChange={setSearchTerm} />
-        <EstoqueTable products={filteredProducts} />
+        <EstoqueSearch
+          searchTerm={searchTerm}
+          onSearchChange={setSearchTerm}
+          handleGenerateLabel={handleGenerateLabel}
+        />
+        <EstoqueTable
+          products={filteredProducts}
+          selectedRows={selectedRows}
+          setSelectedRows={setSelectedRows}
+        />
         <DataPagination
           currentPage={currentPage}
           totalPages={totalPages}

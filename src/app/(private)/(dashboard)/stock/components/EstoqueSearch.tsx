@@ -1,16 +1,18 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Filter, Search, TrendingUp } from "lucide-react";
+import { Filter, Search, Tag } from "lucide-react";
 
 interface EstoqueSearchProps {
   searchTerm: string;
   onSearchChange: (value: string) => void;
+  handleGenerateLabel: () => void;
 }
 
 export function EstoqueSearch({
   searchTerm,
   onSearchChange,
+  handleGenerateLabel,
 }: EstoqueSearchProps) {
   return (
     <Card className="border-border/50">
@@ -28,9 +30,12 @@ export function EstoqueSearch({
           <Filter className="w-4 h-4" />
           Filtros
         </Button>
-        <Button className="h-11 gap-2 bg-blue-600 hover:bg-blue-700 text-white">
-          <TrendingUp className="w-4 h-4" />
-          Relatório
+        <Button
+          className="h-11 gap-2 bg-blue-600 hover:bg-blue-700 text-white cursor-pointer"
+          onClick={handleGenerateLabel}
+        >
+          <Tag className="w-4 h-4" />
+          Gerar etiquetas
         </Button>
       </CardContent>
     </Card>
