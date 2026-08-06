@@ -14,18 +14,46 @@ import {
 import { Package, Pencil } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useProductsCategories } from "@/hooks/useProductsCategories";
-import { useState } from "react";
+import { SetStateAction, useState } from "react";
 import { DialogEditProduct } from "@/components/DialogAlterProduct";
 import { getQuantityStyle, getUnitBadgeStyle } from "@/utils/productsQuantity";
+import { Checkbox } from "@/components/ui/checkbox";
 
 interface EstoqueTableProps {
   products: Product[];
+  selectedRows: Set<string>;
+  setSelectedRows: (param: SetStateAction<Set<string>>) => void;
 }
 
-export function EstoqueTable({ products }: EstoqueTableProps) {
+export function EstoqueTable({
+  products,
+  selectedRows,
+  setSelectedRows,
+}: EstoqueTableProps) {
   const { productsCategories } = useProductsCategories();
 
   const [openDialog, setOpenDialog] = useState(false);
+
+  console.log("selectedRows", selectedRows);
+
+  const selectAll = selectedRows.size === products.length;
+  const handleSelectAll = (checked: boolean) => {
+    if (checked) {
+      setSelectedRows(new Set(products.map((row) => row.id)));
+    } else {
+      setSelectedRows(new Set());
+    }
+  };
+
+  const handleSelectRow = (id: string, checked: boolean) => {
+    const newSelected = new Set(selectedRows);
+    if (checked) {
+      newSelected.add(id);
+    } else {
+      newSelected.delete(id);
+    }
+    setSelectedRows(newSelected);
+  };
 
   const [productSelect, setProductSelect] = useState<Product>({} as Product);
   return (
@@ -34,6 +62,14 @@ export function EstoqueTable({ products }: EstoqueTableProps) {
         <Table>
           <TableHeader>
             <TableRow className="bg-muted/50 hover:bg-muted/50 border-b border-border">
+              <TableHead className="font-semibold text-foreground">
+                <Checkbox
+                  id="select-all-checkbox"
+                  name="select-all-checkbox"
+                  checked={selectAll}
+                  onCheckedChange={handleSelectAll}
+                />
+              </TableHead>
               <TableHead className="font-semibold text-foreground">
                 Produto
               </TableHead>
@@ -69,6 +105,16 @@ export function EstoqueTable({ products }: EstoqueTableProps) {
                   key={index}
                   className="border-b border-border/50 hover:bg-muted/40 transition-colors"
                 >
+                  <TableCell className="py-4">
+                    <Checkbox
+                      id={`row-${product.id}-checkbox`}
+                      name={`row-${product.id}-checkbox`}
+                      checked={selectedRows.has(product.id)}
+                      onCheckedChange={(checked) =>
+                        handleSelectRow(product.id, checked === true)
+                      }
+                    />
+                  </TableCell>
                   <TableCell className="py-4">
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 rounded-lg bg-linear-to-br from-blue-500/10 to-indigo-500/10 border border-blue-500/20 flex items-center justify-center">
