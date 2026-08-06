@@ -132,8 +132,7 @@ export function DialogNewVendors({ open, onOpenChange, fornecedor }: Props) {
                   id="document"
                   value={data.tax_id}
                   onChange={(e) => update("tax_id", e.target.value)}
-                  placeholder="Digite aqui"
-                  
+                  placeholder={
                     data.tax_id === "CNPJ"
                       ? "00.000.000/0000-00"
                       : "000.000.000-00"
