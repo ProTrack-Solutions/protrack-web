@@ -22,7 +22,7 @@ export function Endereco({ formData, onChange }: EnderecoProps) {
     <Card className="border-border/50">
       <CardContent className="p-6 space-y-5">
         <div className="flex items-center gap-3 pb-2 border-b border-border/50">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center shadow-sm">
+          <div className="w-10 h-10 rounded-xl bg-linear-to-br from-emerald-500 to-teal-600 flex items-center justify-center shadow-sm">
             <MapPin className="w-5 h-5 text-white" />
           </div>
           <div>
@@ -40,7 +40,7 @@ export function Endereco({ formData, onChange }: EnderecoProps) {
             </Label>
             <Input
               id="address_street"
-              placeholder="Ex: Rua das Flores"
+              placeholder="Digite aqui"
               value={formData.address_street}
               onChange={(e) => onChange("address_street", e.target.value)}
               className="h-11"
@@ -53,7 +53,7 @@ export function Endereco({ formData, onChange }: EnderecoProps) {
             </Label>
             <Input
               id="address_number"
-              placeholder="123"
+              placeholder="Digite aqui"
               value={formData.address_number}
               onChange={(e) => onChange("address_number", e.target.value)}
               className="h-11"
@@ -66,7 +66,7 @@ export function Endereco({ formData, onChange }: EnderecoProps) {
             </Label>
             <Input
               id="address_complement"
-              placeholder="Apto 45, Bloco B..."
+              placeholder="Digite aqui"
               value={formData.address_complement}
               onChange={(e) => onChange("address_complement", e.target.value)}
               className="h-11"
@@ -82,7 +82,7 @@ export function Endereco({ formData, onChange }: EnderecoProps) {
             </Label>
             <Input
               id="address_neighborhood"
-              placeholder="Centro"
+              placeholder="Digite aqui"
               value={formData.address_neighborhood}
               onChange={(e) => onChange("address_neighborhood", e.target.value)}
               className="h-11"
@@ -95,7 +95,7 @@ export function Endereco({ formData, onChange }: EnderecoProps) {
             </Label>
             <Input
               id="address_city"
-              placeholder="São Paulo"
+              placeholder="Digite aqui"
               value={formData.address_city}
               onChange={(e) => onChange("address_city", e.target.value)}
               className="h-11"
@@ -111,7 +111,7 @@ export function Endereco({ formData, onChange }: EnderecoProps) {
               onValueChange={(v) => onChange("address_state", v)}
             >
               <SelectTrigger id="address_state" className="h-11">
-                <SelectValue placeholder="UF" />
+                <SelectValue placeholder="Selecione" />
               </SelectTrigger>
               <SelectContent>
                 {estados.map((uf) => (
@@ -129,7 +129,7 @@ export function Endereco({ formData, onChange }: EnderecoProps) {
             </Label>
             <Input
               id="address_zipcode"
-              placeholder="00000-000"
+              placeholder="Digite aqui"
               value={formData.address_zipcode}
               onChange={(e) => onChange("address_zipcode", e.target.value)}
               className="h-11"
@@ -142,7 +142,7 @@ export function Endereco({ formData, onChange }: EnderecoProps) {
             </Label>
             <Input
               id="address_country"
-              placeholder="Brasil"
+              placeholder="Digite aqui"
               value={formData.address_country}
               onChange={(e) => onChange("address_country", e.target.value)}
               className="h-11"

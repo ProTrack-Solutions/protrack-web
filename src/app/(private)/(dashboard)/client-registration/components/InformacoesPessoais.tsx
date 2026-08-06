@@ -40,7 +40,7 @@ export function InformacoesPessoais({
     <Card className="border-border/50">
       <CardContent className="p-6 space-y-5">
         <div className="flex items-center gap-3 pb-2 border-b border-border/50">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-sm">
+          <div className="w-10 h-10 rounded-xl bg-linear-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-sm">
             <BadgeInfo className="w-5 h-5 text-white" />
           </div>
           <div>
@@ -60,7 +60,7 @@ export function InformacoesPessoais({
             </Label>
             <Input
               id="full_name"
-              placeholder="Ex: João da Silva"
+              placeholder="Digite aqui"
               value={formData.full_name}
               onChange={(e) => onChange("full_name", e.target.value)}
               className="h-11"
@@ -73,7 +73,7 @@ export function InformacoesPessoais({
             </Label>
             <Input
               id="cpf"
-              placeholder="000.000.000-00"
+              placeholder="Digite aqui"
               value={formData.cpf}
               onChange={(e) => onChange("cpf", e.target.value)}
               className="h-11"
@@ -86,7 +86,7 @@ export function InformacoesPessoais({
             </Label>
             <Input
               id="rg"
-              placeholder="00.000.000-0"
+              placeholder="Digite aqui"
               value={formData.rg}
               onChange={(e) => onChange("rg", e.target.value)}
               className="h-11"

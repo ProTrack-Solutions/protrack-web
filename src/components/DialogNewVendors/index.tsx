@@ -120,7 +120,7 @@ export function DialogNewVendors({ open, onOpenChange, fornecedor }: Props) {
                   id="name"
                   value={data.name}
                   onChange={(e) => update("name", e.target.value)}
-                  placeholder="Razão social"
+                  placeholder="Digite aqui"
                   required
                 />
               </div>
@@ -132,7 +132,8 @@ export function DialogNewVendors({ open, onOpenChange, fornecedor }: Props) {
                   id="document"
                   value={data.tax_id}
                   onChange={(e) => update("tax_id", e.target.value)}
-                  placeholder={
+                  placeholder="Digite aqui"
+                  
                     data.tax_id === "CNPJ"
                       ? "00.000.000/0000-00"
                       : "000.000.000-00"
@@ -158,7 +159,7 @@ export function DialogNewVendors({ open, onOpenChange, fornecedor }: Props) {
                   type="email"
                   value={data.email}
                   onChange={(e) => update("email", e.target.value)}
-                  placeholder="fornecedor@email.com"
+                  placeholder="Digite aqui"
                 />
               </div>
               <div className="space-y-2">
@@ -167,7 +168,7 @@ export function DialogNewVendors({ open, onOpenChange, fornecedor }: Props) {
                   id="phone"
                   value={data.phone}
                   onChange={(e) => update("phone", e.target.value)}
-                  placeholder="(00) 0000-0000"
+                  placeholder="Digite aqui"
                 />
               </div>
             </div>
@@ -187,7 +188,7 @@ export function DialogNewVendors({ open, onOpenChange, fornecedor }: Props) {
                   id="address_street"
                   value={data.address_line_1}
                   onChange={(e) => update("address_line_1", e.target.value)}
-                  placeholder="Nome da rua"
+                  placeholder="Digite aqui"
                 />
               </div>
               <div className="space-y-2">
@@ -196,7 +197,7 @@ export function DialogNewVendors({ open, onOpenChange, fornecedor }: Props) {
                   id="address_number"
                   value={data.number}
                   onChange={(e) => update("number", e.target.value)}
-                  placeholder="Nº"
+                  placeholder="Digite aqui"
                 />
               </div>
               <div className="space-y-2">
@@ -205,7 +206,7 @@ export function DialogNewVendors({ open, onOpenChange, fornecedor }: Props) {
                   id="country"
                   value={data.country}
                   onChange={(e) => update("country", e.target.value)}
-                  placeholder="Brasil"
+                  placeholder="Digite aqui"
                 />
               </div>
             </div>
@@ -216,7 +217,7 @@ export function DialogNewVendors({ open, onOpenChange, fornecedor }: Props) {
                   id="address_complement"
                   value={data.address_line_2}
                   onChange={(e) => update("address_line_2", e.target.value)}
-                  placeholder="Sala, andar..."
+                  placeholder="Digite aqui"
                 />
               </div>
               <div className="space-y-2">
@@ -225,7 +226,7 @@ export function DialogNewVendors({ open, onOpenChange, fornecedor }: Props) {
                   id="address_neighborhood"
                   value={data.neighborhood}
                   onChange={(e) => update("neighborhood", e.target.value)}
-                  placeholder="Bairro"
+                  placeholder="Digite aqui"
                 />
               </div>
             </div>
@@ -236,7 +237,7 @@ export function DialogNewVendors({ open, onOpenChange, fornecedor }: Props) {
                   id="address_city"
                   value={data.city}
                   onChange={(e) => update("city", e.target.value)}
-                  placeholder="Cidade"
+                  placeholder="Digite aqui"
                 />
               </div>
               <div className="space-y-2">
@@ -245,7 +246,7 @@ export function DialogNewVendors({ open, onOpenChange, fornecedor }: Props) {
                   id="address_state"
                   value={data.state}
                   onChange={(e) => update("state", e.target.value)}
-                  placeholder="UF"
+                  placeholder="Selecione"
                   maxLength={2}
                 />
               </div>
@@ -255,7 +256,7 @@ export function DialogNewVendors({ open, onOpenChange, fornecedor }: Props) {
                   id="address_zipcode"
                   value={data.postal_code}
                   onChange={(e) => update("postal_code", e.target.value)}
-                  placeholder="00000-000"
+                  placeholder="Digite aqui"
                 />
               </div>
             </div>

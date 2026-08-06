@@ -22,7 +22,7 @@ export default function UserStep({
       <div className="space-y-2">
         <Label className={labelClass}>Nome completo</Label>
         <Input
-          placeholder="Gabriel Ferrarez"
+          placeholder="Digite aqui"
           value={user.name}
           onChange={(e) => setUser({ ...user, name: e.target.value })}
           className={inputClass}
@@ -32,7 +32,7 @@ export default function UserStep({
         <div className="space-y-2">
           <Label className={labelClass}>Usuário</Label>
           <Input
-            placeholder="gabriel.ferrarez"
+            placeholder="Digite aqui"
             value={user.username}
             onChange={(e) =>
               setUser({
@@ -46,7 +46,7 @@ export default function UserStep({
         <div className="space-y-2">
           <Label className={labelClass}>CPF</Label>
           <Input
-            placeholder="12345678909"
+            placeholder="Digite aqui"
             inputMode="numeric"
             maxLength={14}
             value={user.document}
@@ -61,7 +61,7 @@ export default function UserStep({
         <Label className={labelClass}>Email</Label>
         <Input
           type="email"
-          placeholder="voce@empresa.com"
+          placeholder="Digite aqui"
           value={user.email}
           onChange={(e) => setUser({ ...user, email: e.target.value })}
           className={inputClass}
@@ -72,7 +72,7 @@ export default function UserStep({
         <div className="relative">
           <Input
             type={showPassword ? "text" : "password"}
-            placeholder="Mínimo 8 caracteres"
+            placeholder="Digite aqui"
             value={user.password}
             onChange={(e) => setUser({ ...user, password: e.target.value })}
             className="h-11 bg-muted/50 pr-10"

@@ -22,7 +22,7 @@ export default function CompanyStep({ company, setCompany }: CompanyStepProps) {
         <div className="space-y-2">
           <Label className={labelClass}>Razão social</Label>
           <Input
-            placeholder="Empresa Teste LTDA"
+            placeholder="Digite aqui"
             value={company.name}
             onChange={(e) => setCompany({ ...company, name: e.target.value })}
             className={inputClass}
@@ -31,7 +31,7 @@ export default function CompanyStep({ company, setCompany }: CompanyStepProps) {
         <div className="space-y-2">
           <Label className={labelClass}>Nome fantasia</Label>
           <Input
-            placeholder="Empresa Teste"
+            placeholder="Digite aqui"
             value={company.trade_name}
             onChange={(e) =>
               setCompany({ ...company, trade_name: e.target.value })
@@ -42,7 +42,7 @@ export default function CompanyStep({ company, setCompany }: CompanyStepProps) {
         <div className="space-y-2">
           <Label className={labelClass}>CNPJ</Label>
           <Input
-            placeholder="32937977000126"
+            placeholder="Digite aqui"
             inputMode="numeric"
             maxLength={18}
             value={company.document}
@@ -55,7 +55,7 @@ export default function CompanyStep({ company, setCompany }: CompanyStepProps) {
         <div className="space-y-2">
           <Label className={labelClass}>Telefone</Label>
           <Input
-            placeholder="35999998888"
+            placeholder="Digite aqui"
             inputMode="numeric"
             value={company.phone}
             onChange={(e) =>
@@ -68,7 +68,7 @@ export default function CompanyStep({ company, setCompany }: CompanyStepProps) {
           <Label className={labelClass}>E-mail</Label>
           <Input
             type="email"
-            placeholder="contato@empresa.com"
+            placeholder="Digite aqui"
             value={company.email}
             onChange={(e) => setCompany({ ...company, email: e.target.value })}
             className={inputClass}
@@ -77,7 +77,7 @@ export default function CompanyStep({ company, setCompany }: CompanyStepProps) {
         <div className="space-y-2">
           <Label className={labelClass}>Website</Label>
           <Input
-            placeholder="https://empresateste.com"
+            placeholder="Digite aqui"
             value={company.website}
             onChange={(e) =>
               setCompany({ ...company, website: e.target.value })
@@ -93,7 +93,7 @@ export default function CompanyStep({ company, setCompany }: CompanyStepProps) {
           <div className="space-y-2 md:col-span-2">
             <Label className={labelClass}>Rua</Label>
             <Input
-              placeholder="Rua Principal"
+              placeholder="Digite aqui"
               value={company.address_street}
               onChange={(e) =>
                 setCompany({ ...company, address_street: e.target.value })
@@ -104,7 +104,7 @@ export default function CompanyStep({ company, setCompany }: CompanyStepProps) {
           <div className="space-y-2">
             <Label className={labelClass}>Número</Label>
             <Input
-              placeholder="100"
+              placeholder="Digite aqui"
               value={company.address_number}
               onChange={(e) =>
                 setCompany({ ...company, address_number: e.target.value })
@@ -115,7 +115,7 @@ export default function CompanyStep({ company, setCompany }: CompanyStepProps) {
           <div className="space-y-2">
             <Label className={labelClass}>Complemento</Label>
             <Input
-              placeholder="Sala 1"
+              placeholder="Digite aqui"
               value={company.address_complement}
               onChange={(e) =>
                 setCompany({ ...company, address_complement: e.target.value })
@@ -126,7 +126,7 @@ export default function CompanyStep({ company, setCompany }: CompanyStepProps) {
           <div className="space-y-2">
             <Label className={labelClass}>Bairro</Label>
             <Input
-              placeholder="Centro"
+              placeholder="Digite aqui"
               value={company.address_neighborhood}
               onChange={(e) =>
                 setCompany({ ...company, address_neighborhood: e.target.value })
@@ -137,7 +137,7 @@ export default function CompanyStep({ company, setCompany }: CompanyStepProps) {
           <div className="space-y-2">
             <Label className={labelClass}>CEP</Label>
             <Input
-              placeholder="37950000"
+              placeholder="Digite aqui"
               inputMode="numeric"
               maxLength={9}
               value={company.address_zipcode}
@@ -153,7 +153,7 @@ export default function CompanyStep({ company, setCompany }: CompanyStepProps) {
           <div className="space-y-2 md:col-span-2">
             <Label className={labelClass}>Cidade</Label>
             <Input
-              placeholder="São Paulo"
+              placeholder="Digite aqui"
               value={company.address_city}
               onChange={(e) =>
                 setCompany({ ...company, address_city: e.target.value })
@@ -170,7 +170,7 @@ export default function CompanyStep({ company, setCompany }: CompanyStepProps) {
               }
             >
               <SelectTrigger className="h-11 bg-muted/50">
-                <SelectValue placeholder="UF" />
+                <SelectValue placeholder="Selecione" />
               </SelectTrigger>
               <SelectContent className="max-h-64">
                 {estados.map((uf) => (
