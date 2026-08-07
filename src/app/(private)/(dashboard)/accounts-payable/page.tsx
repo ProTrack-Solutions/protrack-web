@@ -1,20 +1,37 @@
 "use client";
+import { useEffect, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { ContasPagarTable } from "./components/ContasTable";
 import { ContasPagarFiltrosPesquisa } from "./components/FiltrosPesquisa";
 import { ContasPagarResumoCards } from "./components/ResumoCards";
 import { useBillsPayable } from "@/hooks/useBillsPayable";
+import { useBillsCategories } from "@/hooks/useBillsCategories";
 import { Loading } from "@/components/Loading";
 import { DialogNewAccountsPayable } from "@/components/DialogAccountsPayable";
-import { useEffect, useState } from "react";
 import { DataPagination } from "@/components/DataPagination";
 import { usePagination } from "@/hooks/usePagination";
+import { FiltrosReceber } from "@/components/FilterPopOver";
+import { BillsPayablePaginationParams } from "@/interfaces/bills-payable.interface";
+import { format } from "date-fns";
 
 export default function AccountsPayable() {
-  const { currentPage, pageRange, goToPage } = usePagination({
+  const { currentPage, pageRange, goToPage, setTotalPages } = usePagination({
     totalPages: 1,
   });
+
+  const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState("todos");
+  const [categoriaFilter, setCategoriaFilter] = useState("todas");
+  const [filter, setFilter] = useState<FiltrosReceber>({
+    typeDate: "vencimento",
+  });
+
+  const dateRange = {
+    start: filter?.startDate ? format(filter.startDate, "yyyy-MM-dd") : "",
+    end: filter?.endDate ? format(filter.endDate, "yyyy-MM-dd") : "",
+  };
+
   const {
     billsPayable,
     billsPayableCount,
@@ -24,11 +41,48 @@ export default function AccountsPayable() {
     totalScheduled,
     totalPages,
     refetch,
-  } = useBillsPayable({ Page: currentPage, PerPage: 10 });
+  } = useBillsPayable({
+    Page: currentPage,
+    PerPage: 10,
+    Search: search,
+    status:
+      statusFilter === "todos"
+        ? undefined
+        : (statusFilter as BillsPayablePaginationParams["status"]),
+    StartDate: filter.typeDate === "criacao" ? dateRange.start : "",
+    EndDate: filter.typeDate === "criacao" ? dateRange.end : "",
+    startDueDate: filter.typeDate === "vencimento" ? dateRange.start : "",
+    endDueDate: filter.typeDate === "vencimento" ? dateRange.end : "",
+    startScheduledDate:
+      filter.typeDate === "agendamento" ? dateRange.start : "",
+    endScheduledDate: filter.typeDate === "agendamento" ? dateRange.end : "",
+    startPaymentDate: filter.typeDate === "pagamento" ? dateRange.start : "",
+    endPaymentDate: filter.typeDate === "pagamento" ? dateRange.end : "",
+  });
+
+  const { billsCategories } = useBillsCategories();
+
+  const categorias = useMemo(
+    () => (billsCategories ?? []).map((categoria) => categoria.name),
+    [billsCategories],
+  );
+
+  // A API não suporta filtro por categoria na listagem paginada, então o
+  // recorte é feito no lado do cliente sobre a página atual de resultados.
+  const contas = useMemo(() => {
+    if (categoriaFilter === "todas") return billsPayable;
+    return billsPayable.filter(
+      (conta) => conta.category_name === categoriaFilter,
+    );
+  }, [billsPayable, categoriaFilter]);
 
   useEffect(() => {
     refetch();
-  }, [currentPage, refetch]);
+  }, [currentPage, search, statusFilter, filter, refetch]);
+
+  useEffect(() => {
+    setTotalPages(totalPages || 1);
+  }, [totalPages, setTotalPages]);
 
   const [newOpenDialog, setNewOpenDialog] = useState(false);
 
@@ -64,17 +118,19 @@ export default function AccountsPayable() {
       />
 
       <ContasPagarFiltrosPesquisa
-        searchTerm={""}
-        onSearchTermChange={() => {}}
-        statusFilter={""}
-        onStatusFilterChange={() => {}}
-        categoriaFilter={""}
-        onCategoriaFilterChange={() => {}}
-        categorias={[]}
+        searchTerm={search}
+        onSearchTermChange={setSearch}
+        statusFilter={statusFilter}
+        onStatusFilterChange={setStatusFilter}
+        categoriaFilter={categoriaFilter}
+        onCategoriaFilterChange={setCategoriaFilter}
+        categorias={categorias}
+        filter={filter}
+        onApplyFilter={setFilter}
       />
 
       <ContasPagarTable
-        contas={billsPayable}
+        contas={contas}
         onAgendarPagamento={() => {}}
         onGerarPagamento={() => {}}
       />

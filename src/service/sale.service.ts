@@ -1,4 +1,3 @@
-import { Pagination } from "@/interfaces/pagination.interface";
 import { api } from "./api";
 import {
   CreateSaleParams,
@@ -7,16 +6,26 @@ import {
   GetTop5ProductsResponse,
   GetTotalValuePenddingResponse,
   SaleListResponse,
+  SalePaginationParams,
   UpdateSaleParams,
 } from "@/interfaces/sale.interface";
 
 export const GetSales = async (
-  pagination: Pagination,
+  pagination: SalePaginationParams,
 ): Promise<SaleListResponse> => {
   const response = await api.get<SaleListResponse>("/sales/complete", {
-    headers: {
-      Page: pagination.Page,
-      PerPage: pagination.PerPage,
+    params: {
+      page: pagination.Page,
+      perPage: pagination.PerPage,
+      search: pagination.Search,
+      sortBy: pagination.sortBy,
+      orderBy: pagination.OrderBy,
+      saleStatus: pagination.saleStatus,
+      paymentMethod: pagination.paymentMethod,
+      paymentStartDate: pagination.paymentStartDate,
+      paymentEndDate: pagination.paymentEndDate,
+      saleStartDate: pagination.saleStartDate,
+      saleEndDate: pagination.saleEndDate,
     },
   });
 

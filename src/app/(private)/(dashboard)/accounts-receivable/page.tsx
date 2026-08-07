@@ -12,19 +12,57 @@ import { DialogReceipt } from "@/components/DialogReceipt";
 import { useEffect, useState } from "react";
 import { DataPagination } from "@/components/DataPagination";
 import { usePagination } from "@/hooks/usePagination";
+import { FiltrosReceber } from "@/components/FilterPopOver";
+import { AccountsReceivablePaginationParams } from "@/interfaces/accounts-receivable.interface";
+import { format } from "date-fns";
 
 export default function AccountsReceivable() {
-  const { currentPage, pageRange, goToPage } = usePagination({
+  const { currentPage, pageRange, goToPage, setTotalPages } = usePagination({
     totalPages: 1,
   });
-  const { accountsReceivable, loading, refetch } = useAccountsReceivable({
-    Page: currentPage,
-    PerPage: 10,
+
+  const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState("todos");
+  const [filter, setFilter] = useState<FiltrosReceber>({
+    typeDate: "vencimento",
   });
+
+  const isDueDate = filter.typeDate === "vencimento";
+
+  const { accountsReceivable, loading, totalPages, refetch } =
+    useAccountsReceivable({
+      Page: currentPage,
+      PerPage: 10,
+      Search: search,
+      status:
+        statusFilter === "todos"
+          ? undefined
+          : (statusFilter as AccountsReceivablePaginationParams["status"]),
+      StartDate:
+        !isDueDate && filter?.startDate
+          ? format(filter.startDate, "yyyy-MM-dd")
+          : "",
+      EndDate:
+        !isDueDate && filter?.endDate
+          ? format(filter.endDate, "yyyy-MM-dd")
+          : "",
+      startDueDate:
+        isDueDate && filter?.startDate
+          ? format(filter.startDate, "yyyy-MM-dd")
+          : "",
+      endDueDate:
+        isDueDate && filter?.endDate
+          ? format(filter.endDate, "yyyy-MM-dd")
+          : "",
+    });
 
   useEffect(() => {
     refetch();
-  }, [currentPage, refetch]);
+  }, [currentPage, search, statusFilter, filter, refetch]);
+
+  useEffect(() => {
+    setTotalPages(totalPages || 1);
+  }, [totalPages, setTotalPages]);
 
   const [dialogOpen, setDialogOpen] = useState(false);
 
@@ -67,10 +105,12 @@ export default function AccountsReceivable() {
       />
 
       <BillsFilters
-        searchTerm={""}
-        onSearchTermChange={() => {}}
-        statusFilter={""}
-        onStatusFilterChange={() => {}}
+        searchTerm={search}
+        onSearchTermChange={setSearch}
+        statusFilter={statusFilter}
+        onStatusFilterChange={setStatusFilter}
+        filter={filter}
+        onApplyFilter={setFilter}
       />
 
       <AccountsReceivableTable
@@ -81,7 +121,7 @@ export default function AccountsReceivable() {
 
       <DataPagination
         currentPage={currentPage}
-        totalPages={accountsReceivable?.total_pages || 1}
+        totalPages={totalPages || 1}
         pageRange={pageRange}
         goToPage={goToPage}
       />

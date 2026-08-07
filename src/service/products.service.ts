@@ -12,13 +12,13 @@ export const GetProducts = async (
   PaginationParams: Pagination,
 ): Promise<ProductResponse> => {
   const response = await api.get<ProductResponse>("/product/company", {
-    headers: {
-      Page: PaginationParams.Page,
-      PerPage: PaginationParams.PerPage,
-      StartDate: PaginationParams.StartDate,
-      EndDate: PaginationParams.EndDate,
-      Search: PaginationParams.Search,
-      OrderBy: PaginationParams.OrderBy,
+    params: {
+      page: PaginationParams.Page,
+      perPage: PaginationParams.PerPage,
+      startDate: PaginationParams.StartDate,
+      endDate: PaginationParams.EndDate,
+      search: PaginationParams.Search,
+      orderBy: PaginationParams.OrderBy,
     },
   });
   return response.data;

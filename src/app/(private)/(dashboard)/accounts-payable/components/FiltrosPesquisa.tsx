@@ -1,6 +1,6 @@
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
@@ -8,7 +8,31 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Search, Filter, Download } from "lucide-react";
+import { Search } from "lucide-react";
+import FilterPopOver, { FiltrosReceber } from "@/components/FilterPopOver";
+
+const types: { value: string; label: string; hint: string }[] = [
+  {
+    value: "vencimento",
+    label: "Data de vencimento",
+    hint: "Quando a conta vence",
+  },
+  {
+    value: "agendamento",
+    label: "Data de agendamento",
+    hint: "Quando o pagamento foi agendado",
+  },
+  {
+    value: "pagamento",
+    label: "Data de pagamento",
+    hint: "Quando a conta foi paga",
+  },
+  {
+    value: "criacao",
+    label: "Data de criação",
+    hint: "Quando a conta foi lançada",
+  },
+];
 
 interface ContasPagarFiltrosPesquisaProps {
   searchTerm: string;
@@ -18,6 +42,8 @@ interface ContasPagarFiltrosPesquisaProps {
   categoriaFilter: string;
   onCategoriaFilterChange: (value: string) => void;
   categorias: string[];
+  filter: FiltrosReceber;
+  onApplyFilter: (filtros: FiltrosReceber) => void;
 }
 
 export function ContasPagarFiltrosPesquisa({
@@ -28,7 +54,11 @@ export function ContasPagarFiltrosPesquisa({
   categoriaFilter,
   onCategoriaFilterChange,
   categorias,
+  filter,
+  onApplyFilter,
 }: ContasPagarFiltrosPesquisaProps) {
+  const [filterOpen, setFilterOpen] = useState(false);
+
   return (
     <Card>
       <CardHeader>
@@ -53,10 +83,10 @@ export function ContasPagarFiltrosPesquisa({
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="todos">Todos</SelectItem>
-              <SelectItem value="pendente">Pendente</SelectItem>
-              <SelectItem value="agendado">Agendado</SelectItem>
-              <SelectItem value="pago">Pago</SelectItem>
-              <SelectItem value="vencido">Vencido</SelectItem>
+              <SelectItem value="pending">Pendente</SelectItem>
+              <SelectItem value="scheduled">Agendado</SelectItem>
+              <SelectItem value="paid">Pago</SelectItem>
+              <SelectItem value="overdue">Vencido</SelectItem>
             </SelectContent>
           </Select>
           <Select
@@ -75,14 +105,14 @@ export function ContasPagarFiltrosPesquisa({
               ))}
             </SelectContent>
           </Select>
-          <Button variant="outline">
-            <Filter className="h-4 w-4 mr-2" />
-            Filtros Avançados
-          </Button>
-          <Button variant="outline">
-            <Download className="h-4 w-4 mr-2" />
-            Exportar
-          </Button>
+
+          <FilterPopOver
+            open={filterOpen}
+            onOpenChange={setFilterOpen}
+            value={filter}
+            onApply={onApplyFilter}
+            types={types}
+          />
         </div>
       </CardContent>
     </Card>

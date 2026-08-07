@@ -25,7 +25,7 @@ import {
 } from "@/components/ui/table";
 
 import { Header } from "@/components/Header";
-import { FilterShearch } from "@/components/FilterShearch";
+import { FilterShearch } from "@/app/(private)/(dashboard)/clients/components/FilterShearch";
 import { useClients } from "@/hooks/useClients";
 import { formatPhoneNational } from "@/utils/phoneFormat";
 import { formatDocument } from "@/utils/documentFormat";
@@ -38,33 +38,41 @@ import { toast } from "sonner";
 
 import { DataPagination } from "@/components/DataPagination";
 import { usePagination } from "@/hooks/usePagination";
+import { FiltrosReceber } from "@/components/FilterPopOver";
+import { format } from "date-fns";
 
 export default function Clientes() {
   const [searchTerm, setSearchTerm] = useState("");
-  const { currentPage, goToPage, pageRange } = usePagination({
+  const { currentPage, goToPage, pageRange, setTotalPages } = usePagination({
     totalPages: 1,
   });
-  console.log("currentPage", currentPage);
+  const [filter, setFilter] = useState<FiltrosReceber>({
+    typeDate: "criacao",
+  });
+  const [statusFilter, setStatusFilter] = useState<
+    "active" | "inactive" | "all"
+  >("all");
 
   const { clients, totalPages, loading, refetch } = useClients({
     Page: currentPage,
     PerPage: 10,
+    Search: searchTerm,
+    StartDate:
+      (filter?.startDate && format(filter.startDate, "yyyy-MM-dd")) ?? "",
+    EndDate: (filter?.endDate && format(filter.endDate, "yyyy-MM-dd")) ?? "",
+    Status: statusFilter,
   });
 
   useEffect(() => {
     refetch();
-  }, [currentPage, refetch]);
+  }, [currentPage, searchTerm, filter, statusFilter, refetch]);
+
+  useEffect(() => {
+    setTotalPages(totalPages || 1);
+  }, [totalPages, setTotalPages]);
 
   const [clientsSelected, setClientsSelected] = useState<Client>({} as Client);
   const [openDialog, setOpenDialog] = useState(false);
-
-  const filteredClientes = clients.filter(
-    (client) =>
-      client.full_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      client.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      client.cpf.includes(searchTerm) ||
-      client.mobile_phone.includes(searchTerm),
-  );
 
   const getStatusBadge = (date?: Date | null) => {
     let status = "Ativo";
@@ -114,7 +122,14 @@ export default function Clientes() {
         title="Bem-vindo à página clientes!"
         text="Aqui você pode visualizar todos os clientes cadastrados no sistema.."
       />
-      <FilterShearch searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
+      <FilterShearch
+        searchTerm={searchTerm}
+        setSearchTerm={setSearchTerm}
+        filter={filter}
+        onApplyFilter={setFilter}
+        setStatusFilter={setStatusFilter}
+        statusFilter={statusFilter}
+      />
       {/* Tabela de Clientes */}
       <Card className="pt-0">
         <Table>
@@ -129,7 +144,7 @@ export default function Clientes() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {filteredClientes.map((cliente) => (
+            {clients.map((cliente) => (
               <TableRow key={cliente.id}>
                 <TableCell className="font-medium">
                   <div className="flex items-center gap-2">
@@ -202,7 +217,7 @@ export default function Clientes() {
           </TableBody>
         </Table>
 
-        {filteredClientes.length === 0 && (
+        {clients.length === 0 && (
           <div className="text-center py-8 text-muted-foreground">
             Nenhum cliente encontrado
           </div>
@@ -211,7 +226,7 @@ export default function Clientes() {
 
       <DataPagination
         currentPage={currentPage}
-        totalPages={totalPages}
+        totalPages={totalPages || 1}
         pageRange={pageRange}
         goToPage={goToPage}
       />

@@ -15,7 +15,7 @@ import { FiltrosReceber } from "@/components/FilterPopOver";
 import { format } from "date-fns";
 
 export default function Stock() {
-  const { currentPage, goToPage, pageRange } = usePagination({
+  const { currentPage, goToPage, pageRange, setTotalPages } = usePagination({
     totalPages: 1,
   });
   console.log("currentPage", currentPage);
@@ -73,6 +73,10 @@ export default function Stock() {
     refetch();
   }, [currentPage, refetch]);
 
+  useEffect(() => {
+    setTotalPages(totalPages || 1);
+  }, [totalPages, setTotalPages]);
+
   if (loading) {
     return (
       <div className="flex justify-center items-center w-full h-full">
@@ -112,7 +116,7 @@ export default function Stock() {
         />
         <DataPagination
           currentPage={currentPage}
-          totalPages={totalPages}
+          totalPages={totalPages || 1}
           pageRange={pageRange}
           goToPage={goToPage}
         />

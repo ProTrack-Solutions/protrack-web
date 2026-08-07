@@ -1,4 +1,16 @@
 import { BillsPayableStatus } from "@/enum/billsPayableStatus.enum";
+import { Pagination } from "./pagination.interface";
+
+export interface BillsPayablePaginationParams extends Pagination {
+  status?: BillsPayableStatus | string;
+  startDueDate?: string;
+  endDueDate?: string;
+  startScheduledDate?: string;
+  endScheduledDate?: string;
+  startPaymentDate?: string;
+  endPaymentDate?: string;
+  orderField?: "due_date" | "scheduled_date" | "payment_date" | "created_at";
+}
 
 export interface GetBillsPayableSummaryResponse {
   general_status: string;
