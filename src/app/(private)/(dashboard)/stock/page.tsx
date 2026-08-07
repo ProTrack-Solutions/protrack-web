@@ -15,18 +15,16 @@ import { FiltrosReceber } from "@/components/FilterPopOver";
 import { format } from "date-fns";
 
 export default function Stock() {
-  const { currentPage, goToPage, pageRange, setTotalPages } = usePagination({
-    totalPages: 1,
-  });
-  console.log("currentPage", currentPage);
+  const { currentPage, displayPage, goToPage, pageRange, setTotalPages } =
+    usePagination({
+      totalPages: 1,
+    });
 
   const [searchTerm, setSearchTerm] = useState("");
 
   const [filter, setFilter] = useState<FiltrosReceber>({
     typeDate: "criacao",
   });
-
-  console.log("searchTerm", searchTerm);
 
   const {
     products,
@@ -66,8 +64,6 @@ export default function Stock() {
       toast.error("Erro ao gerar etiquetas!");
     }
   };
-
-  console.log("totalPages", totalPages);
 
   useEffect(() => {
     refetch();
@@ -115,7 +111,7 @@ export default function Stock() {
           setSelectedRows={setSelectedRows}
         />
         <DataPagination
-          currentPage={currentPage}
+          currentPage={displayPage}
           totalPages={totalPages || 1}
           pageRange={pageRange}
           goToPage={goToPage}
