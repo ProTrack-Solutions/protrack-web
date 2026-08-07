@@ -1,11 +1,11 @@
 import {
+  BillsPayablePaginationParams,
   CreateBillsPayableParams,
   GetBillsPayableSummaryResponse,
   ListBillsPayableResponse,
   PaymentBillParams,
   SheduleBillParams,
 } from "@/interfaces/bills-payable.interface";
-import { Pagination } from "@/interfaces/pagination.interface";
 import { api } from "./api";
 
 export const GetBillsPayableSummary =
@@ -17,14 +17,26 @@ export const GetBillsPayableSummary =
   };
 
 export const ListBillsPayable = async (
-  pagination: Pagination,
+  pagination: BillsPayablePaginationParams,
 ): Promise<ListBillsPayableResponse> => {
   const response = await api.get<ListBillsPayableResponse>(
     "/bills-payable/list",
     {
-      headers: {
-        Page: pagination.Page,
-        PerPage: pagination.PerPage,
+      params: {
+        page: pagination.Page,
+        perPage: pagination.PerPage,
+        search: pagination.Search,
+        orderBy: pagination.OrderBy,
+        startDate: pagination.StartDate,
+        endDate: pagination.EndDate,
+        status: pagination.status,
+        startDueDate: pagination.startDueDate,
+        endDueDate: pagination.endDueDate,
+        startScheduledDate: pagination.startScheduledDate,
+        endScheduledDate: pagination.endScheduledDate,
+        startPaymentDate: pagination.startPaymentDate,
+        endPaymentDate: pagination.endPaymentDate,
+        orderField: pagination.orderField,
       },
     },
   );

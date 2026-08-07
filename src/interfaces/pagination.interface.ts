@@ -4,5 +4,5 @@ export interface Pagination {
   StartDate?: string;
   EndDate?: string;
   Search?: string;
-  OrderBy?: string;
+  OrderBy?: "asc" | "desc";
 }

@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useMemo, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { format } from "date-fns";
 
 import { SaleListStats } from "./components/SaleListStats";
 import { SaleListSearch } from "./components/SaleListSearch";
@@ -12,14 +13,21 @@ import { Loading } from "@/components/Loading";
 import { Header } from "@/components/Header";
 import { DataPagination } from "@/components/DataPagination";
 import { usePagination } from "@/hooks/usePagination";
+import { FiltrosReceber } from "@/components/FilterPopOver";
+import { SalePaginationParams } from "@/interfaces/sale.interface";
 
 export default function SalesList() {
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("todos");
+  const [paymentMethodFilter, setPaymentMethodFilter] = useState("todos");
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
-  const { currentPage, pageRange, goToPage } = usePagination({
+  const { currentPage, pageRange, goToPage, setTotalPages } = usePagination({
     totalPages: 1,
+  });
+
+  const [filter, setFilter] = useState<FiltrosReceber>({
+    typeDate: "criacao",
   });
 
   const {
@@ -34,22 +42,37 @@ export default function SalesList() {
   } = useSales({
     Page: currentPage,
     PerPage: 10,
+    Search: search,
+    sortBy: "sale_at",
+    OrderBy: "desc",
+    saleStatus:
+      statusFilter === "todos"
+        ? undefined
+        : (statusFilter as SalePaginationParams["saleStatus"]),
+    paymentMethod:
+      paymentMethodFilter === "todos"
+        ? undefined
+        : (paymentMethodFilter as SalePaginationParams["paymentMethod"]),
+    saleEndDate:
+      (filter?.endDate && format(filter.endDate, "yyyy-MM-dd")) ?? "",
+    saleStartDate:
+      (filter?.startDate && format(filter.startDate, "yyyy-MM-dd")) ?? "",
   });
 
   useEffect(() => {
     refetch();
-  }, [currentPage, refetch]);
+  }, [
+    currentPage,
+    search,
+    filter,
+    statusFilter,
+    paymentMethodFilter,
+    refetch,
+  ]);
 
-  const filteredVendas = useMemo(() => {
-    return sales.filter((v) => {
-      const matchSearch =
-        v.sale.customer_name.toLowerCase().includes(search.toLowerCase()) ||
-        v.sale.sale_id.toLowerCase().includes(search.toLowerCase());
-      const matchStatus =
-        statusFilter === "todos" || v.sale.sale_status === statusFilter;
-      return matchSearch && matchStatus;
-    });
-  }, [search, statusFilter, sales]);
+  useEffect(() => {
+    setTotalPages(totalPages || 1);
+  }, [totalPages, setTotalPages]);
 
   if (loading) {
     return (
@@ -82,10 +105,14 @@ export default function SalesList() {
         setSearch={setSearch}
         statusFilter={statusFilter}
         setStatusFilter={setStatusFilter}
+        paymentMethodFilter={paymentMethodFilter}
+        setPaymentMethodFilter={setPaymentMethodFilter}
+        filter={filter}
+        onApplyFilter={setFilter}
       />
 
       <SaleListTable
-        filteredVendas={filteredVendas}
+        filteredVendas={sales}
         expandedId={expandedId}
         setExpandedId={setExpandedId}
       />

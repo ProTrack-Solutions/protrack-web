@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button";
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import {
@@ -8,13 +8,29 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Download, Filter, Search } from "lucide-react";
+import { Search } from "lucide-react";
+import FilterPopOver, { FiltrosReceber } from "@/components/FilterPopOver";
+
+const types: { value: string; label: string; hint: string }[] = [
+  {
+    value: "vencimento",
+    label: "Data de vencimento",
+    hint: "Quando a conta vence",
+  },
+  {
+    value: "criacao",
+    label: "Data de criação",
+    hint: "Quando a conta foi lançada",
+  },
+];
 
 interface FiltrosContasProps {
   searchTerm: string;
   onSearchTermChange: (value: string) => void;
   statusFilter: string;
   onStatusFilterChange: (value: string) => void;
+  filter: FiltrosReceber;
+  onApplyFilter: (filtros: FiltrosReceber) => void;
 }
 
 export function BillsFilters({
@@ -22,7 +38,11 @@ export function BillsFilters({
   onSearchTermChange,
   statusFilter,
   onStatusFilterChange,
+  filter,
+  onApplyFilter,
 }: FiltrosContasProps) {
+  const [filterOpen, setFilterOpen] = useState(false);
+
   return (
     <Card>
       <CardHeader>
@@ -48,20 +68,20 @@ export function BillsFilters({
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="todos">Todos</SelectItem>
-              <SelectItem value="pendente">Pendente</SelectItem>
-              <SelectItem value="parcial">Parcial</SelectItem>
-              <SelectItem value="pago">Pago</SelectItem>
-              <SelectItem value="vencido">Vencido</SelectItem>
+              <SelectItem value="pending">Pendente</SelectItem>
+              <SelectItem value="partial">Parcial</SelectItem>
+              <SelectItem value="paid">Pago</SelectItem>
+              <SelectItem value="overdue">Vencido</SelectItem>
             </SelectContent>
           </Select>
-          <Button variant="outline">
-            <Filter className="h-4 w-4 mr-2" />
-            Mais Filtros
-          </Button>
-          <Button variant="outline">
-            <Download className="h-4 w-4 mr-2" />
-            Exportar
-          </Button>
+
+          <FilterPopOver
+            open={filterOpen}
+            onOpenChange={setFilterOpen}
+            value={filter}
+            onApply={onApplyFilter}
+            types={types}
+          />
         </div>
       </CardContent>
     </Card>

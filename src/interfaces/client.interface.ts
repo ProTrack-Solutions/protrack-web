@@ -1,4 +1,9 @@
 import { Gender } from "@/enum/gender.enum";
+import { Pagination } from "./pagination.interface";
+
+export interface ClientsPaginationParams extends Pagination {
+  Status?: "active" | "inactive" | "all";
+}
 
 export interface Client {
   id: string;

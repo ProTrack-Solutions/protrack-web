@@ -1,4 +1,5 @@
-import { Search, Filter } from "lucide-react";
+import { useState } from "react";
+import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -8,12 +9,27 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import FilterPopOver, { FiltrosReceber } from "@/components/FilterPopOver";
+import { PaymentMethod } from "@/enum/methodPayments";
+import { getPaymentMethodLabel } from "@/utils/paymentMethodFormat";
+
+const types: { value: string; label: string; hint: string }[] = [
+  {
+    value: "venda",
+    label: "Data da venda",
+    hint: "Quando a venda foi realizada",
+  },
+];
 
 interface SaleListSearchProps {
   search: string;
   setSearch: (value: string) => void;
   statusFilter: string;
   setStatusFilter: (value: string) => void;
+  paymentMethodFilter: string;
+  setPaymentMethodFilter: (value: string) => void;
+  filter: FiltrosReceber;
+  onApplyFilter: (filtros: FiltrosReceber) => void;
 }
 
 export const SaleListSearch = ({
@@ -21,7 +37,13 @@ export const SaleListSearch = ({
   setSearch,
   statusFilter,
   setStatusFilter,
+  paymentMethodFilter,
+  setPaymentMethodFilter,
+  filter,
+  onApplyFilter,
 }: SaleListSearchProps) => {
+  const [filterOpen, setFilterOpen] = useState(false);
+
   return (
     <Card>
       <CardContent className="pt-6">
@@ -37,17 +59,42 @@ export const SaleListSearch = ({
           </div>
           <Select value={statusFilter} onValueChange={setStatusFilter}>
             <SelectTrigger className="w-full sm:w-45">
-              <Filter className="h-4 w-4 mr-2 text-muted-foreground" />
               <SelectValue placeholder="Selecione" />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="todos">Todos os Status</SelectItem>
-              <SelectItem value="pago">Pago</SelectItem>
-              <SelectItem value="pendente">Pendente</SelectItem>
-              <SelectItem value="aprazo">A Prazo</SelectItem>
-              <SelectItem value="cancelado">Cancelado</SelectItem>
+              <SelectItem value="paid">Pago</SelectItem>
+              <SelectItem value="pending">Pendente</SelectItem>
+              <SelectItem value="overdue">Atrasado</SelectItem>
+              <SelectItem value="partial">Parcial</SelectItem>
+              <SelectItem value="canceled">Cancelado</SelectItem>
             </SelectContent>
           </Select>
+
+          <Select
+            value={paymentMethodFilter}
+            onValueChange={setPaymentMethodFilter}
+          >
+            <SelectTrigger className="w-full sm:w-45">
+              <SelectValue placeholder="Forma de pagamento" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="todos">Todas as Formas</SelectItem>
+              {Object.values(PaymentMethod).map((method) => (
+                <SelectItem key={method} value={method}>
+                  {getPaymentMethodLabel(method)}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
+          <FilterPopOver
+            open={filterOpen}
+            onOpenChange={setFilterOpen}
+            value={filter}
+            onApply={onApplyFilter}
+            types={types}
+          />
         </div>
       </CardContent>
     </Card>

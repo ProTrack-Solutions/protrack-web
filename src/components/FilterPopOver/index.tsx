@@ -41,7 +41,7 @@ const FilterPopOver = ({
       <PopoverContent
         className="w-95 sm:w-110 p-4"
         side="right"
-        align="start"
+        align="center"
         sideOffset={8}
       >
         {open && (

@@ -1,8 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
 import { ListAccountsReceivable } from "@/service/accounts-receivable.service";
-import { Pagination } from "@/interfaces/pagination.interface";
+import { AccountsReceivablePaginationParams } from "@/interfaces/accounts-receivable.interface";
 
-export const useAccountsReceivable = (pagination: Pagination) => {
+export const useAccountsReceivable = (
+  paginationParams?: AccountsReceivablePaginationParams,
+) => {
+  const pagination = paginationParams ?? { Page: 1, PerPage: 10 };
+
   const { data, isLoading, isError, refetch } = useQuery({
     queryKey: ["accounts-receivable", pagination.Page, pagination.PerPage],
     queryFn: () => ListAccountsReceivable(pagination),
@@ -16,7 +20,7 @@ export const useAccountsReceivable = (pagination: Pagination) => {
     loading: isLoading,
     totalPages: data?.total_pages || 0,
     error: isError
-      ? "Erro ao carregar os produtos. Por favor, tente novamente."
+      ? "Erro ao carregar as contas a receber. Por favor, tente novamente."
       : null,
     refetch,
   };

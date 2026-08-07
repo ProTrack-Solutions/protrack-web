@@ -1,3 +1,13 @@
+import { Pagination } from "./pagination.interface";
+
+export interface AccountsReceivablePaginationParams extends Pagination {
+  saleId?: string;
+  status?: "pending" | "paid" | "overdue" | "partial";
+  startDueDate?: string;
+  endDueDate?: string;
+  orderField?: "due_date" | "created_at";
+}
+
 export interface AccountsReceivable {
   balance: number;
   company_id: string;
