@@ -24,7 +24,7 @@ export default function PlanStep({
               key={p.id}
               type="button"
               onClick={() => setSelectedPlan(p)}
-              className={`w-full text-left rounded-xl border-2 p-4 transition-all relative ${
+              className={`w-full text-left rounded-xl border-2 p-4 transition-all relative cursor-pointer ${
                 isSelected
                   ? "border-blue-600 bg-blue-50/50 shadow-md"
                   : "border-border hover:border-blue-300"

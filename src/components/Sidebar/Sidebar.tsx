@@ -93,7 +93,7 @@ export function Sidebar({ children }: SidebarProps) {
             {/* Dropdown de Configurações */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <button className="ml-2 p-1 rounded hover:bg-gray-100">
+                <button className="ml-2 p-1 rounded hover:bg-gray-100 cursor-pointer">
                   <MoreVertical size={20} className="cursor-pointer" />
                 </button>
               </DropdownMenuTrigger>

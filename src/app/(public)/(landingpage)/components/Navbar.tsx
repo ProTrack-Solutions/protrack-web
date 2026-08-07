@@ -55,7 +55,7 @@ export function Navbar({ scrolled }: NavbarProps) {
           <button
             aria-label="Abrir menu"
             onClick={() => setMenuOpen((v) => !v)}
-            className="ml-1 rounded-lg border border-border p-2 text-foreground md:hidden"
+            className="ml-1 rounded-lg border border-border p-2 text-foreground md:hidden cursor-pointer"
           >
             <Menu className="h-4 w-4" />
           </button>
