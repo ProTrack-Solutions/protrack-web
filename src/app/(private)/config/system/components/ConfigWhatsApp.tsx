@@ -154,7 +154,7 @@ export const ConfigWhatsApp = () => {
                 <Label htmlFor="session">Nome da Sessão</Label>
                 <Input
                   value={connectionsState?.instance_name ?? ""}
-                  placeholder="Ex: Principal, Vendas..."
+                  placeholder="Digite aqui"
                   disabled
                 />
               </div>

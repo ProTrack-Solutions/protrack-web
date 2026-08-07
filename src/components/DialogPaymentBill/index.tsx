@@ -207,7 +207,7 @@ export const DialogPaymentBill = ({
                   onValueChange={setPaymentMethodId}
                 >
                   <SelectTrigger id="payment_method_id">
-                    <SelectValue placeholder="Selecione a forma de pagamento" />
+                    <SelectValue placeholder="Selecione" />
                   </SelectTrigger>
                   <SelectContent>
                     {Array.isArray(paymentMethods) &&

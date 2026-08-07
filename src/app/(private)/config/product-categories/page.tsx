@@ -73,7 +73,7 @@ export default function ProductCategoriesConfigPage() {
             <div className="flex-1 space-y-2">
               <Label>Nome</Label>
               <Input
-                placeholder="Ex: Vestimenta, Calçados..."
+                placeholder="Digite aqui"
                 value={novaCatProduto.name}
                 onChange={(e) =>
                   setNovaCatProduto((prev) => ({

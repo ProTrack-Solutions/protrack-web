@@ -107,10 +107,7 @@ export default function Departments() {
         <CardContent className="space-y-4">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder="Buscar por nome ou descrição..."
-              className="pl-9"
-            />
+            <Input placeholder="Pesquisar..." className="pl-9" />
           </div>
 
           {Array.isArray(departments) && departments?.length === 0 ? (

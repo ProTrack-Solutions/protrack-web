@@ -14,7 +14,7 @@ export function Contato({ formData, onChange }: ContatoProps) {
     <Card className="border-border/50">
       <CardContent className="p-6 space-y-5">
         <div className="flex items-center gap-3 pb-2 border-b border-border/50">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-sm">
+          <div className="w-10 h-10 rounded-xl bg-linear-to-br from-indigo-500 to-purple-600 flex items-center justify-center shadow-sm">
             <Phone className="w-5 h-5 text-white" />
           </div>
           <div>
@@ -36,7 +36,7 @@ export function Contato({ formData, onChange }: ContatoProps) {
             </Label>
             <Input
               id="whatsapp"
-              placeholder="(00) 00000-0000"
+              placeholder="Digite aqui"
               value={formData.whatsapp}
               onChange={(e) => onChange("whatsapp", e.target.value)}
               className="h-11"
@@ -49,7 +49,7 @@ export function Contato({ formData, onChange }: ContatoProps) {
             </Label>
             <Input
               id="mobile_phone"
-              placeholder="(00) 00000-0000"
+              placeholder="Digite aqui"
               value={formData.mobile_phone}
               onChange={(e) => onChange("mobile_phone", e.target.value)}
               className="h-11"
@@ -62,7 +62,7 @@ export function Contato({ formData, onChange }: ContatoProps) {
             </Label>
             <Input
               id="home_phone"
-              placeholder="(00) 0000-0000"
+              placeholder="Digite aqui"
               value={formData.home_phone}
               onChange={(e) => onChange("home_phone", e.target.value)}
               className="h-11"
@@ -80,7 +80,7 @@ export function Contato({ formData, onChange }: ContatoProps) {
             <Input
               id="email"
               type="email"
-              placeholder="cliente@email.com"
+              placeholder="Digite aqui"
               value={formData.email}
               onChange={(e) => onChange("email", e.target.value)}
               className="h-11"
