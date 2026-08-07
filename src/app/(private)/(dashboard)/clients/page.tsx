@@ -43,9 +43,10 @@ import { format } from "date-fns";
 
 export default function Clientes() {
   const [searchTerm, setSearchTerm] = useState("");
-  const { currentPage, goToPage, pageRange, setTotalPages } = usePagination({
-    totalPages: 1,
-  });
+  const { currentPage, displayPage, goToPage, pageRange, setTotalPages } =
+    usePagination({
+      totalPages: 1,
+    });
   const [filter, setFilter] = useState<FiltrosReceber>({
     typeDate: "criacao",
   });
@@ -225,7 +226,7 @@ export default function Clientes() {
       </Card>
 
       <DataPagination
-        currentPage={currentPage}
+        currentPage={displayPage}
         totalPages={totalPages || 1}
         pageRange={pageRange}
         goToPage={goToPage}

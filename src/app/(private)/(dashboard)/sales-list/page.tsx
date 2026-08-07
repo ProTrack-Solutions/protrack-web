@@ -22,9 +22,10 @@ export default function SalesList() {
   const [paymentMethodFilter, setPaymentMethodFilter] = useState("todos");
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
-  const { currentPage, pageRange, goToPage, setTotalPages } = usePagination({
-    totalPages: 1,
-  });
+  const { currentPage, displayPage, pageRange, goToPage, setTotalPages } =
+    usePagination({
+      totalPages: 1,
+    });
 
   const [filter, setFilter] = useState<FiltrosReceber>({
     typeDate: "criacao",
@@ -117,7 +118,7 @@ export default function SalesList() {
         setExpandedId={setExpandedId}
       />
       <DataPagination
-        currentPage={currentPage}
+        currentPage={displayPage}
         totalPages={totalPages || 1}
         pageRange={pageRange}
         goToPage={goToPage}

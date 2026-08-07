@@ -6,9 +6,16 @@ export const useProducts = (paginationParams?: Pagination) => {
   const pagination = paginationParams ?? { Page: 1, PerPage: 10 };
 
   const { data, isLoading, isError, refetch } = useQuery({
-    queryKey: ["products-stock", pagination.Page, pagination.PerPage],
+    queryKey: [
+      "products-stock",
+      pagination.Page,
+      pagination.PerPage,
+      pagination.Search,
+      pagination.StartDate,
+      pagination.EndDate,
+      pagination.OrderBy,
+    ],
     queryFn: () => GetProducts(pagination),
-
     refetchInterval: 10000,
     refetchOnWindowFocus: true,
   });

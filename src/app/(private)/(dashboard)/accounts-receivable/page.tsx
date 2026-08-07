@@ -17,9 +17,10 @@ import { AccountsReceivablePaginationParams } from "@/interfaces/accounts-receiv
 import { format } from "date-fns";
 
 export default function AccountsReceivable() {
-  const { currentPage, pageRange, goToPage, setTotalPages } = usePagination({
-    totalPages: 1,
-  });
+  const { currentPage, displayPage, pageRange, goToPage, setTotalPages } =
+    usePagination({
+      totalPages: 1,
+    });
 
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("todos");
@@ -120,7 +121,7 @@ export default function AccountsReceivable() {
       />
 
       <DataPagination
-        currentPage={currentPage}
+        currentPage={displayPage}
         totalPages={totalPages || 1}
         pageRange={pageRange}
         goToPage={goToPage}

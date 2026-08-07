@@ -27,11 +27,21 @@ export function usePagination({
   // a página atual ficar fora do intervalo, exibe a última página válida sem
   // perder o "currentPage" real — ele volta a valer assim que o total crescer
   // de novo (ex.: o filtro for removido).
-  const safeCurrentPage = Math.min(currentPage, total);
+  //
+  // Importante: isso é só para EXIBIÇÃO (destaque na paginação, texto
+  // "página X de Y"). O `currentPage` "cru" continua sendo o que deve ser
+  // enviado como parâmetro para a API. `total` só é atualizado depois que a
+  // API responde (via `setTotalPages`, chamado num efeito no componente que
+  // consome esse hook); se o valor clampado fosse usado como `Page` da
+  // requisição, uma mudança em `total` alteraria esse `currentPage`, o que
+  // dispararia uma nova busca — cuja resposta poderia alterar `total` de
+  // novo, e assim por diante, um ciclo que estoura o limite de updates do
+  // React ("Maximum update depth exceeded").
+  const displayPage = Math.min(currentPage, total);
 
   const pageRange = useMemo(
-    () => getPageRange(safeCurrentPage, total),
-    [safeCurrentPage, total],
+    () => getPageRange(displayPage, total),
+    [displayPage, total],
   );
 
   function goToPage(page: number) {
@@ -40,7 +50,8 @@ export function usePagination({
   }
 
   return {
-    currentPage: safeCurrentPage,
+    currentPage,
+    displayPage,
     setCurrentPage,
     totalPages: total,
     setTotalPages,
