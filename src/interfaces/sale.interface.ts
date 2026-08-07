@@ -1,5 +1,29 @@
 import { SaleStatus } from "@/utils/statusSales";
 import { PaymentMethod } from "@/enum/methodPayments";
+import { Pagination } from "./pagination.interface";
+
+export interface SalePaginationParams extends Pagination {
+  saleStatus?:
+    | "pending"
+    | "paid"
+    | "overdue"
+    | "scheduled"
+    | "canceled"
+    | "partial";
+  paymentMethod?:
+    | "cash"
+    | "credit_card"
+    | "debit_card"
+    | "pix"
+    | "bank_transfer"
+    | "installments"
+    | "other";
+  paymentStartDate?: string; // formato: YYYY-MM-DD
+  paymentEndDate?: string; // formato: YYYY-MM-DD
+  saleStartDate?: string; // formato: YYYY-MM-DD
+  saleEndDate?: string; // formato: YYYY-MM-DD
+  sortBy?: "sale_at" | "created_at";
+}
 
 export const initialSaleFormData: CreateSaleParams = {
   customer_id: "",

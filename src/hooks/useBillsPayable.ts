@@ -1,8 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
 import { ListBillsPayable } from "@/service/bills-payable.service";
-import { Pagination } from "@/interfaces/pagination.interface";
+import { BillsPayablePaginationParams } from "@/interfaces/bills-payable.interface";
 
-export const useBillsPayable = (pagination: Pagination) => {
+export const useBillsPayable = (
+  paginationParams?: BillsPayablePaginationParams,
+) => {
+  const pagination = paginationParams ?? { Page: 1, PerPage: 10 };
+
   const { data, isLoading, isError, refetch } = useQuery({
     queryKey: ["bills-payable", pagination.Page, pagination.PerPage],
     queryFn: () => ListBillsPayable(pagination),
@@ -20,7 +24,7 @@ export const useBillsPayable = (pagination: Pagination) => {
     totalPages: data?.total_pages || 0,
     loading: isLoading,
     error: isError
-      ? "Erro ao carregar os produtos. Por favor, tente novamente."
+      ? "Erro ao carregar as contas a pagar. Por favor, tente novamente."
       : null,
     refetch,
   };

@@ -1,8 +1,10 @@
-import { Pagination } from "@/interfaces/pagination.interface";
+import { SalePaginationParams } from "@/interfaces/sale.interface";
 import { GetSales } from "@/service/sale.service";
 import { useQuery } from "@tanstack/react-query";
 
-export const useSales = (pagination: Pagination) => {
+export const useSales = (paginationParams?: SalePaginationParams) => {
+  const pagination = paginationParams ?? { Page: 1, PerPage: 10 };
+
   const { data, isLoading, isError, refetch } = useQuery({
     queryKey: ["sales", pagination.Page, pagination.PerPage],
     queryFn: () => GetSales(pagination),

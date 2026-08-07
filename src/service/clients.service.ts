@@ -1,10 +1,10 @@
 import {
   ClienteFormData,
   ClientResponse,
+  ClientsPaginationParams,
   UpdatedClient,
 } from "@/interfaces/client.interface";
 import { api } from "./api";
-import { Pagination } from "@/interfaces/pagination.interface";
 
 export const CreateClient = async (params: ClienteFormData): Promise<void> => {
   const response = await api.post("/customers", params);
@@ -12,12 +12,17 @@ export const CreateClient = async (params: ClienteFormData): Promise<void> => {
 };
 
 export const GetClient = async (
-  pagination: Pagination,
+  pagination: ClientsPaginationParams,
 ): Promise<ClientResponse> => {
   const response = await api.get("/customers/list", {
-    headers: {
-      Page: pagination.Page,
-      PerPage: pagination.PerPage,
+    params: {
+      page: pagination.Page,
+      perPage: pagination.PerPage,
+      search: pagination.Search,
+      startDate: pagination.StartDate,
+      endDate: pagination.EndDate,
+      orderBy: pagination.OrderBy,
+      status: pagination.Status,
     },
   });
 
