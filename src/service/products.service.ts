@@ -15,6 +15,10 @@ export const GetProducts = async (
     headers: {
       Page: PaginationParams.Page,
       PerPage: PaginationParams.PerPage,
+      StartDate: PaginationParams.StartDate,
+      EndDate: PaginationParams.EndDate,
+      Search: PaginationParams.Search,
+      OrderBy: PaginationParams.OrderBy,
     },
   });
   return response.data;

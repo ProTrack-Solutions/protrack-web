@@ -40,7 +40,7 @@ export function FormInfoBasica({ formData, onChange }: FormInfoBasicaProps) {
           </Label>
           <Input
             id="nome"
-            placeholder="Ex: Camiseta Premium Algodão"
+            placeholder="Digite aqui"
             value={formData.name}
             onChange={(e) => onChange("name", e.target.value)}
             className="h-11"
@@ -105,7 +105,7 @@ export function FormInfoBasica({ formData, onChange }: FormInfoBasicaProps) {
           </Label>
           <Input
             id="codigoBarras"
-            placeholder="0000000000000"
+            placeholder="Digite aqui"
             value={formData.barcode}
             onChange={(e) => onChange("barcode", e.target.value)}
             className="h-11 font-mono"
@@ -119,7 +119,7 @@ export function FormInfoBasica({ formData, onChange }: FormInfoBasicaProps) {
           </Label>
           <Textarea
             id="descricao"
-            placeholder="Detalhes do produto, características, material..."
+            placeholder="Digite aqui"
             value={formData.description}
             onChange={(e) => onChange("description", e.target.value)}
             className="min-h-25 resize-none"

@@ -133,7 +133,7 @@ export const DialogNewAccountsPayable = ({
                   onValueChange={(v) => handleChange("vendor_id", v)}
                 >
                   <SelectTrigger id="new-fornecedor" className="h-11">
-                    <SelectValue placeholder="Selecione o fornecedor" />
+                    <SelectValue placeholder="Selecione" />
                   </SelectTrigger>
                   <SelectContent>
                     {Array.isArray(vendorsIsActive) &&
@@ -182,7 +182,7 @@ export const DialogNewAccountsPayable = ({
                 </Label>
                 <Input
                   id="new-descricao"
-                  placeholder="Ex: Compra de estoque - Pedido #123"
+                  placeholder="Digite aqui"
                   value={formData.description}
                   onChange={(e) => handleChange("description", e.target.value)}
                   className="h-11"
@@ -276,7 +276,7 @@ export const DialogNewAccountsPayable = ({
                   onValueChange={(v) => handleChange("payment_method_id", v)}
                 >
                   <SelectTrigger id="new-forma" className="h-11">
-                    <SelectValue placeholder="Selecione a forma de pagamento" />
+                    <SelectValue placeholder="Selecione" />
                   </SelectTrigger>
                   <SelectContent>
                     {Array.isArray(paymentMethods) &&
@@ -298,7 +298,7 @@ export const DialogNewAccountsPayable = ({
             </Label>
             <Textarea
               id="new-obs"
-              placeholder="Informações adicionais sobre a conta (opcional)..."
+              placeholder="Digite aqui"
               value={formData.notes}
               onChange={(e) => handleChange("notes", e.target.value)}
               className="min-h-22.5 resize-none"

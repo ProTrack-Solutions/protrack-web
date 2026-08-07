@@ -137,7 +137,7 @@ export const DialogReceipt = ({
               </Label>
               <Select value={clientId} onValueChange={setClientId}>
                 <SelectTrigger id="conta_id">
-                  <SelectValue placeholder="Escolha o cliente/conta a receber" />
+                  <SelectValue placeholder="Selecione" />
                 </SelectTrigger>
                 <SelectContent>
                   {clients.map((c) => (
@@ -211,7 +211,7 @@ export const DialogReceipt = ({
                   onValueChange={setPaymentMethodId}
                 >
                   <SelectTrigger id="payment_method_id">
-                    <SelectValue placeholder="Selecione a forma de pagamento" />
+                    <SelectValue placeholder="Selecione" />
                   </SelectTrigger>
                   <SelectContent>
                     {Array.isArray(paymentMethods) &&
@@ -239,7 +239,7 @@ export const DialogReceipt = ({
                   value={note}
                   onChange={(e) => setNote(e.target.value)}
                   className="p-2"
-                  placeholder="Observação..."
+                  placeholder="Digite aqui"
                 />
               </div>
             </div>

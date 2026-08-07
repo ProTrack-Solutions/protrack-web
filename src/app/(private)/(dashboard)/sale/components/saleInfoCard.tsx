@@ -41,7 +41,7 @@ export function SaleInfoCard({ clients }: Props) {
               <Select onValueChange={field.onChange} value={field.value}>
                 <FormControl>
                   <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Selecione um cliente" />
+                    <SelectValue placeholder="Selecione" />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>

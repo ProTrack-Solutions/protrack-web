@@ -153,7 +153,7 @@ export function DialogEditClients({
                 <Input
                   value={formData.full_name}
                   onChange={(e) => handleChange("full_name", e.target.value)}
-                  placeholder="Ex: João da Silva"
+                  placeholder="Digite aqui"
                 />
               </div>
 
@@ -164,7 +164,7 @@ export function DialogEditClients({
                 <Input
                   value={formData.cpf}
                   onChange={(e) => handleChange("cpf", e.target.value)}
-                  placeholder="000.000.000-00"
+                  placeholder="Digite aqui"
                 />
               </div>
 
@@ -173,7 +173,7 @@ export function DialogEditClients({
                 <Input
                   value={formData.rg}
                   onChange={(e) => handleChange("rg", e.target.value)}
-                  placeholder="00.000.000-0"
+                  placeholder="Digite aqui"
                 />
               </div>
 
@@ -269,7 +269,7 @@ export function DialogEditClients({
                 <Input
                   value={formData.whatsapp}
                   onChange={(e) => handleChange("whatsapp", e.target.value)}
-                  placeholder="(00) 00000-0000"
+                  placeholder="Digite aqui"
                 />
               </div>
               <div className="space-y-2">
@@ -277,7 +277,7 @@ export function DialogEditClients({
                 <Input
                   value={formData.mobile_phone}
                   onChange={(e) => handleChange("mobile_phone", e.target.value)}
-                  placeholder="(00) 00000-0000"
+                  placeholder="Digite aqui"
                 />
               </div>
               <div className="space-y-2">
@@ -285,7 +285,7 @@ export function DialogEditClients({
                 <Input
                   value={formData.home_phone}
                   onChange={(e) => handleChange("home_phone", e.target.value)}
-                  placeholder="(00) 0000-0000"
+                  placeholder="Digite aqui"
                 />
               </div>
               <div className="space-y-2">
@@ -297,7 +297,7 @@ export function DialogEditClients({
                   type="email"
                   value={formData.email}
                   onChange={(e) => handleChange("email", e.target.value)}
-                  placeholder="cliente@email.com"
+                  placeholder="Digite aqui"
                 />
               </div>
             </div>
@@ -318,7 +318,7 @@ export function DialogEditClients({
                   onChange={(e) =>
                     handleChange("address_street", e.target.value)
                   }
-                  placeholder="Ex: Rua das Flores"
+                  placeholder="Digite aqui"
                 />
               </div>
               <div className="space-y-2">
@@ -328,7 +328,7 @@ export function DialogEditClients({
                   onChange={(e) =>
                     handleChange("address_number", e.target.value)
                   }
-                  placeholder="123"
+                  placeholder="Digite aqui"
                 />
               </div>
               <div className="space-y-2">
@@ -338,7 +338,7 @@ export function DialogEditClients({
                   onChange={(e) =>
                     handleChange("address_complement", e.target.value)
                   }
-                  placeholder="Apto 45, Bloco B..."
+                  placeholder="Digite aqui"
                 />
               </div>
               <div className="space-y-2">
@@ -348,7 +348,7 @@ export function DialogEditClients({
                   onChange={(e) =>
                     handleChange("address_neighborhood", e.target.value)
                   }
-                  placeholder="Centro"
+                  placeholder="Digite aqui"
                 />
               </div>
               <div className="space-y-2">
@@ -356,7 +356,7 @@ export function DialogEditClients({
                 <Input
                   value={formData.address_city}
                   onChange={(e) => handleChange("address_city", e.target.value)}
-                  placeholder="São Paulo"
+                  placeholder="Digite aqui"
                 />
               </div>
               <div className="space-y-2">
@@ -366,7 +366,7 @@ export function DialogEditClients({
                   onValueChange={(v) => handleChange("address_state", v)}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder="UF" />
+                    <SelectValue placeholder="Selecione" />
                   </SelectTrigger>
                   <SelectContent>
                     {estados.map((uf) => (
@@ -384,7 +384,7 @@ export function DialogEditClients({
                   onChange={(e) =>
                     handleChange("address_zipcode", e.target.value)
                   }
-                  placeholder="00000-000"
+                  placeholder="Digite aqui"
                 />
               </div>
               <div className="space-y-2">
@@ -394,7 +394,7 @@ export function DialogEditClients({
                   onChange={(e) =>
                     handleChange("address_country", e.target.value)
                   }
-                  placeholder="Brasil"
+                  placeholder="Digite aqui"
                 />
               </div>
             </div>

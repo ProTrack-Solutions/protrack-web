@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { EstoqueSearch } from "./components/EstoqueSearch";
 import { EstoqueStats } from "./components/EstoqueStats";
 import { EstoqueTable } from "./components/EstoqueTable";
@@ -11,12 +11,22 @@ import { DataPagination } from "@/components/DataPagination";
 import { usePagination } from "@/hooks/usePagination";
 import { GenerateLabel } from "@/service/label.service";
 import { toast } from "sonner";
+import { FiltrosReceber } from "@/components/FilterPopOver";
+import { format } from "date-fns";
 
 export default function Stock() {
   const { currentPage, goToPage, pageRange } = usePagination({
     totalPages: 1,
   });
   console.log("currentPage", currentPage);
+
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const [filter, setFilter] = useState<FiltrosReceber>({
+    typeDate: "criacao",
+  });
+
+  console.log("searchTerm", searchTerm);
 
   const {
     products,
@@ -31,7 +41,16 @@ export default function Stock() {
   } = useProducts({
     Page: currentPage,
     PerPage: 10,
+    Search: searchTerm,
+    EndDate: (filter?.endDate && format(filter.endDate, "yyyy-MM-dd")) ?? "",
+    OrderBy: "asc",
+    StartDate:
+      (filter?.startDate && format(filter.startDate, "yyyy-MM-dd")) ?? "",
   });
+
+  useEffect(() => {
+    refetch();
+  }, [searchTerm, filter, refetch]);
 
   const [selectedRows, setSelectedRows] = useState<Set<string>>(new Set(["1"]));
 
@@ -53,19 +72,6 @@ export default function Stock() {
   useEffect(() => {
     refetch();
   }, [currentPage, refetch]);
-
-  const [searchTerm, setSearchTerm] = useState("");
-
-  const filteredProducts = useMemo(
-    () =>
-      products.filter(
-        (p) =>
-          p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          p.barcode.includes(searchTerm) ||
-          p.category_name.toLowerCase().includes(searchTerm.toLowerCase()),
-      ),
-    [searchTerm, products],
-  );
 
   if (loading) {
     return (
@@ -96,9 +102,11 @@ export default function Stock() {
           searchTerm={searchTerm}
           onSearchChange={setSearchTerm}
           handleGenerateLabel={handleGenerateLabel}
+          onApplyFilter={setFilter}
+          filter={filter}
         />
         <EstoqueTable
-          products={filteredProducts}
+          products={products}
           selectedRows={selectedRows}
           setSelectedRows={setSelectedRows}
         />

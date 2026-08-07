@@ -282,7 +282,7 @@ export function DialogAlterSale({
                         }
                       >
                         <SelectTrigger>
-                          <SelectValue placeholder="Selecione o dia" />
+                          <SelectValue placeholder="Selecione" />
                         </SelectTrigger>
                         <SelectContent>
                           {[1, 5, 10, 15, 20, 25, 30].map((dia) => (
@@ -314,7 +314,7 @@ export function DialogAlterSale({
                         value={String(field.value)}
                       >
                         <SelectTrigger>
-                          <SelectValue placeholder="Selecione a quantidade" />
+                          <SelectValue placeholder="Selecione" />
                         </SelectTrigger>
 
                         <SelectContent>

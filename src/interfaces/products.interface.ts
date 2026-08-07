@@ -1,3 +1,5 @@
+import { Pagination } from "./pagination.interface";
+
 export interface Product {
   id: string;
   category_id: string;

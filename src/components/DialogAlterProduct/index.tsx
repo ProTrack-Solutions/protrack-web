@@ -128,7 +128,7 @@ export const DialogEditProduct = ({
                 </Label>
                 <Input
                   id="edit-name"
-                  placeholder="Ex: Camiseta Premium Algodão"
+                  placeholder="Digite aqui"
                   value={formData.name}
                   onChange={(e) => handleChange("name", e.target.value)}
                   className="h-11"
@@ -166,7 +166,7 @@ export const DialogEditProduct = ({
                 </Label>
                 <Input
                   id="edit-barcode"
-                  placeholder="0000000000000"
+                  placeholder="Digite aqui"
                   value={formData.barcode}
                   onChange={(e) => handleChange("barcode", e.target.value)}
                   className="h-11 font-mono"
@@ -182,7 +182,7 @@ export const DialogEditProduct = ({
                 </Label>
                 <Textarea
                   id="edit-description"
-                  placeholder="Detalhes do produto, características, material..."
+                  placeholder="Digite aqui"
                   value={formData.description}
                   onChange={(e) => handleChange("description", e.target.value)}
                   className="min-h-25 resize-none"
@@ -219,7 +219,7 @@ export const DialogEditProduct = ({
                   </Label>
                   <Input
                     id="unit"
-                    placeholder="G, KG, ML..."
+                    placeholder="Digite aqui"
                     value={formData.unit}
                     onChange={(e) => handleChange("unit", e.target.value)}
                     className="h-11"
@@ -239,7 +239,7 @@ export const DialogEditProduct = ({
                     id="edit-quantity"
                     type="number"
                     min="0"
-                    placeholder="0"
+                    placeholder="0,00"
                     value={formData.quantity}
                     onChange={(e) =>
                       handleChange("quantity", parseInt(e.target.value) || 0)
@@ -258,7 +258,7 @@ export const DialogEditProduct = ({
                   </Label>
                   <Input
                     id="edit-size"
-                    placeholder="P, M, G, GG, 42, Único..."
+                    placeholder="Digite aqui"
                     value={formData.size}
                     onChange={(e) => handleChange("size", e.target.value)}
                     className="h-11"
