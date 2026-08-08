@@ -154,9 +154,7 @@ export function EstoqueTable({
                       variant="outline"
                       className={`${product.sell_in_bulk ? getUnitBadgeStyle(product.unit) : getQuantityStyle(product.quantity)} font-semibold min-w-12 justify-center`}
                     >
-                      {product.sell_in_bulk
-                        ? product.unit
-                        : product.quantity + "un"}
+                      {product.sell_in_bulk ? product.unit : product.quantity}
                     </Badge>
                   </TableCell>
                   <TableCell className="text-right">
