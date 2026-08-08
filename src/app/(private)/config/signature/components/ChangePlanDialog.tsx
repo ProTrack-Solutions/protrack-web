@@ -7,11 +7,12 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Plano, brl } from "./types";
+import { brl } from "./types";
+import { PlansResponse } from "@/interfaces/plans.interface";
 
 interface ChangePlanDialogProps {
-  planoAtual: Plano;
-  planoSelecionado: Plano | null;
+  planoAtual: PlansResponse;
+  planoSelecionado: PlansResponse | null;
   onOpenChange: (open: boolean) => void;
   onConfirm: () => void;
 }
@@ -30,27 +31,28 @@ export function ChangePlanDialog({
       <DialogContent>
         <DialogHeader>
           <DialogTitle>
-            Confirmar mudança para {planoSelecionado?.nome}
+            Confirmar mudança para {planoSelecionado?.name}
           </DialogTitle>
           <DialogDescription>
             O novo valor de{" "}
-            {planoSelecionado ? brl(planoSelecionado.preco) : ""}/mês passa a
-            valer no próximo ciclo, com cobrança proporcional dos dias
-            restantes.
+            {planoSelecionado ? brl(planoSelecionado.price_cents / 100) : ""}
+            /mês passa a valer no próximo ciclo, com cobrança proporcional dos
+            dias restantes.
           </DialogDescription>
         </DialogHeader>
         <div className="rounded-lg border p-4 space-y-2 text-sm">
           <div className="flex justify-between">
             <span className="text-muted-foreground">Plano atual</span>
             <span>
-              {planoAtual.nome} — {brl(planoAtual.preco)}/mês
+              {planoAtual.name} — {brl(planoAtual.price_cents / 100)}/mês
             </span>
           </div>
           <div className="flex justify-between">
             <span className="text-muted-foreground">Novo plano</span>
             <span className="font-semibold">
-              {planoSelecionado?.nome} —{" "}
-              {planoSelecionado ? brl(planoSelecionado.preco) : ""}/mês
+              {planoSelecionado?.name} —{" "}
+              {planoSelecionado ? brl(planoSelecionado.price_cents / 100) : ""}
+              /mês
             </span>
           </div>
         </div>

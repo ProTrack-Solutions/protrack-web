@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import { BillingInfoCard } from "./components/BillingInfoCard";
@@ -12,43 +12,128 @@ import { PaymentHistoryTable } from "./components/PaymentHistoryTable";
 import { PaymentMethodCard } from "./components/PaymentMethodCard";
 import { PlansGrid } from "./components/PlansGrid";
 import { SignatureStats } from "./components/SignatureStats";
-import { faturas, Plano, PlanoId, planos } from "./components/types";
+import { faturas } from "./components/types";
 import { HeaderConfig } from "@/components/HeaderConfig";
+import { CancelSubiscription } from "@/service/subscription-manager.service";
+import { useSubscription } from "@/hooks/useSubscription";
+import { usePlans } from "@/hooks/usePlans";
+import { PlansResponse } from "@/interfaces/plans.interface";
+import { SimpleLoading } from "@/components/SimpleLoading";
+import { useCompany } from "@/hooks/useCompany";
+
+const PLANO_VAZIO: PlansResponse = {
+  id: "",
+  name: "",
+  description: "",
+  price_cents: 0,
+  currency: "BRL",
+  billing_cycle: "",
+  active: false,
+  created_at: new Date(),
+  updated_at: new Date(),
+  external_id: "",
+  highlight: false,
+  icon: "",
+  features: [],
+};
 
 const Assinatura = () => {
-  const [planoAtual, setPlanoAtual] = useState<PlanoId>("profissional");
-  const [cancelado, setCancelado] = useState(false);
-  const [confirmCancel, setConfirmCancel] = useState(false);
-  const [planoSelecionado, setPlanoSelecionado] = useState<Plano | null>(null);
+  const {
+    subscription,
+    error: subscriptionError,
+    loading: subscriptionLoading,
+    refetch,
+  } = useSubscription();
+  const { plans, loading: plansLoading } = usePlans();
 
-  const plano = useMemo(
-    () => planos.find((p) => p.id === planoAtual)!,
-    [planoAtual],
-  );
+  const { company, loading: companyLoading } = useCompany();
+
+  const [confirmCancel, setConfirmCancel] = useState(false);
+  const [isCancelling, setIsCancelling] = useState(false);
+  const [planoSelecionado, setPlanoSelecionado] =
+    useState<PlansResponse | null>(null);
+
+  useEffect(() => {
+    if (subscriptionError) toast.error(subscriptionError);
+  }, [subscriptionError]);
+
+  // Monta o plano exibido a partir da própria assinatura (não do catálogo),
+  // já que um plano descontinuado pode não aparecer mais em /plans.
+  const plano: PlansResponse = subscription
+    ? {
+        id: subscription.plan.id,
+        name: subscription.plan.name,
+        description: subscription.plan.description,
+        price_cents: subscription.plan.price_cents,
+        currency: subscription.plan.currency,
+        billing_cycle: subscription.plan.billing_cycle,
+        active: subscription.plan.active,
+        created_at: new Date(subscription.created_at),
+        updated_at: new Date(subscription.updated_at),
+        external_id: subscription.plan.external_id,
+        highlight: subscription.plan.highlight,
+        icon: subscription.plan.icon,
+        features: subscription.features.map((f) => ({
+          id: f.id,
+          name: f.name,
+          is_enabled: f.is_enabled,
+          display_order: f.display_order,
+          created_at: subscription.created_at,
+          updated_at: subscription.updated_at,
+          plan_id: subscription.plan.id,
+        })),
+      }
+    : PLANO_VAZIO;
+
+  const proximaCobranca = subscription
+    ? new Date(subscription.current_period_end).toLocaleDateString("pt-BR")
+    : "—";
 
   const totalPago = faturas
     .filter((f) => f.status === "paga")
     .reduce((s, f) => s + f.valor, 0);
 
-  const handleUpgrade = () =>
+  const handleUpgrade = () => {
+    if (!plans?.length) return;
     setPlanoSelecionado(
-      planos.find((p) => p.preco > plano.preco) ?? planos[planos.length - 1],
+      plans.find((p) => p.price_cents > plano.price_cents) ??
+        plans[plans.length - 1],
     );
+  };
 
   const confirmarTroca = () => {
     if (!planoSelecionado) return;
-    const upgrade = planoSelecionado.preco > plano.preco;
-    setPlanoAtual(planoSelecionado.id);
-    setCancelado(false);
+    const upgrade = planoSelecionado.price_cents > plano.price_cents;
     toast(upgrade ? "Upgrade realizado!" : "Plano alterado");
     setPlanoSelecionado(null);
   };
 
-  const cancelar = () => {
-    setCancelado(true);
-    setConfirmCancel(false);
-    toast("Assinatura cancelada");
+  const cancelar = async (motivo: string, cancelarImediatamente: boolean) => {
+    setIsCancelling(true);
+    try {
+      await CancelSubiscription({
+        cancel_at_period_end: !cancelarImediatamente,
+        idempotency_key: crypto.randomUUID(),
+        reason: motivo,
+      });
+      setConfirmCancel(false);
+      refetch();
+      toast.success(
+        cancelarImediatamente
+          ? "Assinatura cancelada imediatamente"
+          : "Assinatura cancelada",
+      );
+    } catch (error) {
+      console.log(error);
+      toast.error("Erro ao cancelar assinatura!");
+    } finally {
+      setIsCancelling(false);
+    }
   };
+
+  if (subscriptionLoading || plansLoading || companyLoading || !company) {
+    return <SimpleLoading fullScreen />;
+  }
 
   return (
     <div className="min-h-screen bg-linear-to-br from-background via-background to-muted/30">
@@ -58,8 +143,9 @@ const Assinatura = () => {
       />
       <SignatureStats
         plano={plano}
-        cancelado={cancelado}
+        status={subscription?.status ?? ""}
         totalPago={totalPago}
+        proximaCobranca={proximaCobranca}
       />
 
       <Tabs defaultValue="visao" className="space-y-6 pt-4">
@@ -74,12 +160,13 @@ const Assinatura = () => {
           <div className="grid lg:grid-cols-3 gap-6">
             <CurrentPlanCard
               plano={plano}
-              cancelado={cancelado}
+              status={subscription?.status ?? ""}
+              proximaCobranca={proximaCobranca}
               onUpgrade={handleUpgrade}
               onCancel={() => setConfirmCancel(true)}
-              onReactivate={() => setCancelado(false)}
+              onReactivate={() => {}}
             />
-            <PaymentMethodCard />
+            <PaymentMethodCard paymentMethod={subscription?.payment_method} />
           </div>
         </TabsContent>
 
@@ -89,8 +176,12 @@ const Assinatura = () => {
 
         <TabsContent value="faturamento" className="space-y-6">
           <div className="grid lg:grid-cols-3 gap-6">
-            <NextInvoiceCard plano={plano} cancelado={cancelado} />
-            <BillingInfoCard />
+            <NextInvoiceCard
+              plano={plano}
+              status={subscription?.status ?? ""}
+              proximaCobranca={proximaCobranca}
+            />
+            <BillingInfoCard company={company} />
           </div>
         </TabsContent>
 
@@ -108,7 +199,9 @@ const Assinatura = () => {
 
       <CancelSubscriptionDialog
         open={confirmCancel}
-        planoNome={plano.nome}
+        planoNome={plano.name}
+        proximaCobranca={proximaCobranca}
+        isSubmitting={isCancelling}
         onOpenChange={setConfirmCancel}
         onConfirm={cancelar}
       />

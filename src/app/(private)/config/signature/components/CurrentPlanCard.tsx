@@ -17,11 +17,12 @@ import {
   Users,
   XCircle,
 } from "lucide-react";
-import { Plano } from "./types";
+import { PlansResponse } from "@/interfaces/plans.interface";
 
 interface CurrentPlanCardProps {
-  plano: Plano;
-  cancelado: boolean;
+  plano: PlansResponse;
+  status: string;
+  proximaCobranca: string;
   onUpgrade: () => void;
   onCancel: () => void;
   onReactivate: () => void;
@@ -29,7 +30,8 @@ interface CurrentPlanCardProps {
 
 export function CurrentPlanCard({
   plano,
-  cancelado,
+  status,
+  proximaCobranca,
   onUpgrade,
   onCancel,
   onReactivate,
@@ -41,30 +43,33 @@ export function CurrentPlanCard({
           <div>
             <CardTitle className="flex items-center gap-2">
               <Sparkles className="w-5 h-5 text-blue-600" />
-              Plano {plano.nome}
+              Plano {plano.name}
             </CardTitle>
-            <CardDescription>{plano.descricao}</CardDescription>
+            <CardDescription>{plano.description}</CardDescription>
           </div>
           <Badge
             variant="outline"
             className={
-              cancelado
+              status == "canceled"
                 ? "bg-rose-50 text-rose-700 border-rose-200 dark:bg-rose-500/10 dark:text-rose-400"
                 : "bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-500/10 dark:text-emerald-400"
             }
           >
-            {cancelado ? "Cancelada" : "Ativa"}
+            {status == "canceled" ? "Cancelada" : "Ativa"}
           </Badge>
         </div>
       </CardHeader>
       <CardContent className="space-y-6">
         <div className="grid sm:grid-cols-2 gap-3">
-          {plano.recursos.map((r) => (
-            <div key={r} className="flex items-center gap-2 text-sm">
-              <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-              <span>{r}</span>
-            </div>
-          ))}
+          {[...plano.features]
+            .filter((f) => f.is_enabled)
+            .sort((a, b) => a.display_order - b.display_order)
+            .map((f) => (
+              <div key={f.id} className="flex items-center gap-2 text-sm">
+                <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                <span>{f.name}</span>
+              </div>
+            ))}
         </div>
 
         <Separator />
@@ -85,7 +90,9 @@ export function CurrentPlanCard({
                 <FileText className="w-4 h-4" /> Ciclo atual
               </span>
               <span className="font-medium">
-                {cancelado ? "Encerra em 05/09/2026" : "Renova em 05/09/2026"}
+                {status == "canceled"
+                  ? `Encerra em ${proximaCobranca}`
+                  : `Renova em ${proximaCobranca}`}
               </span>
             </div>
             <Progress value={45} className="h-2" />
@@ -100,7 +107,7 @@ export function CurrentPlanCard({
             <ArrowUpRight className="w-4 h-4 mr-2" />
             Fazer upgrade
           </Button>
-          {cancelado ? (
+          {status == "canceled" ? (
             <Button variant="outline" onClick={onReactivate}>
               Reativar assinatura
             </Button>

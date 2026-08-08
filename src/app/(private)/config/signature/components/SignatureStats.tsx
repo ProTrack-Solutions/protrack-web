@@ -1,34 +1,43 @@
 import { Card, CardContent } from "@/components/ui/card";
-import { BadgeCheck, CalendarDays, CreditCard, Receipt, XCircle } from "lucide-react";
-import { Plano, brl } from "./types";
+import {
+  BadgeCheck,
+  CalendarDays,
+  CreditCard,
+  Receipt,
+  XCircle,
+} from "lucide-react";
+import { brl } from "./types";
+import { PlansResponse } from "@/interfaces/plans.interface";
 
 interface SignatureStatsProps {
-  plano: Plano;
-  cancelado: boolean;
+  plano: PlansResponse;
+  status: string;
   totalPago: number;
+  proximaCobranca: string;
 }
 
 export function SignatureStats({
   plano,
-  cancelado,
+  status,
   totalPago,
+  proximaCobranca,
 }: SignatureStatsProps) {
   const stats = [
     {
       label: "Status",
-      valor: cancelado ? "Cancelada" : "Ativa",
-      icon: cancelado ? XCircle : BadgeCheck,
-      cor: cancelado ? "text-rose-600" : "text-emerald-600",
+      valor: status == "canceled" ? "Cancelada" : "Ativa",
+      icon: status == "canceled" ? XCircle : BadgeCheck,
+      cor: status == "canceled" ? "text-rose-600" : "text-emerald-600",
     },
     {
       label: "Próxima cobrança",
-      valor: cancelado ? "—" : "05/09/2026",
+      valor: status == "canceled" ? "—" : proximaCobranca,
       icon: CalendarDays,
       cor: "text-blue-600",
     },
     {
       label: "Valor mensal",
-      valor: brl(plano.preco),
+      valor: brl(plano.price_cents / 100),
       icon: CreditCard,
       cor: "text-indigo-600",
     },

@@ -5,7 +5,7 @@ export interface PlansResponse {
   price_cents: number;
   currency: string;
   billing_cycle: string;
-  active: true;
+  active: boolean;
   created_at: Date;
   updated_at: Date;
   external_id: string;

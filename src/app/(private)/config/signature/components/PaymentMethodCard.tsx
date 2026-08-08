@@ -8,10 +8,15 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { PaymentMethodDetails } from "@/interfaces/subscription-manager.interface";
 import { CreditCard, ShieldCheck } from "lucide-react";
 import { toast } from "sonner";
 
-export function PaymentMethodCard() {
+interface PaymentMethodCardProps {
+  paymentMethod?: PaymentMethodDetails | null;
+}
+
+export function PaymentMethodCard({ paymentMethod }: PaymentMethodCardProps) {
   return (
     <Card className="border-border/60 shadow-sm">
       <CardHeader>
@@ -25,10 +30,18 @@ export function PaymentMethodCard() {
         <div className="rounded-xl bg-linear-to-br from-blue-600 to-indigo-700 p-5 text-white shadow-md">
           <div className="flex justify-between items-start">
             <CreditCard className="w-7 h-7 opacity-80" />
-            <span className="text-sm font-semibold uppercase">Mastercard</span>
+            <span className="text-sm font-semibold uppercase">
+              {paymentMethod?.card_brand ?? "Sem cartão"}
+            </span>
           </div>
-          <p className="mt-6 text-lg tracking-widest">•••• •••• •••• 0000</p>
-          <p className="mt-2 text-xs text-blue-100">Validade 12/2028</p>
+          <p className="mt-6 text-lg tracking-widest">
+            •••• •••• •••• {paymentMethod?.card_last4 ?? "----"}
+          </p>
+          <p className="mt-2 text-xs text-blue-100">
+            {paymentMethod
+              ? `Validade ${String(paymentMethod.card_exp_month).padStart(2, "0")}/${paymentMethod.card_exp_year}`
+              : "Nenhum método de pagamento cadastrado"}
+          </p>
         </div>
         <Button
           variant="outline"
