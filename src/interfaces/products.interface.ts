@@ -68,7 +68,7 @@ export const initialFormData: CreateProductParams = {
   sale_price: 0,
   not_barcode: false,
   sell_in_bulk: false,
-  unit: "",
+  unit: "UN",
 };
 
 export interface CreateProductParams {

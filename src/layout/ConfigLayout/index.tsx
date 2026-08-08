@@ -8,12 +8,11 @@ import {
   Settings,
   User,
   Shield,
-  Database,
-  Mail,
   Package,
   ArrowLeft,
   Truck,
   Building2,
+  Crown,
 } from "lucide-react";
 
 export default function LayoutConfig({
@@ -75,18 +74,11 @@ export default function LayoutConfig({
       descricao: "Senhas, autenticação e permissões",
     },
     {
-      id: "backup",
-      href: "/config/backup",
-      titulo: "Backup",
-      icone: Database,
-      descricao: "Backup automático e exportação de dados",
-    },
-    {
-      id: "notificacoes",
-      href: "/config/notifications",
-      titulo: "Notificações",
-      icone: Mail,
-      descricao: "E-mail, alertas e comunicações",
+      id: "signature",
+      href: "/config/signature",
+      titulo: "Assinatura",
+      icone: Crown,
+      descricao: "Gerencie a sua assinatura e pagamentos",
     },
   ];
 
