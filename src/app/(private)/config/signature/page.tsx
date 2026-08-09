@@ -12,11 +12,11 @@ import { PaymentHistoryTable } from "./components/PaymentHistoryTable";
 import { PaymentMethodCard } from "./components/PaymentMethodCard";
 import { PlansGrid } from "./components/PlansGrid";
 import { SignatureStats } from "./components/SignatureStats";
-import { faturas } from "./components/types";
 import { HeaderConfig } from "@/components/HeaderConfig";
 import { CancelSubiscription } from "@/service/subscription-manager.service";
 import { useSubscription } from "@/hooks/useSubscription";
 import { usePlans } from "@/hooks/usePlans";
+import { useInvoiceHistory } from "@/hooks/useInvoiceHistory";
 import { PlansResponse } from "@/interfaces/plans.interface";
 import { SimpleLoading } from "@/components/SimpleLoading";
 import { useCompany } from "@/hooks/useCompany";
@@ -47,6 +47,14 @@ const Assinatura = () => {
   const { plans, loading: plansLoading } = usePlans();
 
   const { company, loading: companyLoading } = useCompany();
+
+  // PerPage alto o suficiente para cobrir o histórico recente sem paginação:
+  // a mesma lista alimenta tanto a tabela da aba "Histórico" quanto o total
+  // pago exibido em SignatureStats.
+  const { invoices, loading: invoicesLoading } = useInvoiceHistory({
+    Page: 1,
+    PerPage: 50,
+  });
 
   const [confirmCancel, setConfirmCancel] = useState(false);
   const [isCancelling, setIsCancelling] = useState(false);
@@ -89,9 +97,10 @@ const Assinatura = () => {
     ? new Date(subscription.current_period_end).toLocaleDateString("pt-BR")
     : "—";
 
-  const totalPago = faturas
-    .filter((f) => f.status === "paga")
-    .reduce((s, f) => s + f.valor, 0);
+  const totalPago =
+    invoices
+      .filter((f) => f.status === "approved")
+      .reduce((s, f) => s + f.amount_cents, 0) / 100;
 
   const handleUpgrade = () => {
     if (!plans?.length) return;
@@ -186,7 +195,11 @@ const Assinatura = () => {
         </TabsContent>
 
         <TabsContent value="historico">
-          <PaymentHistoryTable />
+          <PaymentHistoryTable
+            invoices={invoices}
+            loading={invoicesLoading}
+            paymentMethod={subscription?.payment_method}
+          />
         </TabsContent>
       </Tabs>
 
