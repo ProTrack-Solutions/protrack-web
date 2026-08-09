@@ -204,7 +204,7 @@ export function DialogAlterSale({
                   render={({ field }) => (
                     <Select value={field.value} onValueChange={field.onChange}>
                       <SelectTrigger>
-                        <SelectValue placeholder="Selecione" />
+                        <SelectValue placeholder="Selecione a forma de pagamento" />
                       </SelectTrigger>
                       <SelectContent>
                         {paymentMethodOptions.map((m) => (
@@ -282,7 +282,7 @@ export function DialogAlterSale({
                         }
                       >
                         <SelectTrigger>
-                          <SelectValue placeholder="Selecione" />
+                          <SelectValue placeholder="Selecione o dia de vencimento" />
                         </SelectTrigger>
                         <SelectContent>
                           {[1, 5, 10, 15, 20, 25, 30].map((dia) => (
@@ -314,7 +314,7 @@ export function DialogAlterSale({
                         value={String(field.value)}
                       >
                         <SelectTrigger>
-                          <SelectValue placeholder="Selecione" />
+                          <SelectValue placeholder="Selecione a quantidade de parcelas" />
                         </SelectTrigger>
 
                         <SelectContent>

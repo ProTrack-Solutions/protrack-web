@@ -51,7 +51,7 @@ export function FormEstoque({ formData, onChange }: FormEstoqueProps) {
               id="quantidade"
               type="number"
               min="0"
-              placeholder="0,00"
+              placeholder="0"
               value={formData.quantity}
               onChange={(e) => onChange("quantity", e.target.value)}
               className="h-11"
@@ -68,7 +68,7 @@ export function FormEstoque({ formData, onChange }: FormEstoqueProps) {
             </Label>
             <Input
               id="tamanho"
-              placeholder="Digite aqui"
+              placeholder="Ex: P, M, G, 42"
               value={formData.size}
               onChange={(e) => onChange("size", e.target.value)}
               className="h-11"
@@ -87,7 +87,7 @@ export function FormEstoque({ formData, onChange }: FormEstoqueProps) {
             </Label>
             <Input
               id="unit"
-              placeholder="Digite aqui"
+              placeholder="Ex: kg, L, un"
               value={formData.unit}
               onChange={(e) => onChange("unit", e.target.value)}
               className="h-11"

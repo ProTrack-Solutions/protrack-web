@@ -40,7 +40,7 @@ export function FormInfoBasica({ formData, onChange }: FormInfoBasicaProps) {
           </Label>
           <Input
             id="nome"
-            placeholder="Digite aqui"
+            placeholder="Ex: Camiseta Básica Branca"
             value={formData.name}
             onChange={(e) => onChange("name", e.target.value)}
             className="h-11"
@@ -57,7 +57,7 @@ export function FormInfoBasica({ formData, onChange }: FormInfoBasicaProps) {
             onValueChange={(v) => onChange("category_id", v)}
           >
             <SelectTrigger id="categoria" className="h-11">
-              <SelectValue placeholder="Selecione" />
+              <SelectValue placeholder="Selecione a categoria" />
             </SelectTrigger>
             <SelectContent>
               {Array.isArray(productsCategories) &&
@@ -105,7 +105,7 @@ export function FormInfoBasica({ formData, onChange }: FormInfoBasicaProps) {
           </Label>
           <Input
             id="codigoBarras"
-            placeholder="Digite aqui"
+            placeholder="Ex: 7891234567890"
             value={formData.barcode}
             onChange={(e) => onChange("barcode", e.target.value)}
             className="h-11 font-mono"
@@ -119,7 +119,7 @@ export function FormInfoBasica({ formData, onChange }: FormInfoBasicaProps) {
           </Label>
           <Textarea
             id="descricao"
-            placeholder="Digite aqui"
+            placeholder="Descreva as características do produto (opcional)"
             value={formData.description}
             onChange={(e) => onChange("description", e.target.value)}
             className="min-h-25 resize-none"

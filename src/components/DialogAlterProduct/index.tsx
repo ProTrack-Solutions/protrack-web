@@ -128,7 +128,7 @@ export const DialogEditProduct = ({
                 </Label>
                 <Input
                   id="edit-name"
-                  placeholder="Digite aqui"
+                  placeholder="Ex: Camiseta Básica Branca"
                   value={formData.name}
                   onChange={(e) => handleChange("name", e.target.value)}
                   className="h-11"
@@ -144,7 +144,7 @@ export const DialogEditProduct = ({
                   onValueChange={(v) => handleChange("category_id", v)}
                 >
                   <SelectTrigger id="edit: " className="h-11">
-                    <SelectValue placeholder="Selecione" />
+                    <SelectValue placeholder="Selecione a categoria" />
                   </SelectTrigger>
                   <SelectContent>
                     {productsCategories?.map((c) => (
@@ -166,7 +166,7 @@ export const DialogEditProduct = ({
                 </Label>
                 <Input
                   id="edit-barcode"
-                  placeholder="Digite aqui"
+                  placeholder="Ex: 7891234567890"
                   value={formData.barcode}
                   onChange={(e) => handleChange("barcode", e.target.value)}
                   className="h-11 font-mono"
@@ -182,7 +182,7 @@ export const DialogEditProduct = ({
                 </Label>
                 <Textarea
                   id="edit-description"
-                  placeholder="Digite aqui"
+                  placeholder="Descreva as características do produto (opcional)"
                   value={formData.description}
                   onChange={(e) => handleChange("description", e.target.value)}
                   className="min-h-25 resize-none"
@@ -219,7 +219,7 @@ export const DialogEditProduct = ({
                   </Label>
                   <Input
                     id="unit"
-                    placeholder="Digite aqui"
+                    placeholder="Ex: kg, L, un"
                     value={formData.unit}
                     onChange={(e) => handleChange("unit", e.target.value)}
                     className="h-11"
@@ -239,7 +239,7 @@ export const DialogEditProduct = ({
                     id="edit-quantity"
                     type="number"
                     min="0"
-                    placeholder="0,00"
+                    placeholder="0"
                     value={formData.quantity}
                     onChange={(e) =>
                       handleChange("quantity", parseInt(e.target.value) || 0)
@@ -258,7 +258,7 @@ export const DialogEditProduct = ({
                   </Label>
                   <Input
                     id="edit-size"
-                    placeholder="Digite aqui"
+                    placeholder="Ex: P, M, G, 42"
                     value={formData.size}
                     onChange={(e) => handleChange("size", e.target.value)}
                     className="h-11"

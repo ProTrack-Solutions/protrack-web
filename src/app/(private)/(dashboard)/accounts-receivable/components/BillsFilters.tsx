@@ -54,7 +54,7 @@ export function BillsFilters({
             <div className="relative">
               <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
               <Input
-                placeholder="Pesquisar..."
+                placeholder="Pesquisar por cliente ou descrição..."
                 value={searchTerm}
                 onChange={(e) => onSearchTermChange(e.target.value)}
                 className="pl-9"
@@ -64,7 +64,7 @@ export function BillsFilters({
           {/* onValueChange do Select recebe a string do valor diretamente, não um evento DOM */}
           <Select value={statusFilter} onValueChange={onStatusFilterChange}>
             <SelectTrigger className="w-45">
-              <SelectValue placeholder="Selecione" />
+              <SelectValue placeholder="Selecione o status" />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="todos">Todos</SelectItem>

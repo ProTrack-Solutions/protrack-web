@@ -46,7 +46,7 @@ export const FilterShearch = ({
         <div className="relative flex-1">
           <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
           <Input
-            placeholder="Pesquisar..."
+            placeholder="Pesquisar por nome, CPF ou email..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="pl-10"
@@ -54,7 +54,7 @@ export const FilterShearch = ({
         </div>
         <Select value={statusFilter} onValueChange={setStatusFilter}>
           <SelectTrigger className="w-45">
-            <SelectValue placeholder="Selecione" />
+            <SelectValue placeholder="Selecione o status" />
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">Todos</SelectItem>
