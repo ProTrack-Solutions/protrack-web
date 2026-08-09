@@ -62,3 +62,8 @@ export const SheduleBill = async (
 ) => {
   await api.put(`/bills-payable/schedule/${billPayableId}`, params);
 };
+
+export const SumBillsPayable = async () => {
+  const { data } = await api.get("/bills-payable/total-payable");
+  return data;
+};
