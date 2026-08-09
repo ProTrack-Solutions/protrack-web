@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, ArrowRight } from "lucide-react";
+import { ArrowLeft, ArrowRight, Loader2 } from "lucide-react";
 
 import StepSidebar from "./components/StepSidebar";
 import CompanyStep from "./components/CompanyStep";
@@ -147,9 +147,11 @@ export default function Register() {
 
   const stripe = useStripe();
   const elements = useElements();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (): Promise<void> => {
     if (!stripe || !elements) {
+      toast("Aguarde o carregamento do formulário de pagamento.");
       return;
     }
 
@@ -157,6 +159,8 @@ export default function Register() {
     if (!cardElement) {
       return;
     }
+
+    setIsSubmitting(true);
 
     try {
       const { error, paymentMethod } = await stripe.createPaymentMethod({
@@ -208,13 +212,38 @@ export default function Register() {
         idempotency_key: crypto.randomUUID(), // Gera um UUID para idempotência
       };
 
-      await register(payload);
+      const registerResponse = await register(payload);
 
-      console.log("PaymentMethod gerado:", paymentMethod.id);
-    } catch (error) {
-      console.log(error);
-    } finally {
+      // Se o Stripe exigir confirmação do PaymentIntent (inclusive 3D
+      // Secure), precisamos confirmar aqui antes de considerar o cadastro
+      // concluído — senão a assinatura fica "incomplete" e expira sozinha.
+      if (registerResponse.requires_action && registerResponse.client_secret) {
+        const { error: confirmError, paymentIntent } =
+          await stripe.confirmCardPayment(registerResponse.client_secret);
+
+        if (confirmError) {
+          throw new Error(
+            confirmError.message ||
+              "Não foi possível confirmar o pagamento. Verifique os dados do cartão e tente novamente.",
+          );
+        }
+
+        if (paymentIntent?.status !== "succeeded") {
+          throw new Error(
+            "Pagamento não confirmado. Tente novamente ou utilize outro cartão.",
+          );
+        }
+      }
+
       if (currentStep < steps.length) setCurrentStep(currentStep + 1);
+    } catch (error) {
+      const message =
+        error instanceof Error
+          ? error.message
+          : "Erro ao concluir o cadastro. Tente novamente.";
+      toast(message);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -303,6 +332,7 @@ export default function Register() {
                 <Button
                   variant="outline"
                   onClick={handleBack}
+                  disabled={isSubmitting}
                   className="h-12 px-6"
                 >
                   <ArrowLeft className="h-4 w-4 mr-2" /> Voltar
@@ -310,10 +340,20 @@ export default function Register() {
               )}
               <Button
                 onClick={currentStep === 4 ? handleSubmit : handleNext}
+                disabled={isSubmitting}
                 className="flex-1 h-12 bg-blue-600 hover:bg-blue-700 text-base font-semibold"
               >
-                {currentStep === 4 ? "Finalizar cadastro" : "Continuar"}
-                <ArrowRight className="h-4 w-4 ml-2" />
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    Confirmando pagamento...
+                  </>
+                ) : (
+                  <>
+                    {currentStep === 4 ? "Finalizar cadastro" : "Continuar"}
+                    <ArrowRight className="h-4 w-4 ml-2" />
+                  </>
+                )}
               </Button>
             </div>
           )}
