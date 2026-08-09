@@ -36,7 +36,7 @@ export function EstoqueSearch({
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground w-4 h-4" />
           <Input
-            placeholder="Pesquisar..."
+            placeholder="Pesquisar por nome ou código de barras..."
             value={searchTerm}
             onChange={(e) => onSearchChange(e.target.value)}
             className="pl-10 h-11 bg-background border-border focus-visible:ring-blue-500/30"

@@ -92,7 +92,7 @@ export function SaleFormPaymentMethod() {
                 >
                   <FormControl>
                     <SelectTrigger>
-                      <SelectValue placeholder="Selecione" />
+                      <SelectValue placeholder="Selecione a forma de pagamento" />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
@@ -187,7 +187,7 @@ export function SaleFormPaymentMethod() {
                     >
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue placeholder="Selecione" />
+                          <SelectValue placeholder="Selecione o dia de vencimento" />
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>

@@ -51,7 +51,7 @@ export const SaleListSearch = ({
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="Pesquisar..."
+              placeholder="Pesquisar por cliente ou nº da venda..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="pl-9"
@@ -59,7 +59,7 @@ export const SaleListSearch = ({
           </div>
           <Select value={statusFilter} onValueChange={setStatusFilter}>
             <SelectTrigger className="w-full sm:w-45">
-              <SelectValue placeholder="Selecione" />
+              <SelectValue placeholder="Selecione o status" />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="todos">Todos os Status</SelectItem>
@@ -76,7 +76,7 @@ export const SaleListSearch = ({
             onValueChange={setPaymentMethodFilter}
           >
             <SelectTrigger className="w-full sm:w-45">
-              <SelectValue placeholder="Forma de pagamento" />
+              <SelectValue placeholder="Selecione a forma de pagamento" />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="todos">Todas as Formas</SelectItem>

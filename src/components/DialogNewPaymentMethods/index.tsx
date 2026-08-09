@@ -96,7 +96,7 @@ export function DialogNewPaymentMethod({
                   id="pm-name"
                   value={form.name}
                   onChange={(e) => update("name", e.target.value)}
-                  placeholder="Digite aqui"
+                  placeholder="Ex: Dinheiro, Cartão de Crédito, Pix"
                 />
               </div>
 

@@ -103,7 +103,7 @@ export function SaleProductsTable({ products }: Props) {
                         >
                           <FormControl>
                             <SelectTrigger className="w-full">
-                              <SelectValue placeholder="Selecione" />
+                              <SelectValue placeholder="Selecione o produto" />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
