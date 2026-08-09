@@ -28,8 +28,11 @@ export function SalesSummaryCard({ salesSummaryData }: Props) {
               R$ {formatCurrency(salesSummaryData.current_month_st ?? 0)}
             </p>
             <div className="flex items-center gap-2 mt-2">
-              <Badge variant="secondary" className="text-white">
-                +{salesSummaryData.growth_percentage}%
+              <Badge
+                variant="secondary"
+                className={`${salesSummaryData.growth_percentage <= 0 ? "bg-red-500" : "bg-green-500"}`}
+              >
+                {salesSummaryData.growth_percentage}%
               </Badge>
               <span className="text-sm text-muted-foreground">
                 vs mês anterior

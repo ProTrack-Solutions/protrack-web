@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Save } from "lucide-react";
 import { toast } from "sonner";
-import { BankAccount, BankAccountsCard } from "./components/BankAccountsCard";
+
 import { PaymentMethodsCard } from "./components/PaymentMethodsCard";
 import { CategoriesCard } from "./components/CategoriesCard";
 import { LimitsCard, LimitsData } from "./components/LimitsCard";
@@ -14,27 +14,6 @@ import { HeaderConfig } from "@/components/HeaderConfig";
 
 export default function FinancialConfigPage() {
   const { billsCategories } = useBillsCategories();
-
-  const [bankAccounts, setBankAccounts] = useState<BankAccount[]>([
-    {
-      id: "1",
-      nome: "Conta Principal",
-      banco: "Banco do Brasil",
-      agencia: "1234-5",
-      conta: "12345-6",
-      saldo: 45200.3,
-      ativa: true,
-    },
-    {
-      id: "2",
-      nome: "Conta Reserva",
-      banco: "Banco Itaú",
-      agencia: "5678-9",
-      conta: "67890-1",
-      saldo: 18500.5,
-      ativa: true,
-    },
-  ]);
 
   const [alerts, setAlerts] = useState<AlertsData>({
     contasVencidas: true,
@@ -53,17 +32,6 @@ export default function FinancialConfigPage() {
 
   const handleSaveSettings = () =>
     toast("As configurações financeiras foram atualizadas com sucesso.");
-  const handleAddAccount = () =>
-    toast("Funcionalidade para adicionar nova conta bancária.");
-  const handleEditAccount = (id: string) =>
-    toast(`Editando conta bancária ID: ${id}`);
-  const handleAddCategory = () =>
-    toast("Funcionalidade para adicionar nova categoria.");
-
-  const handleDeleteAccount = (id: string) => {
-    setBankAccounts((accounts) => accounts.filter((c) => c.id !== id));
-    toast("A conta bancária foi removida com sucesso.");
-  };
 
   return (
     <div className="space-y-6">
@@ -72,19 +40,9 @@ export default function FinancialConfigPage() {
         description="Configure contas, métodos de pagamento, categorias e alertas"
       />
 
-      <BankAccountsCard
-        accounts={bankAccounts}
-        onAdd={handleAddAccount}
-        onEdit={handleEditAccount}
-        onDelete={handleDeleteAccount}
-      />
-
       <PaymentMethodsCard />
 
-      <CategoriesCard
-        categories={billsCategories ?? []}
-        onAdd={handleAddCategory}
-      />
+      <CategoriesCard categories={billsCategories ?? []} />
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <LimitsCard values={limits} onChange={setLimits} />

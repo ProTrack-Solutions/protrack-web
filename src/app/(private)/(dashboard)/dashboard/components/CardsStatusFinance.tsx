@@ -3,21 +3,14 @@ import { DollarSign, CreditCard, TrendingUp } from "lucide-react";
 
 interface Props {
   totalSalesPedding: number;
+  totalBillsPayable: number;
 }
 
-export const CardsStatusFinance = ({ totalSalesPedding }: Props) => {
-  const saldoAtual = {
-    caixa: 15400.5,
-    banco: 45200.3,
-    contasReceber: totalSalesPedding,
-    contasPagar: 12800.75,
-  };
-
-  const saldoTotal =
-    saldoAtual.caixa +
-    saldoAtual.banco +
-    saldoAtual.contasReceber -
-    saldoAtual.contasPagar;
+export const CardsStatusFinance = ({
+  totalSalesPedding,
+  totalBillsPayable,
+}: Props) => {
+  const saldoTotal = 0 + totalSalesPedding - totalBillsPayable;
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
       <Card className="bg-gradient-primary text-primary-foreground">
@@ -42,12 +35,7 @@ export const CardsStatusFinance = ({ totalSalesPedding }: Props) => {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-muted-foreground">Caixa</p>
-              <h3 className="text-xl font-bold text-foreground">
-                R${" "}
-                {saldoAtual.caixa.toLocaleString("pt-BR", {
-                  minimumFractionDigits: 2,
-                })}
-              </h3>
+              <h3 className="text-xl font-bold text-foreground">R$ {"..."}</h3>
             </div>
             <CreditCard className="h-6 w-6 text-muted-foreground" />
           </div>
@@ -58,10 +46,10 @@ export const CardsStatusFinance = ({ totalSalesPedding }: Props) => {
         <CardContent className="p-6">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-muted-foreground">Bancos</p>
-              <h3 className="text-xl font-bold text-foreground">
+              <p className="text-sm text-red-400">A Pagar</p>
+              <h3 className="text-xl font-bold text-red-400">
                 R${" "}
-                {saldoAtual.banco.toLocaleString("pt-BR", {
+                {totalBillsPayable.toLocaleString("pt-BR", {
                   minimumFractionDigits: 2,
                 })}
               </h3>
@@ -78,7 +66,7 @@ export const CardsStatusFinance = ({ totalSalesPedding }: Props) => {
               <p className="text-sm text-secondary">A Receber</p>
               <h3 className="text-xl font-bold text-secondary">
                 R${" "}
-                {saldoAtual.contasReceber.toLocaleString("pt-BR", {
+                {totalSalesPedding.toLocaleString("pt-BR", {
                   minimumFractionDigits: 2,
                 })}
               </h3>
