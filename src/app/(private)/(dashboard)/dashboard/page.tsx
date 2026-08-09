@@ -24,6 +24,7 @@ export default function DashBoard() {
     cashFlow,
     inventoryTurnover,
     announcements,
+    totalBillsPayable,
   } = useDashboard();
 
   if (loading) {
@@ -36,7 +37,10 @@ export default function DashBoard() {
       <Header title="Dashboard" text="Visão geral da situação da empresa" />
 
       {/* Cards Superiores de Status Geral */}
-      <CardsStatusFinance totalSalesPedding={totalSalesPedding ?? 0} />
+      <CardsStatusFinance
+        totalSalesPedding={totalSalesPedding ?? 0}
+        totalBillsPayable={totalBillsPayable ?? 0}
+      />
 
       {/* Grid: Resumo de Vendas e Painel de Alertas */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

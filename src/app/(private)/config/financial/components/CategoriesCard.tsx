@@ -7,10 +7,9 @@ import { toast } from "sonner";
 
 interface CategoriesCardProps {
   categories: ListBillsCategoriesResponse[];
-  onAdd: () => void;
 }
 
-export function CategoriesCard({ categories, onAdd }: CategoriesCardProps) {
+export function CategoriesCard({ categories }: CategoriesCardProps) {
   const handleDeleteCategory = async (billId: string) => {
     try {
       await DeleteBillCategory(billId);
@@ -29,7 +28,7 @@ export function CategoriesCard({ categories, onAdd }: CategoriesCardProps) {
             <Tag className="h-5 w-5" />
             Categorias de Despesas
           </CardTitle>
-          <Button onClick={onAdd}>
+          <Button>
             <Plus className="h-4 w-4 mr-2" /> Nova Categoria
           </Button>
         </div>
