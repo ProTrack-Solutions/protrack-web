@@ -123,7 +123,7 @@ export function DialogNewDepartments({
               id="dep-name"
               value={form.name}
               onChange={(e) => update("name", e.target.value)}
-              placeholder="Digite aqui"
+              placeholder="Ex: Financeiro, Vendas, Estoque"
               autoFocus
             />
           </div>
@@ -134,7 +134,7 @@ export function DialogNewDepartments({
               id="dep-desc"
               value={form.description}
               onChange={(e) => update("description", e.target.value)}
-              placeholder="Digite aqui"
+              placeholder="Descreva as responsabilidades deste departamento (opcional)"
               rows={4}
             />
           </div>

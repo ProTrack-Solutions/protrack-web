@@ -67,7 +67,7 @@ export default function PaymentStep({
         <div className="space-y-2">
           <Label className={labelClass}>Nome impresso</Label>
           <Input
-            placeholder="Digite aqui"
+            placeholder="NOME COMO NO CARTÃO"
             value={payment.card_holder}
             onChange={(e) =>
               setPayment({

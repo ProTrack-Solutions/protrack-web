@@ -60,7 +60,7 @@ export function InformacoesPessoais({
             </Label>
             <Input
               id="full_name"
-              placeholder="Digite aqui"
+              placeholder="Digite o nome completo"
               value={formData.full_name}
               onChange={(e) => onChange("full_name", e.target.value)}
               className="h-11"
@@ -73,7 +73,7 @@ export function InformacoesPessoais({
             </Label>
             <Input
               id="cpf"
-              placeholder="Digite aqui"
+              placeholder="000.000.000-00"
               value={formData.cpf}
               onChange={(e) => onChange("cpf", e.target.value)}
               className="h-11"
@@ -86,7 +86,7 @@ export function InformacoesPessoais({
             </Label>
             <Input
               id="rg"
-              placeholder="Digite aqui"
+              placeholder="00.000.000-0"
               value={formData.rg}
               onChange={(e) => onChange("rg", e.target.value)}
               className="h-11"
@@ -134,7 +134,7 @@ export function InformacoesPessoais({
               onValueChange={(v) => onChange("gender", v)}
             >
               <SelectTrigger id="gender" className="h-11">
-                <SelectValue placeholder="Selecione" />
+                <SelectValue placeholder="Selecione o gênero" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value={Gender.GenderMale}>Masculino</SelectItem>
@@ -156,7 +156,7 @@ export function InformacoesPessoais({
               onValueChange={(v) => onChange("marital_status", v)}
             >
               <SelectTrigger id="marital_status" className="h-11">
-                <SelectValue placeholder="Selecione" />
+                <SelectValue placeholder="Selecione o estado civil" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="solteiro">Solteiro(a)</SelectItem>

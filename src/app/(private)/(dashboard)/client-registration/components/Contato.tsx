@@ -36,7 +36,7 @@ export function Contato({ formData, onChange }: ContatoProps) {
             </Label>
             <Input
               id="whatsapp"
-              placeholder="Digite aqui"
+              placeholder="(00) 00000-0000"
               value={formData.whatsapp}
               onChange={(e) => onChange("whatsapp", e.target.value)}
               className="h-11"
@@ -49,7 +49,7 @@ export function Contato({ formData, onChange }: ContatoProps) {
             </Label>
             <Input
               id="mobile_phone"
-              placeholder="Digite aqui"
+              placeholder="(00) 00000-0000"
               value={formData.mobile_phone}
               onChange={(e) => onChange("mobile_phone", e.target.value)}
               className="h-11"
@@ -62,7 +62,7 @@ export function Contato({ formData, onChange }: ContatoProps) {
             </Label>
             <Input
               id="home_phone"
-              placeholder="Digite aqui"
+              placeholder="(00) 0000-0000"
               value={formData.home_phone}
               onChange={(e) => onChange("home_phone", e.target.value)}
               className="h-11"
@@ -80,7 +80,7 @@ export function Contato({ formData, onChange }: ContatoProps) {
             <Input
               id="email"
               type="email"
-              placeholder="Digite aqui"
+              placeholder="nome@email.com"
               value={formData.email}
               onChange={(e) => onChange("email", e.target.value)}
               className="h-11"
