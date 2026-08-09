@@ -49,6 +49,17 @@ export interface PaymentData {
   card_holder?: string;
 }
 
+export interface RegisterResponse {
+  company_id: string;
+  // Status da assinatura no Stripe logo após a criação (ex: "incomplete").
+  subscription_status: string;
+  // client_secret do PaymentIntent da primeira invoice. Presente quando o
+  // pagamento ainda precisa ser confirmado no navegador (via
+  // stripe.confirmCardPayment), incluindo autenticação 3D Secure.
+  client_secret?: string;
+  requires_action: boolean;
+}
+
 export interface RegisterParams {
   company: {
     address_city: string;
