@@ -1,20 +1,30 @@
 "use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { HeaderConfig } from "@/components/HeaderConfig";
+import { SecurityStatusCard } from "./components/SecurityStatusCard";
+import { ChangePasswordCard } from "./components/ChangePasswordCard";
+
+import { ActiveSessionsCard } from "./components/ActiveSessionsCard";
 
 export default function SecurityConfigPage() {
   return (
     <div className="space-y-6">
-      <Card>
-        <CardHeader>
-          <CardTitle>Configurações de Segurança</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p className="text-muted-foreground">
-            Em desenvolvimento - Senhas, autenticação de dois fatores, permissões.
-          </p>
-        </CardContent>
-      </Card>
+      <HeaderConfig
+        title="Segurança"
+        description="Configure suas opções de segurança e controle de acesso"
+      />
+
+      <div className="grid gap-6 lg:grid-cols-2">
+        <div className="space-y-6">
+          <SecurityStatusCard />
+
+          <ChangePasswordCard />
+        </div>
+
+        <div className="space-y-6">
+          <ActiveSessionsCard sessoes={[]} />
+        </div>
+      </div>
     </div>
   );
 }
