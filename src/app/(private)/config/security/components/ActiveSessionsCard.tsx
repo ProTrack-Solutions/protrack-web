@@ -1,16 +1,18 @@
 "use client";
 
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { AlertTriangle, CheckCircle, Clock } from "lucide-react";
 import { toast } from "sonner";
-import type { SessaoAtiva } from "./types";
+
+interface SessaoAtiva {
+  id: string;
+  dispositivo: string;
+  localizacao: string;
+  ultimoAcesso: string;
+  atual: boolean;
+}
 
 interface ActiveSessionsCardProps {
   sessoes: SessaoAtiva[];
@@ -43,9 +45,7 @@ export function ActiveSessionsCard({ sessoes }: ActiveSessionsCardProps) {
                   <div className="w-5 h-5 rounded-full bg-muted" />
                 )}
                 <div>
-                  <h4 className="font-medium text-sm">
-                    {sessao.dispositivo}
-                  </h4>
+                  <h4 className="font-medium text-sm">{sessao.dispositivo}</h4>
                   <p className="text-xs text-muted-foreground">
                     {sessao.localizacao} • {sessao.ultimoAcesso}
                   </p>
@@ -74,9 +74,7 @@ export function ActiveSessionsCard({ sessoes }: ActiveSessionsCardProps) {
           <div className="flex items-start gap-2">
             <AlertTriangle className="h-4 w-4 text-yellow-600 mt-0.5" />
             <div>
-              <h4 className="font-medium text-yellow-800 text-sm">
-                Atenção
-              </h4>
+              <h4 className="font-medium text-yellow-800 text-sm">Atenção</h4>
               <p className="text-xs text-yellow-700">
                 Sessões não reconhecidas? Altere sua senha imediatamente.
               </p>
