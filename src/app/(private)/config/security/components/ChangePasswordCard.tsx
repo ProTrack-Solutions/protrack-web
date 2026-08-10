@@ -1,17 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Eye, EyeOff, Key, Lock } from "lucide-react";
 import { toast } from "sonner";
+import { UpdatePassword } from "@/service/user.service";
 
 export function ChangePasswordCard() {
   const [mostrarSenha, setMostrarSenha] = useState(false);
@@ -19,22 +15,29 @@ export function ChangePasswordCard() {
   const [novaSenha, setNovaSenha] = useState("");
   const [confirmarSenha, setConfirmarSenha] = useState("");
 
-  const handleAlterarSenha = () => {
+  const handleAlterarSenha = async () => {
     if (novaSenha !== confirmarSenha) {
       toast.error("As senhas não coincidem.");
       return;
     }
-
     if (novaSenha.length < 8) {
       toast.error("A senha deve ter no mínimo 8 caracteres.");
       return;
     }
-
-    toast.success("Sua senha foi alterada com sucesso.");
-
-    setSenhaAtual("");
-    setNovaSenha("");
-    setConfirmarSenha("");
+    try {
+      await UpdatePassword({
+        current_password: senhaAtual,
+        password: confirmarSenha,
+      });
+      toast.success("Sua senha foi alterada com sucesso.");
+    } catch (error) {
+      console.log(error);
+      toast.error("Erro ao atualizar senha.");
+    } finally {
+      setSenhaAtual("");
+      setNovaSenha("");
+      setConfirmarSenha("");
+    }
   };
 
   return (

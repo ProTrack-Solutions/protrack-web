@@ -25,3 +25,8 @@ export interface UpdateUserParams {
   status: string;
   username: string;
 }
+
+export interface UpdatePasswordParams {
+  current_password: string;
+  password: string;
+}

@@ -1,19 +1,8 @@
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { CheckCircle } from "lucide-react";
 
-interface SecurityStatusCardProps {
-  twoFactorEnabled: boolean;
-}
-
-export function SecurityStatusCard({
-  twoFactorEnabled,
-}: SecurityStatusCardProps) {
+export function SecurityStatusCard() {
   return (
     <Card>
       <CardHeader>
@@ -28,10 +17,7 @@ export function SecurityStatusCard({
             <span className="text-sm font-medium text-green-800">
               Conta Protegida
             </span>
-            <Badge
-              variant="secondary"
-              className="bg-green-100 text-green-700"
-            >
+            <Badge variant="secondary" className="bg-green-100 text-green-700">
               Ativo
             </Badge>
           </div>
@@ -39,18 +25,6 @@ export function SecurityStatusCard({
             <div className="flex justify-between">
               <span className="text-muted-foreground">Senha forte:</span>
               <span className="text-green-600 font-medium">✓</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-muted-foreground">2FA:</span>
-              <span
-                className={
-                  twoFactorEnabled
-                    ? "text-green-600 font-medium"
-                    : "text-yellow-600 font-medium"
-                }
-              >
-                {twoFactorEnabled ? "✓" : "!"}
-              </span>
             </div>
           </div>
         </div>
