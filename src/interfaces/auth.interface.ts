@@ -3,6 +3,15 @@ export interface LoginParams {
   password: string;
 }
 
+export interface ForgotPasswordParams {
+  email: string;
+}
+
+export interface ResetPasswordParams {
+  token: string;
+  new_password: string;
+}
+
 export interface LoginResponse {
   accessToken: string;
   refreshToken: string;
