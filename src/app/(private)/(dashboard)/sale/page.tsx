@@ -31,8 +31,14 @@ export default function Sale() {
 
   const onSubmit = async (data: CreateSaleParams) => {
     try {
-      console.log("Dados prontos para enviar para o back-end:", data);
-      await CreateSale(data);
+      const payload = { ...data };
+
+      if (!payload.customer_id) {
+        delete payload.customer_id;
+      }
+
+      console.log("Dados prontos para enviar para o back-end:", payload);
+      await CreateSale(payload);
       toast.success("Venda cadastrado com sucesso!");
     } catch (error) {
       console.log(error);

@@ -27,6 +27,7 @@ export interface SalePaginationParams extends Pagination {
 
 export const initialSaleFormData: CreateSaleParams = {
   customer_id: "",
+  buyer_document: "",
   discount_amount: 0,
   due_days: 0,
   payment_method: PaymentMethod.Cash,
@@ -36,7 +37,8 @@ export const initialSaleFormData: CreateSaleParams = {
 };
 
 export interface CreateSaleParams {
-  customer_id: string;
+  customer_id?: string;
+  buyer_document: string;
   discount_amount: number;
   due_days: number;
   payment_method: PaymentMethod;
