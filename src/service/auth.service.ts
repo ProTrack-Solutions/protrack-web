@@ -1,4 +1,9 @@
-import { RegisterParams, RegisterResponse } from "@/interfaces/auth.interface";
+import {
+  ForgotPasswordParams,
+  RegisterParams,
+  RegisterResponse,
+  ResetPasswordParams,
+} from "@/interfaces/auth.interface";
 import { api } from "./api";
 
 export const Register = async (
@@ -9,4 +14,16 @@ export const Register = async (
     params,
   );
   return data;
+};
+
+export const ForgotPassword = async (
+  params: ForgotPasswordParams,
+): Promise<void> => {
+  await api.post("/auth/forgot-password", params);
+};
+
+export const ResetPassword = async (
+  params: ResetPasswordParams,
+): Promise<void> => {
+  await api.post("/auth/reset-password", params);
 };

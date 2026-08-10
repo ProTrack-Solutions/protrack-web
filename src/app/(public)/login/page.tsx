@@ -110,7 +110,7 @@ export default function Login() {
 
               <span
                 className="text-blue-600 font-semibold cursor-pointer text-sm"
-                onClick={() => router.push("/confirmacaoemail")}
+                onClick={() => router.push("/forgot-password")}
               >
                 Esqueceu a senha?
               </span>
