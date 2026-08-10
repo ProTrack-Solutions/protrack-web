@@ -12,7 +12,7 @@ const systemLinks: [string, string][] = [
 export function Footer() {
   return (
     <footer className="border-t border-border bg-background">
-      <div className="mx-auto grid max-w-7xl gap-10 px-5 py-14 md:grid-cols-4">
+      <div className="mx-auto grid max-w-7xl gap-10 px-5 py-14 md:grid-cols-5">
         <div className="md:col-span-2">
           <div className="flex items-center gap-2.5">
             <Image src={logo} alt="ProTrack Logo" width={200} height={200} />
@@ -66,6 +66,36 @@ export function Footer() {
               >
                 Criar conta
               </Link>
+            </li>
+          </ul>
+        </div>
+
+        <div>
+          <h3 className="text-xs font-bold uppercase tracking-[0.25em] text-foreground">
+            Contato
+          </h3>
+          <ul className="mt-4 space-y-3 text-sm text-muted-foreground">
+            <li>
+              <span className="block text-xs text-muted-foreground/70">
+                Suporte
+              </span>
+              <a
+                href="mailto:suporte.protrack@ptsolutionss.com"
+                className="break-all transition-colors hover:text-primary"
+              >
+                suporte.protrack@ptsolutionss.com
+              </a>
+            </li>
+            <li>
+              <span className="block text-xs text-muted-foreground/70">
+                Contato
+              </span>
+              <a
+                href="mailto:contato.protrack@ptsolutionss.com"
+                className="break-all transition-colors hover:text-primary"
+              >
+                contato.protrack@ptsolutionss.com
+              </a>
             </li>
           </ul>
         </div>
