@@ -58,4 +58,6 @@ export interface PlanFeatureResponse {
   name: string;
   is_enabled: boolean;
   display_order: number;
+  feature_key: string;
+  limit_value: number;
 }

@@ -64,7 +64,7 @@ export function PricingSection() {
                       className="flex items-start gap-2.5 text-sm text-card-foreground"
                     >
                       <Check className="mt-0.5 h-4 w-4 shrink-0 text-[hsl(155,55%,42%)]" />
-                      {f.name}
+                      {f.name} {f.limit_value > 0 ? "- " + f.limit_value : ""}
                     </li>
                   ))}
                 </ul>

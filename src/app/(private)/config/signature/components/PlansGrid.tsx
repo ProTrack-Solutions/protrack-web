@@ -64,7 +64,9 @@ export function PlansGrid({ planoAtual, onSelect }: PlansGridProps) {
                 {p.features?.map((r) => (
                   <div key={r.id} className="flex items-center gap-2 text-sm">
                     <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-                    <span>{r.name}</span>
+                    <span>
+                      {r.name} {r.limit_value > 0 ? "- " + r.limit_value : ""}
+                    </span>
                   </div>
                 ))}
               </div>
