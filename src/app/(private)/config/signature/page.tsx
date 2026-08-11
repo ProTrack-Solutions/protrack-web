@@ -89,6 +89,8 @@ const Assinatura = () => {
           created_at: subscription.created_at,
           updated_at: subscription.updated_at,
           plan_id: subscription.plan.id,
+          feature_key: f.feature_key,
+          limit_value: f.limit_value,
         })),
       }
     : PLANO_VAZIO;
