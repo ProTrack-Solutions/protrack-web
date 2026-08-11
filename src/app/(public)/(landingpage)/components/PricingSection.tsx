@@ -5,6 +5,8 @@ import { Badge } from "@/components/ui/badge";
 import { Reveal } from "./Reveal";
 import { usePlans } from "@/hooks/usePlans";
 
+const QUANTITY_FEATURE_KEYS = ["max_users", "max_products", "max_sales_month"];
+
 export function PricingSection() {
   const { plans } = usePlans();
 
@@ -64,7 +66,9 @@ export function PricingSection() {
                       className="flex items-start gap-2.5 text-sm text-card-foreground"
                     >
                       <Check className="mt-0.5 h-4 w-4 shrink-0 text-[hsl(155,55%,42%)]" />
-                      {f.name} {f.limit_value > 0 ? "- " + f.limit_value : ""}
+                      {f.name}
+                      {QUANTITY_FEATURE_KEYS.includes(f.feature_key) &&
+                        ` - ${f.limit_value != null ? f.limit_value : "Ilimitado"}`}
                     </li>
                   ))}
                 </ul>
