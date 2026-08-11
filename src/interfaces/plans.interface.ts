@@ -17,6 +17,8 @@ export interface PlansResponse {
 export interface PlanFeature {
   created_at: string;
   display_order: number;
+  feature_key: string;
+  limit_value: number;
   id: string;
   is_enabled: boolean;
   name: string;
