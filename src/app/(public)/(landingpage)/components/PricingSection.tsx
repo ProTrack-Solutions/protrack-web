@@ -68,7 +68,7 @@ export function PricingSection() {
                       <Check className="mt-0.5 h-4 w-4 shrink-0 text-[hsl(155,55%,42%)]" />
                       {f.name}
                       {QUANTITY_FEATURE_KEYS.includes(f.feature_key) &&
-                        ` - ${f.limit_value != null ? f.limit_value : "Ilimitado"}`}
+                        ` - ${f.limit_value == 0 ? f.limit_value : "Ilimitado"}`}
                     </li>
                   ))}
                 </ul>
