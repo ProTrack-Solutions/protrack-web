@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { Geist } from "next/font/google";
+import Script from "next/script";
 import { cn } from "@/lib/utils";
 import StripeProvider from "@/providers/stripe-provider";
 import { Toaster } from "sonner";
@@ -30,6 +31,18 @@ export default function RootLayout({
       className={cn("font-sans overflow-auto", geist.variable)}
     >
       <body>
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-XGQK1HZGML"
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-XGQK1HZGML');
+          `}
+        </Script>
         <Toaster theme="light" richColors closeButton position="top-right" />
         <StripeProvider>{children}</StripeProvider>
       </body>
