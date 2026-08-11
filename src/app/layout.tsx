@@ -8,7 +8,12 @@ import { Toaster } from "sonner";
 const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
 
 export const metadata: Metadata = {
-  title: "ProTrack",
+  title: {
+    default: "ERP para Pequenas Empresas: Estoque e Vendas | ProTrack",
+    template: "%s | ProTrack",
+  },
+  description:
+    "Sistema de gestão empresarial (ERP) para pequenas empresas: estoque, vendas parceladas, financeiro e clientes em uma única plataforma na nuvem, sem instalação.",
   icons: {
     icon: "logo.svg",
   },

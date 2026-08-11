@@ -1,0 +1,13 @@
+# ProTrack
+
+> Sistema de gestão empresarial da PT Solutions, que integra estoque, vendas, clientes e financeiro em uma única plataforma na nuvem.
+
+ProTrack Solutions é uma empresa de tecnologia que desenvolve softwares para simplificar a gestão e a operação de negócios. O ProTrack-strock é seu principal produto: um ERP simples e rápido de configurar, feito para pequenas e médias empresas que precisam controlar estoque, vendas parceladas, contas a pagar/receber e relacionamento com clientes em um só lugar, sem necessidade de instalação ou consultoria de implantação.
+
+## Docs
+- [Página inicial](https://www.ptsolutionss.com/): visão geral do ProTrack, seus módulos, planos e perguntas frequentes.
+- [Criar conta](https://www.ptsolutionss.com/register): cadastro gratuito para começar a usar o sistema.
+- [Login](https://www.ptsolutionss.com/login): acesso à área logada para clientes já cadastrados.
+
+## Optional
+- [Sitemap](https://www.ptsolutionss.com/sitemap.xml): lista completa de páginas públicas indexáveis do site.
