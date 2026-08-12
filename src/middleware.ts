@@ -12,9 +12,7 @@ export default auth((req) => {
 
   // Lista de páginas ou prefixos que são públicos (além do login, se houver)
   const isPublicRoute =
-    isAuthRoute ||
-    nextUrl.pathname === "/register" ||
-    nextUrl.pathname.startsWith("/");
+    isAuthRoute || nextUrl.pathname === "/register" || nextUrl.pathname === "/";
 
   // 1. Se estiver deslogado e tentar acessar uma rota privada, vai para o login
   if (!isLoggedIn && !isPublicRoute) {
