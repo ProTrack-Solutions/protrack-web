@@ -30,10 +30,27 @@ import { useState } from "react";
 
 interface Props {
   products: Product[];
+  onReachEnd?: () => void;
+  hasMore?: boolean;
+  isLoadingMore?: boolean;
 }
 
-export function SaleProductsTable({ products }: Props) {
+export function SaleProductsTable({
+  products,
+  onReachEnd,
+  hasMore,
+  isLoadingMore,
+}: Props) {
   const { control, setValue } = useFormContext<CreateSaleParams>();
+
+  const handleScroll = (event: React.UIEvent<HTMLDivElement>) => {
+    const { scrollTop, scrollHeight, clientHeight } = event.currentTarget;
+    const isNearEnd = scrollHeight - scrollTop - clientHeight < 48;
+
+    if (isNearEnd && hasMore && !isLoadingMore) {
+      onReachEnd?.();
+    }
+  };
 
   const { fields, append, remove } = useFieldArray({
     control,
@@ -106,7 +123,7 @@ export function SaleProductsTable({ products }: Props) {
                               <SelectValue placeholder="Selecione o produto" />
                             </SelectTrigger>
                           </FormControl>
-                          <SelectContent>
+                          <SelectContent onScroll={handleScroll}>
                             {products.map((produto) => (
                               <SelectItem key={produto.id} value={produto.id}>
                                 {produto.name} - R${" "}
@@ -114,6 +131,11 @@ export function SaleProductsTable({ products }: Props) {
                                 {produto.quantity})
                               </SelectItem>
                             ))}
+                            {isLoadingMore && (
+                              <div className="py-2 text-center text-xs text-muted-foreground">
+                                Carregando mais produtos...
+                              </div>
+                            )}
                           </SelectContent>
                         </Select>
                         <FormMessage />
