@@ -1,4 +1,3 @@
-// src/middleware.ts
 import { NextResponse } from "next/server";
 import { auth } from "@/auth";
 
@@ -12,7 +11,11 @@ export default auth((req) => {
 
   // Lista de páginas ou prefixos que são públicos (além do login, se houver)
   const isPublicRoute =
-    isAuthRoute || nextUrl.pathname === "/register" || nextUrl.pathname === "/";
+    isAuthRoute ||
+    nextUrl.pathname === "/register" ||
+    nextUrl.pathname === "/" ||
+    nextUrl.pathname === "/forgot-password" ||
+    nextUrl.pathname === "/reset-password";
 
   // 1. Se estiver deslogado e tentar acessar uma rota privada, vai para o login
   if (!isLoggedIn && !isPublicRoute) {

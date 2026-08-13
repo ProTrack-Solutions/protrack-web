@@ -13,8 +13,8 @@ import {
   initialSaleFormData,
 } from "@/interfaces/sale.interface";
 import { SaleFormPaymentMethod } from "./components/saleFormPaymentMethod";
-import { useProducts } from "@/hooks/useProducts";
-import { useClients } from "@/hooks/useClients";
+import { useInfiniteProducts } from "@/hooks/useInfiniteProducts";
+import { useInfiniteClients } from "@/hooks/useInfiniteClients";
 import { Loading } from "@/components/Loading";
 import { CreateSale } from "@/service/sale.service";
 import { toast } from "sonner";
@@ -25,9 +25,21 @@ export default function Sale() {
   });
 
 
-  const { products, loading: loadingProducts } = useProducts();
+  const {
+    products,
+    loading: loadingProducts,
+    fetchNextPage: fetchNextProductsPage,
+    hasNextPage: hasNextProductsPage,
+    isFetchingNextPage: isFetchingNextProductsPage,
+  } = useInfiniteProducts();
 
-  const { clients, loading: loadingClients } = useClients();
+  const {
+    clients,
+    loading: loadingClients,
+    fetchNextPage: fetchNextClientsPage,
+    hasNextPage: hasNextClientsPage,
+    isFetchingNextPage: isFetchingNextClientsPage,
+  } = useInfiniteClients();
 
   const onSubmit = async (data: CreateSaleParams) => {
     try {
@@ -62,13 +74,23 @@ export default function Sale() {
       <Form {...form}>
         <form className="space-y-6" onSubmit={form.handleSubmit(onSubmit)}>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <SaleInfoCard clients={clients} />
+            <SaleInfoCard
+              clients={clients}
+              onReachEnd={fetchNextClientsPage}
+              hasMore={hasNextClientsPage}
+              isLoadingMore={isFetchingNextClientsPage}
+            />
             <SaleSummaryCard products={products} />
           </div>
 
           <SaleFormPaymentMethod />
 
-          <SaleProductsTable products={products} />
+          <SaleProductsTable
+            products={products}
+            onReachEnd={fetchNextProductsPage}
+            hasMore={hasNextProductsPage}
+            isLoadingMore={isFetchingNextProductsPage}
+          />
 
           <SaleFormActions />
         </form>
