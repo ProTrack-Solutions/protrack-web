@@ -10,6 +10,7 @@ const QUANTITY_FEATURE_KEYS = [
   "max_products",
   "max_sales_month",
   "whatsapp_integration",
+  "nfe_emition",
 ];
 
 export function PricingSection() {
