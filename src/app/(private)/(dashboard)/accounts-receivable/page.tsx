@@ -22,6 +22,7 @@ export default function AccountsReceivable() {
       totalPages: 1,
     });
 
+  const [searchText, setSearchText] = useState("");
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("todos");
   const [filter, setFilter] = useState<FiltrosReceber>({
@@ -65,6 +66,11 @@ export default function AccountsReceivable() {
     setTotalPages(totalPages || 1);
   }, [totalPages, setTotalPages]);
 
+  const handleSearch = (value: string) => {
+    setSearch(value);
+    goToPage(1);
+  };
+
   const [dialogOpen, setDialogOpen] = useState(false);
 
   const handleBaixarPagamento = () => {
@@ -106,8 +112,9 @@ export default function AccountsReceivable() {
       />
 
       <BillsFilters
-        searchTerm={search}
-        onSearchTermChange={setSearch}
+        searchText={searchText}
+        onSearchTextChange={setSearchText}
+        onSearchChange={handleSearch}
         statusFilter={statusFilter}
         onStatusFilterChange={setStatusFilter}
         filter={filter}

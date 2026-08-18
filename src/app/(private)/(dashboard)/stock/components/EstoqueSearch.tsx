@@ -14,6 +14,8 @@ const types: { value: string; label: string; hint: string }[] = [
 ];
 
 interface EstoqueSearchProps {
+  searchText: string;
+  onSearchTextChange: (value: string) => void;
   onSearchChange: (value: string) => void;
   handleGenerateLabel: () => void;
   onApplyFilter: (filtros: FiltrosReceber) => void;
@@ -21,6 +23,8 @@ interface EstoqueSearchProps {
 }
 
 export function EstoqueSearch({
+  searchText,
+  onSearchTextChange,
   onSearchChange,
   handleGenerateLabel,
   onApplyFilter,
@@ -28,7 +32,14 @@ export function EstoqueSearch({
 }: EstoqueSearchProps) {
   const [filterOpen, setFilterOpen] = useState(false);
 
-  const [searchText, SetSearchText] = useState("");
+  const handleInputChange = (value: string) => {
+    onSearchTextChange(value);
+
+    // Quando o campo é totalmente apagado, volta para a consulta sem filtro
+    if (value.trim() === "") {
+      onSearchChange("");
+    }
+  };
 
   return (
     <Card className="border-border/50">
@@ -45,7 +56,7 @@ export function EstoqueSearch({
           <Input
             placeholder="Pesquisar por nome ou código de barras..."
             value={searchText}
-            onChange={(e) => SetSearchText(e.target.value)}
+            onChange={(e) => handleInputChange(e.target.value)}
             className="pl-10 h-11 bg-background border-border focus-visible:ring-blue-500/30"
           />
         </div>

@@ -42,6 +42,7 @@ import { FiltrosReceber } from "@/components/FilterPopOver";
 import { format } from "date-fns";
 
 export default function Clientes() {
+  const [searchText, setSearchText] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const { currentPage, displayPage, goToPage, pageRange, setTotalPages } =
     usePagination({
@@ -71,6 +72,11 @@ export default function Clientes() {
   useEffect(() => {
     setTotalPages(totalPages || 1);
   }, [totalPages, setTotalPages]);
+
+  const handleSearch = (value: string) => {
+    setSearchTerm(value);
+    goToPage(1);
+  };
 
   const [clientsSelected, setClientsSelected] = useState<Client>({} as Client);
   const [openDialog, setOpenDialog] = useState(false);
@@ -124,8 +130,9 @@ export default function Clientes() {
         text="Aqui você pode visualizar todos os clientes cadastrados no sistema.."
       />
       <FilterShearch
-        searchTerm={searchTerm}
-        setSearchTerm={setSearchTerm}
+        searchText={searchText}
+        onSearchTextChange={setSearchText}
+        onSearchChange={handleSearch}
         filter={filter}
         onApplyFilter={setFilter}
         setStatusFilter={setStatusFilter}
