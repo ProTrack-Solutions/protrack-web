@@ -5,7 +5,12 @@ import { Badge } from "@/components/ui/badge";
 import { Reveal } from "./Reveal";
 import { usePlans } from "@/hooks/usePlans";
 
-const QUANTITY_FEATURE_KEYS = ["max_users", "max_products", "max_sales_month"];
+const QUANTITY_FEATURE_KEYS = [
+  "max_users",
+  "max_products",
+  "max_sales_month",
+  "whatsapp_integration",
+];
 
 export function PricingSection() {
   const { plans } = usePlans();
