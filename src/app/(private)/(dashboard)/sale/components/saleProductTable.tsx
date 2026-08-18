@@ -1,14 +1,12 @@
 import { useFormContext, useFieldArray, useWatch } from "react-hook-form";
-import { Plus, Trash2 } from "lucide-react";
+import { ChevronDown, Plus, Search, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Table,
@@ -27,21 +25,34 @@ import {
 import { CreateSaleParams } from "@/interfaces/sale.interface";
 import { Product } from "@/interfaces/products.interface";
 import { useState } from "react";
+import { cn } from "@/lib/utils";
 
-interface Props {
+interface ProductSearchSelectProps {
+  value?: string;
+  onChange: (value: string) => void;
   products: Product[];
+  productSearch: string;
+  onProductSearchChange?: (value: string) => void;
   onReachEnd?: () => void;
   hasMore?: boolean;
   isLoadingMore?: boolean;
+  isSearchingProducts?: boolean;
 }
 
-export function SaleProductsTable({
+function ProductSearchSelect({
+  value,
+  onChange,
   products,
+  productSearch,
+  onProductSearchChange,
   onReachEnd,
   hasMore,
   isLoadingMore,
-}: Props) {
-  const { control, setValue } = useFormContext<CreateSaleParams>();
+  isSearchingProducts = false,
+}: ProductSearchSelectProps) {
+  const [open, setOpen] = useState(false);
+
+  const selectedProduct = products.find((product) => product.id === value);
 
   const handleScroll = (event: React.UIEvent<HTMLDivElement>) => {
     const { scrollTop, scrollHeight, clientHeight } = event.currentTarget;
@@ -51,6 +62,105 @@ export function SaleProductsTable({
       onReachEnd?.();
     }
   };
+
+  return (
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
+        <Button
+          type="button"
+          variant="outline"
+          role="combobox"
+          aria-expanded={open}
+          className="h-8 w-full justify-between font-normal"
+        >
+          <span className="truncate">
+            {selectedProduct ? (
+              `${selectedProduct.name} - R$ ${selectedProduct.sale_price.toFixed(2)} (Est: ${selectedProduct.quantity})`
+            ) : (
+              <span className="text-muted-foreground">Selecione o produto</span>
+            )}
+          </span>
+          <ChevronDown className="size-4 shrink-0 opacity-50" />
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent
+        className="w-(--radix-popover-trigger-width) p-0"
+        align="start"
+      >
+        <div className="border-b p-2">
+          <div className="relative">
+            <Search className="absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              autoFocus
+              placeholder="Buscar produto..."
+              value={productSearch}
+              onChange={(event) => onProductSearchChange?.(event.target.value)}
+              className="h-8 pl-8"
+            />
+          </div>
+        </div>
+        <div className="max-h-60 overflow-y-auto p-1" onScroll={handleScroll}>
+          {isSearchingProducts && products.length === 0 ? (
+            <div className="py-4 text-center text-xs text-muted-foreground">
+              Buscando produtos...
+            </div>
+          ) : (
+            products.map((produto) => (
+              <button
+                key={produto.id}
+                type="button"
+                className={cn(
+                  "flex w-full cursor-default items-center rounded-md px-2 py-1.5 text-left text-sm outline-none hover:bg-accent hover:text-accent-foreground",
+                  value === produto.id && "bg-accent text-accent-foreground",
+                )}
+                onClick={() => {
+                  onChange(produto.id);
+                  setOpen(false);
+                }}
+              >
+                {produto.name} - R$ {produto.sale_price.toFixed(2)} (Est:{" "}
+                {produto.quantity})
+              </button>
+            ))
+          )}
+          {!isSearchingProducts && products.length === 0 && (
+            <div className="py-4 text-center text-xs text-muted-foreground">
+              Nenhum produto encontrado.
+            </div>
+          )}
+          {isLoadingMore && (
+            <div className="py-2 text-center text-xs text-muted-foreground">
+              Carregando mais produtos...
+            </div>
+          )}
+        </div>
+      </PopoverContent>
+    </Popover>
+  );
+}
+
+interface Props {
+  products: Product[];
+  onReachEnd?: () => void;
+  hasMore?: boolean;
+  isLoadingMore?: boolean;
+  productSearch?: string;
+  onProductSearchChange?: (value: string) => void;
+  onProductSelected?: (product: Product) => void;
+  isSearchingProducts?: boolean;
+}
+
+export function SaleProductsTable({
+  products,
+  onReachEnd,
+  hasMore,
+  isLoadingMore,
+  productSearch = "",
+  onProductSearchChange,
+  onProductSelected,
+  isSearchingProducts = false,
+}: Props) {
+  const { control, setValue } = useFormContext<CreateSaleParams>();
 
   const { fields, append, remove } = useFieldArray({
     control,
@@ -63,17 +173,45 @@ export function SaleProductsTable({
     Record<string, number>
   >({});
 
-  console.log("valoresProdutos", valoresProdutos);
+  const [selectedProductsByRow, setSelectedProductsByRow] = useState<
+    Record<number, Product>
+  >({});
+
+  const getDisplayProducts = (index: number, selectedProductId?: string) => {
+    const selectedProduct =
+      selectedProductsByRow[index] ??
+      products.find((product) => product.id === selectedProductId);
+
+    if (
+      selectedProduct &&
+      !products.some((product) => product.id === selectedProduct.id)
+    ) {
+      return [selectedProduct, ...products];
+    }
+
+    return products;
+  };
 
   const handleProdutoChange = (index: number, produtoId: string) => {
     const produto = products.find((p) => p.id === produtoId);
-    if (produto) {
-      setValue(`items.${index}.product_id`, produto.id);
-      const i = `items.${index}.product_id`;
+    const selectedProduct = selectedProductsByRow[index];
+    const resolvedProduct =
+      produto ??
+      (selectedProduct?.id === produtoId ? selectedProduct : undefined);
+
+    if (resolvedProduct) {
+      setValue(`items.${index}.product_id`, resolvedProduct.id);
+      const fieldKey = `items.${index}.product_id`;
+
+      setSelectedProductsByRow((prev) => ({
+        ...prev,
+        [index]: resolvedProduct,
+      }));
+      onProductSelected?.(resolvedProduct);
 
       setValoresProdutos((prev) => ({
         ...prev,
-        [i]: produto.sale_price,
+        [fieldKey]: resolvedProduct.sale_price,
       }));
     }
   };
@@ -111,33 +249,22 @@ export function SaleProductsTable({
                     name={`items.${index}.product_id`}
                     render={({ field }) => (
                       <FormItem>
-                        <Select
-                          onValueChange={(value) => {
-                            field.onChange(value);
-                            handleProdutoChange(index, value);
-                          }}
-                          value={field.value}
-                        >
-                          <FormControl>
-                            <SelectTrigger className="w-full">
-                              <SelectValue placeholder="Selecione o produto" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent onScroll={handleScroll}>
-                            {products.map((produto) => (
-                              <SelectItem key={produto.id} value={produto.id}>
-                                {produto.name} - R${" "}
-                                {produto.sale_price.toFixed(2)} (Est:{" "}
-                                {produto.quantity})
-                              </SelectItem>
-                            ))}
-                            {isLoadingMore && (
-                              <div className="py-2 text-center text-xs text-muted-foreground">
-                                Carregando mais produtos...
-                              </div>
-                            )}
-                          </SelectContent>
-                        </Select>
+                        <FormControl>
+                          <ProductSearchSelect
+                            value={field.value}
+                            onChange={(value) => {
+                              field.onChange(value);
+                              handleProdutoChange(index, value);
+                            }}
+                            products={getDisplayProducts(index, field.value)}
+                            productSearch={productSearch}
+                            onProductSearchChange={onProductSearchChange}
+                            onReachEnd={onReachEnd}
+                            hasMore={hasMore}
+                            isLoadingMore={isLoadingMore}
+                            isSearchingProducts={isSearchingProducts}
+                          />
+                        </FormControl>
                         <FormMessage />
                       </FormItem>
                     )}
@@ -171,7 +298,6 @@ export function SaleProductsTable({
                     type="number"
                     step="0.01"
                     min="0"
-                    {...field}
                     value={valoresProdutos[`items.${index}.product_id`] || ""}
                     disabled
                   />

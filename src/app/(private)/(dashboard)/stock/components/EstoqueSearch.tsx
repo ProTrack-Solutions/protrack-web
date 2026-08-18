@@ -14,7 +14,6 @@ const types: { value: string; label: string; hint: string }[] = [
 ];
 
 interface EstoqueSearchProps {
-  searchTerm: string;
   onSearchChange: (value: string) => void;
   handleGenerateLabel: () => void;
   onApplyFilter: (filtros: FiltrosReceber) => void;
@@ -22,7 +21,6 @@ interface EstoqueSearchProps {
 }
 
 export function EstoqueSearch({
-  searchTerm,
   onSearchChange,
   handleGenerateLabel,
   onApplyFilter,
@@ -30,15 +28,24 @@ export function EstoqueSearch({
 }: EstoqueSearchProps) {
   const [filterOpen, setFilterOpen] = useState(false);
 
+  const [searchText, SetSearchText] = useState("");
+
   return (
     <Card className="border-border/50">
       <CardContent className="p-4 flex flex-col sm:flex-row gap-3">
+        <Button
+          className="h-11 gap-2 bg-blue-600 hover:bg-blue-700 text-white cursor-pointer"
+          onClick={() => onSearchChange(searchText)}
+        >
+          <Search className="w-4 h-4" />
+          Buscar
+        </Button>
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground w-4 h-4" />
           <Input
             placeholder="Pesquisar por nome ou código de barras..."
-            value={searchTerm}
-            onChange={(e) => onSearchChange(e.target.value)}
+            value={searchText}
+            onChange={(e) => SetSearchText(e.target.value)}
             className="pl-10 h-11 bg-background border-border focus-visible:ring-blue-500/30"
           />
         </div>
