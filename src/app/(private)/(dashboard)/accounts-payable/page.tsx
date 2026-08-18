@@ -21,6 +21,7 @@ export default function AccountsPayable() {
       totalPages: 1,
     });
 
+  const [searchText, setSearchText] = useState("");
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("todos");
   const [categoriaFilter, setCategoriaFilter] = useState("todas");
@@ -85,6 +86,11 @@ export default function AccountsPayable() {
     setTotalPages(totalPages || 1);
   }, [totalPages, setTotalPages]);
 
+  const handleSearch = (value: string) => {
+    setSearch(value);
+    goToPage(1);
+  };
+
   const [newOpenDialog, setNewOpenDialog] = useState(false);
 
   if (loading) {
@@ -119,8 +125,9 @@ export default function AccountsPayable() {
       />
 
       <ContasPagarFiltrosPesquisa
-        searchTerm={search}
-        onSearchTermChange={setSearch}
+        searchText={searchText}
+        onSearchTextChange={setSearchText}
+        onSearchChange={handleSearch}
         statusFilter={statusFilter}
         onStatusFilterChange={setStatusFilter}
         categoriaFilter={categoriaFilter}

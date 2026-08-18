@@ -17,6 +17,7 @@ import { FiltrosReceber } from "@/components/FilterPopOver";
 import { SalePaginationParams } from "@/interfaces/sale.interface";
 
 export default function SalesList() {
+  const [searchText, setSearchText] = useState("");
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("todos");
   const [paymentMethodFilter, setPaymentMethodFilter] = useState("todos");
@@ -75,6 +76,11 @@ export default function SalesList() {
     setTotalPages(totalPages || 1);
   }, [totalPages, setTotalPages]);
 
+  const handleSearch = (value: string) => {
+    setSearch(value);
+    goToPage(1);
+  };
+
   if (loading) {
     return (
       <div className="flex justify-center items-center w-full h-full">
@@ -102,8 +108,9 @@ export default function SalesList() {
       />
 
       <SaleListSearch
-        search={search}
-        setSearch={setSearch}
+        searchText={searchText}
+        onSearchTextChange={setSearchText}
+        onSearchChange={handleSearch}
         statusFilter={statusFilter}
         setStatusFilter={setStatusFilter}
         paymentMethodFilter={paymentMethodFilter}
