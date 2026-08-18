@@ -13,6 +13,7 @@ import { GenerateLabel } from "@/service/label.service";
 import { toast } from "sonner";
 import { FiltrosReceber } from "@/components/FilterPopOver";
 import { format } from "date-fns";
+import { GetProducts } from "@/service/products.service";
 
 export default function Stock() {
   const { currentPage, displayPage, goToPage, pageRange, setTotalPages } =
@@ -20,6 +21,7 @@ export default function Stock() {
       totalPages: 1,
     });
 
+  const [searchText, setSearchText] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
 
   const [filter, setFilter] = useState<FiltrosReceber>({
@@ -50,7 +52,47 @@ export default function Stock() {
     refetch();
   }, [searchTerm, filter, refetch]);
 
-  const [selectedRows, setSelectedRows] = useState<Set<string>>(new Set(["1"]));
+  const handleSearch = (value: string) => {
+    setSearchTerm(value);
+    goToPage(1);
+  };
+
+  const [selectedRows, setSelectedRows] = useState<Set<string>>(new Set());
+  const [selectingAll, setSelectingAll] = useState(false);
+
+  const handleSelectAll = async (checked: boolean) => {
+    if (!checked) {
+      setSelectedRows(new Set());
+      return;
+    }
+
+    if (!productsCount) {
+      setSelectedRows(new Set());
+      return;
+    }
+
+    try {
+      setSelectingAll(true);
+      // Os produtos vêm paginados, então para selecionar todos é preciso
+      // buscar todas as páginas de uma vez respeitando os filtros atuais.
+      const allProducts = await GetProducts({
+        Page: 1,
+        PerPage: productsCount,
+        Search: searchTerm,
+        OrderBy: "asc",
+        EndDate:
+          (filter?.endDate && format(filter.endDate, "yyyy-MM-dd")) ?? "",
+        StartDate:
+          (filter?.startDate && format(filter.startDate, "yyyy-MM-dd")) ?? "",
+      });
+      setSelectedRows(new Set(allProducts.data.map((product) => product.id)));
+    } catch (error) {
+      console.log(error);
+      toast.error("Erro ao selecionar todos os produtos!");
+    } finally {
+      setSelectingAll(false);
+    }
+  };
 
   const handleGenerateLabel = async () => {
     const payload = Array.from(selectedRows).map((id) => ({
@@ -99,15 +141,20 @@ export default function Stock() {
           totalValueInStock={totalValueInStock}
         />
         <EstoqueSearch
-          onSearchChange={setSearchTerm}
+          searchText={searchText}
+          onSearchTextChange={setSearchText}
+          onSearchChange={handleSearch}
           handleGenerateLabel={handleGenerateLabel}
           onApplyFilter={setFilter}
           filter={filter}
         />
         <EstoqueTable
           products={products}
+          productsCount={productsCount}
           selectedRows={selectedRows}
           setSelectedRows={setSelectedRows}
+          onSelectAll={handleSelectAll}
+          selectingAll={selectingAll}
         />
         <DataPagination
           currentPage={displayPage}

@@ -21,29 +21,30 @@ import { Checkbox } from "@/components/ui/checkbox";
 
 interface EstoqueTableProps {
   products: Product[];
+  productsCount: number;
   selectedRows: Set<string>;
   setSelectedRows: (param: SetStateAction<Set<string>>) => void;
+  onSelectAll: (checked: boolean) => void;
+  selectingAll?: boolean;
 }
 
 export function EstoqueTable({
   products,
+  productsCount,
   selectedRows,
   setSelectedRows,
+  onSelectAll,
+  selectingAll,
 }: EstoqueTableProps) {
   const { productsCategories } = useProductsCategories();
 
   const [openDialog, setOpenDialog] = useState(false);
 
-  console.log("selectedRows", selectedRows);
-
-  const selectAll = selectedRows.size === products.length;
-  const handleSelectAll = (checked: boolean) => {
-    if (checked) {
-      setSelectedRows(new Set(products.map((row) => row.id)));
-    } else {
-      setSelectedRows(new Set());
-    }
-  };
+  // Os produtos são buscados paginados, então o header considera o total
+  // de produtos (todas as páginas), e não apenas os itens da página atual.
+  const selectAll = productsCount > 0 && selectedRows.size === productsCount;
+  const selectAllState: boolean | "indeterminate" =
+    selectedRows.size > 0 && !selectAll ? "indeterminate" : selectAll;
 
   const handleSelectRow = (id: string, checked: boolean) => {
     const newSelected = new Set(selectedRows);
@@ -66,8 +67,9 @@ export function EstoqueTable({
                 <Checkbox
                   id="select-all-checkbox"
                   name="select-all-checkbox"
-                  checked={selectAll}
-                  onCheckedChange={handleSelectAll}
+                  checked={selectAllState}
+                  disabled={selectingAll}
+                  onCheckedChange={(checked) => onSelectAll(checked === true)}
                 />
               </TableHead>
               <TableHead className="font-semibold text-foreground">

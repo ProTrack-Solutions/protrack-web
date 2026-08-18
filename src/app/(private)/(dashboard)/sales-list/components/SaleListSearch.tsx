@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
   Select,
@@ -22,8 +23,9 @@ const types: { value: string; label: string; hint: string }[] = [
 ];
 
 interface SaleListSearchProps {
-  search: string;
-  setSearch: (value: string) => void;
+  searchText: string;
+  onSearchTextChange: (value: string) => void;
+  onSearchChange: (value: string) => void;
   statusFilter: string;
   setStatusFilter: (value: string) => void;
   paymentMethodFilter: string;
@@ -33,8 +35,9 @@ interface SaleListSearchProps {
 }
 
 export const SaleListSearch = ({
-  search,
-  setSearch,
+  searchText,
+  onSearchTextChange,
+  onSearchChange,
   statusFilter,
   setStatusFilter,
   paymentMethodFilter,
@@ -44,16 +47,32 @@ export const SaleListSearch = ({
 }: SaleListSearchProps) => {
   const [filterOpen, setFilterOpen] = useState(false);
 
+  const handleInputChange = (value: string) => {
+    onSearchTextChange(value);
+
+    // Quando o campo é totalmente apagado, volta para a consulta sem filtro
+    if (value.trim() === "") {
+      onSearchChange("");
+    }
+  };
+
   return (
     <Card>
       <CardContent className="pt-6">
         <div className="flex flex-col sm:flex-row gap-3">
+          <Button
+            className="gap-2 cursor-pointer"
+            onClick={() => onSearchChange(searchText)}
+          >
+            <Search className="h-4 w-4" />
+            Buscar
+          </Button>
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
               placeholder="Pesquisar por cliente ou nº da venda..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              value={searchText}
+              onChange={(e) => handleInputChange(e.target.value)}
               className="pl-9"
             />
           </div>
