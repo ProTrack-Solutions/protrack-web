@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { Form } from "@/components/ui/form";
 
@@ -18,12 +19,31 @@ import { useInfiniteClients } from "@/hooks/useInfiniteClients";
 import { Loading } from "@/components/Loading";
 import { CreateSale } from "@/service/sale.service";
 import { toast } from "sonner";
+import { Product } from "@/interfaces/products.interface";
+
+function useDebouncedValue<T>(value: T, delay: number): T {
+  const [debouncedValue, setDebouncedValue] = useState(value);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setDebouncedValue(value), delay);
+    return () => clearTimeout(timer);
+  }, [value, delay]);
+
+  return debouncedValue;
+}
 
 export default function Sale() {
   const form = useForm<CreateSaleParams>({
     defaultValues: initialSaleFormData,
   });
 
+  const [productSearch, setProductSearch] = useState("");
+  const debouncedProductSearch = useDebouncedValue(productSearch, 300);
+  const [clientSearch, setClientSearch] = useState("");
+  const debouncedClientSearch = useDebouncedValue(clientSearch, 300);
+  const [selectedProducts, setSelectedProducts] = useState<
+    Record<string, Product>
+  >({});
 
   const {
     products,
@@ -31,7 +51,15 @@ export default function Sale() {
     fetchNextPage: fetchNextProductsPage,
     hasNextPage: hasNextProductsPage,
     isFetchingNextPage: isFetchingNextProductsPage,
-  } = useInfiniteProducts();
+  } = useInfiniteProducts(debouncedProductSearch || undefined);
+
+  const productsForSummary = useMemo(() => {
+    const byId = new Map(products.map((product) => [product?.id, product]));
+    Object.values(selectedProducts).forEach((product) =>
+      byId.set(product?.id, product),
+    );
+    return Array.from(byId.values());
+  }, [products, selectedProducts]);
 
   const {
     clients,
@@ -39,7 +67,7 @@ export default function Sale() {
     fetchNextPage: fetchNextClientsPage,
     hasNextPage: hasNextClientsPage,
     isFetchingNextPage: isFetchingNextClientsPage,
-  } = useInfiniteClients();
+  } = useInfiniteClients(debouncedClientSearch || undefined);
 
   const onSubmit = async (data: CreateSaleParams) => {
     try {
@@ -57,7 +85,14 @@ export default function Sale() {
       toast.error("Erro ao cadastrar venda!");
     } finally {
       form.reset();
+      setSelectedProducts({});
+      setProductSearch("");
+      setClientSearch("");
     }
+  };
+
+  const handleProductSelected = (product: Product) => {
+    setSelectedProducts((prev) => ({ ...prev, [product.id]: product }));
   };
 
   if (loadingClients && loadingProducts) {
@@ -79,8 +114,13 @@ export default function Sale() {
               onReachEnd={fetchNextClientsPage}
               hasMore={hasNextClientsPage}
               isLoadingMore={isFetchingNextClientsPage}
+              clientSearch={clientSearch}
+              onClientSearchChange={setClientSearch}
+              isSearchingClients={
+                clientSearch !== debouncedClientSearch || loadingClients
+              }
             />
-            <SaleSummaryCard products={products} />
+            <SaleSummaryCard products={productsForSummary} />
           </div>
 
           <SaleFormPaymentMethod />
@@ -90,6 +130,12 @@ export default function Sale() {
             onReachEnd={fetchNextProductsPage}
             hasMore={hasNextProductsPage}
             isLoadingMore={isFetchingNextProductsPage}
+            productSearch={productSearch}
+            onProductSearchChange={setProductSearch}
+            onProductSelected={handleProductSelected}
+            isSearchingProducts={
+              productSearch !== debouncedProductSearch || loadingProducts
+            }
           />
 
           <SaleFormActions />

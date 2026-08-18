@@ -99,7 +99,6 @@ export default function Stock() {
           totalValueInStock={totalValueInStock}
         />
         <EstoqueSearch
-          searchTerm={searchTerm}
           onSearchChange={setSearchTerm}
           handleGenerateLabel={handleGenerateLabel}
           onApplyFilter={setFilter}
