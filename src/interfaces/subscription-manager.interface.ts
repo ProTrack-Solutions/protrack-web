@@ -61,3 +61,9 @@ export interface PlanFeatureResponse {
   feature_key: string;
   limit_value: number;
 }
+
+export interface GetUseMenssagesResponse {
+  limit_menssage: number;
+  menssage_amount: number;
+  percentage: number;
+}

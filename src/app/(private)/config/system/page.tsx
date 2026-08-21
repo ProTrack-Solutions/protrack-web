@@ -9,7 +9,7 @@ export default function SystemConfigPage() {
   return (
     <div className="space-y-6">
       <HeaderConfig
-        title="Configurações financeiras"
+        title="Configurações do sistema"
         description="Aqui você encontra as configurações do sistema"
       />
 
