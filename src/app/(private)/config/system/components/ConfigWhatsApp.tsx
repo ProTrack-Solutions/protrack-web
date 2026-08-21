@@ -1,3 +1,4 @@
+import { SimpleLoading } from "@/components/SimpleLoading";
 import {
   Card,
   CardHeader,
@@ -11,46 +12,23 @@ import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
 import { CompanySettings } from "@/enum/company-settings.enum";
 import { useCompanySettings } from "@/hooks/useCompanySettings";
+import { useConfigSettings } from "@/hooks/useSubscriptionManager";
 import { UpsetCompanySettingsRequest } from "@/interfaces/company-settings.interface";
 import { UpsetCompanySettings } from "@/service/company-settings.service";
 import { FileText, CheckCircle2, Send, AlertTriangle } from "lucide-react";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
 
-type SaleTemplate = {
-  id: string;
-  name: string;
-  description: string;
-  body: string;
-};
-
-const SALE_TEMPLATES: SaleTemplate[] = [
-  {
-    id: "padrao",
-    name: "Padrão",
-    description: "Mensagem simples de confirmação de venda.",
-    body: "Olá {cliente}! ✅ Sua compra na {empresa} foi confirmada.\n\nProdutos: {produtos}\nValor: {valor}\n\nObrigado pela preferência!",
-  },
-  {
-    id: "detalhado",
-    name: "Detalhado",
-    description: "Inclui vencimento e mais informações da venda.",
-    body: "Olá {cliente}, tudo bem?\n\nSua compra na {empresa} foi registrada com sucesso:\n\n🛒 Produtos: {produtos}\n💰 Valor: {valor}\n📅 Vencimento: {vencimento}\n\nQualquer dúvida, estamos à disposição!",
-  },
-  {
-    id: "resumido",
-    name: "Resumido",
-    description: "Versão curta, ideal para envios em massa.",
-    body: "{empresa}: venda de {valor} confirmada para {cliente}. Vencimento: {vencimento}.",
-  },
-];
-
 export const ConfigWhatsApp = () => {
-  const [templateVenda, setTemplateVenda] = useState(SALE_TEMPLATES[0].id);
-  const [limiteMensagens, setLimiteMensagens] = useState(500);
-  const [mensagensEnviadas] = useState(0);
+  const [templateVenda, setTemplateVenda] = useState<string | null>(null);
 
-  const { companySettings } = useCompanySettings();
+  const {
+    companySettings,
+    loading: settingsLoading,
+    refetch: settingsRefetch,
+  } = useCompanySettings();
+
+  const { usageMenssages, templates, loading, refetch } = useConfigSettings();
 
   const mensagensAtivas = useMemo(() => {
     const setting = companySettings?.find(
@@ -71,31 +49,48 @@ export const ConfigWhatsApp = () => {
   ) => {
     try {
       await UpsetCompanySettings(params);
+      await settingsRefetch();
+      await refetch();
       if (params.key == CompanySettings.IsWhatsappActive) {
         toast.success(
           params.value
             ? "Mensagens via WhatsApp ativadas."
             : "Mensagens via WhatsApp desativadas.",
         );
-      } else {
+      } else if (params.key == CompanySettings.IsExcessUsage) {
         toast.success(
           params.value
             ? "Mensagens excedentes ativadas."
             : "Mensagens excedentes desativadas.",
         );
+      } else if (params.key == CompanySettings.SaleOverdueTemplate) {
+        toast.success(`Template "${params.value}" selecionado.`);
       }
     } catch (error) {
       console.log(error);
     }
   };
 
-  const selectedTemplate =
-    SALE_TEMPLATES.find((tpl) => tpl.id === templateVenda) ?? SALE_TEMPLATES[0];
+  const savedTemplateId = useMemo(() => {
+    const setting = companySettings?.find(
+      (cs) => cs.key === CompanySettings.SaleOverdueTemplate,
+    );
+    return setting?.value as string | undefined;
+  }, [companySettings]);
 
-  const percentualUso =
-    limiteMensagens > 0
-      ? Math.min(100, Math.round((mensagensEnviadas / limiteMensagens) * 100))
-      : 0;
+  const selectedTemplate = useMemo(() => {
+    const templateName = templateVenda ?? savedTemplateId;
+    return (
+      templates?.find((tpl) => tpl.meta_template_name === templateName) ??
+      templates?.[0]
+    );
+  }, [templates, templateVenda, savedTemplateId]);
+
+  if (loading && settingsLoading) {
+    return (
+      <SimpleLoading label="Carregando configurações" fullScreen size="lg" />
+    );
+  }
 
   return (
     <div className="space-y-4 mt-4">
@@ -117,51 +112,70 @@ export const ConfigWhatsApp = () => {
           </div>
         </CardHeader>
         <CardContent className="space-y-6">
-          <div className="grid gap-3 md:grid-cols-3">
-            {SALE_TEMPLATES.map((tpl) => {
-              const selected = templateVenda === tpl.id;
-              return (
-                <button
-                  key={tpl.id}
-                  type="button"
-                  onClick={() => {
-                    setTemplateVenda(tpl.id);
-                    toast.success(`Template "${tpl.name}" selecionado.`);
-                  }}
-                  className={`text-left rounded-lg border p-4 transition-all hover:shadow-sm ${
-                    selected
-                      ? "border-primary ring-2 ring-primary/20 bg-primary/5"
-                      : "hover:border-primary/40"
-                  }`}
-                >
-                  <div className="flex items-center justify-between gap-2 mb-1">
-                    <span className="font-semibold text-sm">{tpl.name}</span>
-                    {selected && (
-                      <CheckCircle2 className="h-4 w-4 text-primary shrink-0" />
-                    )}
-                  </div>
-                  <p className="text-xs text-muted-foreground">
-                    {tpl.description}
-                  </p>
-                </button>
-              );
-            })}
-          </div>
-
-          <Separator />
-
-          <div className="space-y-2">
-            <Label>Pré-visualização</Label>
-            <div className="rounded-lg border bg-muted/40 p-4">
-              <div className="max-w-md rounded-2xl rounded-tl-sm bg-emerald-500/10 border border-emerald-500/20 p-3 text-sm whitespace-pre-line">
-                {selectedTemplate.body}
-              </div>
+          {templates?.length ? (
+            <div className="grid gap-3 md:grid-cols-3">
+              {templates.map((tpl) => {
+                const selected = savedTemplateId === tpl.meta_template_name;
+                return (
+                  <button
+                    key={tpl.id}
+                    type="button"
+                    onClick={() => {
+                      setTemplateVenda(tpl.meta_template_name);
+                      handleWhatsappSettings({
+                        key: CompanySettings.SaleOverdueTemplate,
+                        value: String(tpl.meta_template_name),
+                      });
+                    }}
+                    className={`cursor-pointer text-left rounded-lg border p-4 transition-all hover:shadow-sm ${
+                      selected
+                        ? "border-primary ring-2 ring-primary/20 bg-primary/5"
+                        : "hover:border-primary/40"
+                    }`}
+                  >
+                    <div className="flex items-center justify-between gap-2 mb-1">
+                      <span className="font-semibold text-sm">
+                        {tpl.meta_template_name}
+                      </span>
+                      {selected && (
+                        <CheckCircle2 className="h-4 w-4 text-primary shrink-0" />
+                      )}
+                    </div>
+                    <p className="text-xs text-muted-foreground line-clamp-3">
+                      {tpl.body_text}
+                    </p>
+                  </button>
+                );
+              })}
             </div>
-            <p className="text-xs text-muted-foreground">
-              Variáveis disponíveis: {"{cliente}"}, {"{valor}"}, {"{produtos}"},{" "}
-              {"{empresa}"}, {"{vencimento}"}
+          ) : (
+            <p className="text-sm text-muted-foreground">
+              Nenhum template de mensagem cadastrado.
             </p>
-          </div>
+          )}
+
+          {selectedTemplate && (
+            <>
+              <Separator />
+
+              <div className="space-y-2">
+                <Label>Pré-visualização</Label>
+                <div className="rounded-lg border bg-muted/40 p-4">
+                  <div className="max-w-md rounded-2xl rounded-tl-sm bg-emerald-500/10 border border-emerald-500/20 p-3 text-sm whitespace-pre-line">
+                    {selectedTemplate.body_text}
+                  </div>
+                </div>
+                {!!selectedTemplate.variables?.length && (
+                  <p className="text-xs text-muted-foreground">
+                    Variáveis disponíveis:{" "}
+                    {selectedTemplate.variables
+                      .map((v) => (v.startsWith("{") ? v : `{${v}}`))
+                      .join(", ")}
+                  </p>
+                )}
+              </div>
+            </>
+          )}
         </CardContent>
       </Card>
 
@@ -193,6 +207,7 @@ export const ConfigWhatsApp = () => {
               </p>
             </div>
             <Switch
+              className="cursor-pointer"
               id="msg-ativas"
               checked={mensagensAtivas}
               onCheckedChange={(v) => {
@@ -215,6 +230,7 @@ export const ConfigWhatsApp = () => {
               </p>
             </div>
             <Switch
+              className="cursor-pointer"
               id="msg-excedentes"
               checked={mensagensExcedentes}
               disabled={!mensagensAtivas}
@@ -235,33 +251,35 @@ export const ConfigWhatsApp = () => {
                   id="limite-msg"
                   type="number"
                   min={0}
-                  value={limiteMensagens}
-                  onChange={(e) => setLimiteMensagens(Number(e.target.value))}
-                  disabled={!mensagensAtivas}
+                  value={usageMenssages?.limit_menssage ?? ""}
+                  disabled
                 />
               </div>
               <div className="space-y-2">
                 <Label>Consumo do mês</Label>
                 <div className="h-10 flex items-center text-sm font-medium">
-                  {mensagensEnviadas} / {limiteMensagens} ({percentualUso}%)
+                  {usageMenssages?.menssage_amount} /
+                  {usageMenssages?.limit_menssage} ({usageMenssages?.percentage}
+                  %)
                 </div>
               </div>
             </div>
             <div className="h-2 w-full rounded-full bg-muted overflow-hidden">
               <div
                 className="h-full rounded-full bg-primary transition-all"
-                style={{ width: `${percentualUso}%` }}
+                style={{ width: `${usageMenssages?.percentage}%` }}
               />
             </div>
-            {percentualUso >= 100 && !mensagensExcedentes && (
-              <div className="flex gap-2 text-sm text-amber-600">
-                <AlertTriangle className="h-4 w-4 shrink-0 mt-0.5" />
-                <p>
-                  Limite atingido. Ative as mensagens excedentes para continuar
-                  enviando.
-                </p>
-              </div>
-            )}
+            {(usageMenssages?.percentage ?? 0) >= 100 &&
+              !mensagensExcedentes && (
+                <div className="flex gap-2 text-sm text-amber-600">
+                  <AlertTriangle className="h-4 w-4 shrink-0 mt-0.5" />
+                  <p>
+                    Limite atingido. Ative as mensagens excedentes para
+                    continuar enviando.
+                  </p>
+                </div>
+              )}
           </div>
         </CardContent>
       </Card>

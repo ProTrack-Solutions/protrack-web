@@ -4,4 +4,5 @@ export enum CompanySettings {
   LowStock = "low_stock",
   MediumStock = "mediun_stock",
   NormalStock = "normal_stock",
+  SaleOverdueTemplate = "sale_overdue_template",
 }
