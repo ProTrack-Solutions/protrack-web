@@ -1,5 +1,4 @@
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { SimpleLoading } from "@/components/SimpleLoading";
 import {
   Card,
   CardHeader,
@@ -10,117 +9,88 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
-import {
-  ConnectInstance,
-  CreateInstance,
-  DeleteInstance,
-} from "@/service/whatsapp.service";
-import {
-  MessageCircle,
-  CheckCircle2,
-  Power,
-  RefreshCw,
-  Smartphone,
-  Info,
-  QrCode,
-  Loader2,
-  XCircle,
-} from "lucide-react";
-import Image from "next/image";
-import { useEffect, useState } from "react";
+import { Switch } from "@/components/ui/switch";
+import { CompanySettings } from "@/enum/company-settings.enum";
+import { useCompanySettings } from "@/hooks/useCompanySettings";
+import { useConfigSettings } from "@/hooks/useSubscriptionManager";
+import { UpsetCompanySettingsRequest } from "@/interfaces/company-settings.interface";
+import { UpsetCompanySettings } from "@/service/company-settings.service";
+import { FileText, CheckCircle2, Send, AlertTriangle } from "lucide-react";
+import { useMemo, useState } from "react";
 import { toast } from "sonner";
-import QRCode from "qrcode";
-import { useWhatsApp } from "@/hooks/useWhatsApp";
-import { SimpleLoading } from "@/components/SimpleLoading";
 
 export const ConfigWhatsApp = () => {
-  const [qrCode, setQrCode] = useState<string | null>(null);
-  const [qrCodeResp, setQrCodeResp] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
+  const [templateVenda, setTemplateVenda] = useState<string | null>(null);
 
-  const { connectionsState, loading, refetch, pausePolling } = useWhatsApp();
+  const {
+    companySettings,
+    loading: settingsLoading,
+    refetch: settingsRefetch,
+  } = useCompanySettings();
 
-  const handleGenerateQR = async (status: string) => {
+  const { usageMenssages, templates, loading, refetch } = useConfigSettings();
+
+  const mensagensAtivas = useMemo(() => {
+    const setting = companySettings?.find(
+      (cs) => cs.key === CompanySettings.IsWhatsappActive,
+    );
+    return setting ? Boolean(setting.value) : true; // default
+  }, [companySettings]);
+
+  const mensagensExcedentes = useMemo(() => {
+    const setting = companySettings?.find(
+      (cs) => cs.key === CompanySettings.IsExcessUsage,
+    );
+    return setting ? Boolean(setting.value) : false; // default
+  }, [companySettings]);
+
+  const handleWhatsappSettings = async (
+    params: UpsetCompanySettingsRequest,
+  ) => {
     try {
-      setIsLoading(true);
-      if (status == "not_created") {
-        pausePolling(15000);
-        const qrCode = await CreateInstance();
-        setQrCodeResp(qrCode.qr_code);
-      } else {
-        pausePolling(5000);
-        const qrCode = await ConnectInstance();
-        setQrCodeResp(qrCode.qr_code);
+      await UpsetCompanySettings(params);
+      await settingsRefetch();
+      await refetch();
+      if (params.key == CompanySettings.IsWhatsappActive) {
+        toast.success(
+          params.value
+            ? "Mensagens via WhatsApp ativadas."
+            : "Mensagens via WhatsApp desativadas.",
+        );
+      } else if (params.key == CompanySettings.IsExcessUsage) {
+        toast.success(
+          params.value
+            ? "Mensagens excedentes ativadas."
+            : "Mensagens excedentes desativadas.",
+        );
+      } else if (params.key == CompanySettings.SaleOverdueTemplate) {
+        toast.success(`Template "${params.value}" selecionado.`);
       }
-
-      toast.success("QR Code gerado. Escaneie com seu WhatsApp.");
     } catch (error) {
-      setIsLoading(false);
       console.log(error);
-      toast.error("Erro ao gerar QrCode.");
-    } finally {
-      setIsLoading(false);
-      refetch();
     }
   };
 
-  useEffect(() => {
-    if (qrCodeResp) {
-      // Converte a string do WhatsApp em uma Data URL (Base64)
-      QRCode.toDataURL(qrCodeResp)
-        .then((url) => setQrCode(url))
-        .catch((err) => console.error("Erro ao gerar QR Code:", err));
-    }
-  }, [qrCodeResp]);
+  const savedTemplateId = useMemo(() => {
+    const setting = companySettings?.find(
+      (cs) => cs.key === CompanySettings.SaleOverdueTemplate,
+    );
+    return setting?.value as string | undefined;
+  }, [companySettings]);
 
-  const handleRefreshQR = async () => {
-    try {
-      const qrCode = await ConnectInstance();
-      setQrCodeResp(qrCode.qr_code);
-      toast.success("QR Code atualizado.");
-    } catch (error) {
-      console.log(error);
-      toast.error("Erro ao atualizar qrCode");
-    } finally {
-      refetch();
-    }
-  };
+  const selectedTemplate = useMemo(() => {
+    const templateName = templateVenda ?? savedTemplateId;
+    return (
+      templates?.find((tpl) => tpl.meta_template_name === templateName) ??
+      templates?.[0]
+    );
+  }, [templates, templateVenda, savedTemplateId]);
 
-  const handleDisconnect = async () => {
-    try {
-      await DeleteInstance();
-      toast.success("WhatsApp desconectado.");
-    } catch (error) {
-      console.log(error);
-      toast.error("Erro ao se desconectar!");
-    } finally {
-      refetch();
-      setQrCodeResp("");
-    }
-  };
-
-  const statusBadge = {
-    not_created: (
-      <Badge variant="secondary" className="gap-1">
-        <XCircle className="h-3 w-3" /> Desconectado
-      </Badge>
-    ),
-    connecting: (
-      <Badge className="gap-1 bg-amber-500 hover:bg-amber-600">
-        <Loader2 className="h-3 w-3 animate-spin" /> Aguardando leitura
-      </Badge>
-    ),
-    open: (
-      <Badge className="gap-1 bg-emerald-600 hover:bg-emerald-700">
-        <CheckCircle2 className="h-3 w-3" /> Conectado
-      </Badge>
-    ),
-    close: (
-      <Badge variant="secondary" className="gap-1">
-        <XCircle className="h-3 w-3" /> Desconectado
-      </Badge>
-    ),
-  }[connectionsState?.state ?? ""];
+  if (loading && settingsLoading) {
+    return (
+      <SimpleLoading label="Carregando configurações" fullScreen size="lg" />
+    );
+  }
 
   return (
     <div className="space-y-4 mt-4">
@@ -129,165 +99,188 @@ export const ConfigWhatsApp = () => {
           <div className="flex items-start justify-between gap-4">
             <div className="flex items-start gap-3">
               <div className="p-2 rounded-lg bg-emerald-500/10">
-                <MessageCircle className="h-5 w-5 text-emerald-600" />
+                <FileText className="h-5 w-5 text-emerald-600" />
               </div>
               <div>
-                <CardTitle>Conexão WhatsApp</CardTitle>
+                <CardTitle>Template da mensagem de venda</CardTitle>
                 <CardDescription>
-                  Conecte sua conta escaneando o QR Code com o aplicativo do
-                  WhatsApp.
+                  Escolha o modelo de mensagem enviada ao cliente quando uma
+                  venda for concluída.
                 </CardDescription>
               </div>
             </div>
-            {statusBadge}
           </div>
         </CardHeader>
+        <CardContent className="space-y-6">
+          {templates?.length ? (
+            <div className="grid gap-3 md:grid-cols-3">
+              {templates.map((tpl) => {
+                const selected = savedTemplateId === tpl.meta_template_name;
+                return (
+                  <button
+                    key={tpl.id}
+                    type="button"
+                    onClick={() => {
+                      setTemplateVenda(tpl.meta_template_name);
+                      handleWhatsappSettings({
+                        key: CompanySettings.SaleOverdueTemplate,
+                        value: String(tpl.meta_template_name),
+                      });
+                    }}
+                    className={`cursor-pointer text-left rounded-lg border p-4 transition-all hover:shadow-sm ${
+                      selected
+                        ? "border-primary ring-2 ring-primary/20 bg-primary/5"
+                        : "hover:border-primary/40"
+                    }`}
+                  >
+                    <div className="flex items-center justify-between gap-2 mb-1">
+                      <span className="font-semibold text-sm">
+                        {tpl.meta_template_name}
+                      </span>
+                      {selected && (
+                        <CheckCircle2 className="h-4 w-4 text-primary shrink-0" />
+                      )}
+                    </div>
+                    <p className="text-xs text-muted-foreground line-clamp-3">
+                      {tpl.body_text}
+                    </p>
+                  </button>
+                );
+              })}
+            </div>
+          ) : (
+            <p className="text-sm text-muted-foreground">
+              Nenhum template de mensagem cadastrado.
+            </p>
+          )}
 
-        {loading ? (
-          <div className="flex w-full justify-center items-center">
-            <SimpleLoading label="Carregando..." size="lg" />
+          {selectedTemplate && (
+            <>
+              <Separator />
+
+              <div className="space-y-2">
+                <Label>Pré-visualização</Label>
+                <div className="rounded-lg border bg-muted/40 p-4">
+                  <div className="max-w-md rounded-2xl rounded-tl-sm bg-emerald-500/10 border border-emerald-500/20 p-3 text-sm whitespace-pre-line">
+                    {selectedTemplate.body_text}
+                  </div>
+                </div>
+                {!!selectedTemplate.variables?.length && (
+                  <p className="text-xs text-muted-foreground">
+                    Variáveis disponíveis:{" "}
+                    {selectedTemplate.variables
+                      .map((v) => (v.startsWith("{") ? v : `{${v}}`))
+                      .join(", ")}
+                  </p>
+                )}
+              </div>
+            </>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Mensagens */}
+      <Card>
+        <CardHeader>
+          <div className="flex items-start gap-3">
+            <div className="p-2 rounded-lg bg-primary/10">
+              <Send className="h-5 w-5 text-primary" />
+            </div>
+            <div>
+              <CardTitle>Envio de mensagens</CardTitle>
+              <CardDescription>
+                Ative o disparo de mensagens via WhatsApp e defina o
+                comportamento ao ultrapassar o limite do plano.
+              </CardDescription>
+            </div>
           </div>
-        ) : (
-          <CardContent className="space-y-6">
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex items-start justify-between gap-4 rounded-lg border p-4">
+            <div className="space-y-1">
+              <Label htmlFor="msg-ativas" className="text-sm font-medium">
+                Mensagens via WhatsApp
+              </Label>
+              <p className="text-sm text-muted-foreground">
+                Envia automaticamente cobranças, lembretes e confirmações pelo
+                WhatsApp.
+              </p>
+            </div>
+            <Switch
+              className="cursor-pointer"
+              id="msg-ativas"
+              checked={mensagensAtivas}
+              onCheckedChange={(v) => {
+                handleWhatsappSettings({
+                  key: CompanySettings.IsWhatsappActive,
+                  value: v,
+                });
+              }}
+            />
+          </div>
+
+          <div className="flex items-start justify-between gap-4 rounded-lg border p-4">
+            <div className="space-y-1">
+              <Label htmlFor="msg-excedentes" className="text-sm font-medium">
+                Mensagens excedentes
+              </Label>
+              <p className="text-sm text-muted-foreground">
+                Permite continuar enviando após atingir o limite do plano, com
+                cobrança adicional por mensagem.
+              </p>
+            </div>
+            <Switch
+              className="cursor-pointer"
+              id="msg-excedentes"
+              checked={mensagensExcedentes}
+              disabled={!mensagensAtivas}
+              onCheckedChange={(v) => {
+                handleWhatsappSettings({
+                  key: CompanySettings.IsExcessUsage,
+                  value: v,
+                });
+              }}
+            />
+          </div>
+
+          <div className="rounded-lg border p-4 space-y-3">
             <div className="grid gap-4 md:grid-cols-2">
               <div className="space-y-2">
-                <Label htmlFor="session">Nome da Sessão</Label>
+                <Label htmlFor="limite-msg">Limite mensal de mensagens</Label>
                 <Input
-                  value={connectionsState?.instance_name ?? ""}
-                  placeholder="Nenhuma sessão configurada ainda"
+                  id="limite-msg"
+                  type="number"
+                  min={0}
+                  value={usageMenssages?.limit_menssage ?? ""}
                   disabled
                 />
               </div>
+              <div className="space-y-2">
+                <Label>Consumo do mês</Label>
+                <div className="h-10 flex items-center text-sm font-medium">
+                  {usageMenssages?.menssage_amount} /
+                  {usageMenssages?.limit_menssage} ({usageMenssages?.percentage}
+                  %)
+                </div>
+              </div>
             </div>
-
-            <Separator />
-
-            {/* Área do QR Code */}
-            {connectionsState?.state === "open" ? (
-              <div className="flex flex-col items-center justify-center py-8 space-y-4">
-                <div className="p-4 rounded-full bg-emerald-500/10">
-                  <CheckCircle2 className="h-12 w-12 text-emerald-600" />
+            <div className="h-2 w-full rounded-full bg-muted overflow-hidden">
+              <div
+                className="h-full rounded-full bg-primary transition-all"
+                style={{ width: `${usageMenssages?.percentage}%` }}
+              />
+            </div>
+            {(usageMenssages?.percentage ?? 0) >= 100 &&
+              !mensagensExcedentes && (
+                <div className="flex gap-2 text-sm text-amber-600">
+                  <AlertTriangle className="h-4 w-4 shrink-0 mt-0.5" />
+                  <p>
+                    Limite atingido. Ative as mensagens excedentes para
+                    continuar enviando.
+                  </p>
                 </div>
-                <div className="text-center space-y-1">
-                  <p className="font-semibold">WhatsApp conectado</p>
-                </div>
-                <Button
-                  variant="destructive"
-                  onClick={handleDisconnect}
-                  className="gap-2 cursor-pointer"
-                >
-                  <Power className="h-4 w-4" /> Desconectar
-                </Button>
-              </div>
-            ) : connectionsState?.state == "connecting" ? (
-              <div className="grid gap-6 md:grid-cols-[auto_1fr] items-start">
-                <div className="flex flex-col items-center gap-3">
-                  <div className="p-3 bg-white rounded-xl border shadow-sm">
-                    <Image
-                      src={qrCode ?? ""}
-                      alt="QR Code WhatsApp"
-                      width={260}
-                      height={260}
-                      unoptimized
-                    />
-                  </div>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={handleRefreshQR}
-                    className="gap-2"
-                  >
-                    <RefreshCw className="h-3 w-3" /> Atualizar QR Code
-                  </Button>
-                </div>
-
-                <div className="space-y-4">
-                  <div>
-                    <h3 className="font-semibold mb-2 flex items-center gap-2">
-                      <Smartphone className="h-4 w-4" /> Como conectar
-                    </h3>
-                    <ol className="text-sm text-muted-foreground space-y-2 list-decimal list-inside">
-                      <li>Abra o WhatsApp no seu celular</li>
-                      <li>
-                        Toque em <strong>Mais opções</strong> ou{" "}
-                        <strong>Configurações</strong>
-                      </li>
-                      <li>
-                        Selecione <strong>Aparelhos conectados</strong>
-                      </li>
-                      <li>
-                        Toque em <strong>Conectar um aparelho</strong>
-                      </li>
-                      <li>Aponte a câmera para este QR Code</li>
-                    </ol>
-                  </div>
-
-                  <div className="rounded-lg border bg-muted/50 p-3 flex gap-2 text-sm">
-                    <Info className="h-4 w-4 text-muted-foreground shrink-0 mt-0.5" />
-                    <p className="text-muted-foreground">
-                      O QR Code expira em alguns minutos. Caso isso ocorra,
-                      clique em atualizar para gerar um novo.
-                    </p>
-                  </div>
-
-                  <Button
-                    onClick={() => refetch()}
-                    variant="secondary"
-                    className="w-full"
-                  >
-                    Verificar conexão
-                  </Button>
-                </div>
-              </div>
-            ) : (
-              (connectionsState?.state == "not_created" ||
-                connectionsState?.state == "close") && (
-                <div className="flex flex-col items-center justify-center py-12 space-y-4 border-2 border-dashed rounded-lg">
-                  <div className="p-4 rounded-full bg-muted">
-                    <QrCode className="h-12 w-12 text-muted-foreground" />
-                  </div>
-                  <div className="text-center space-y-1 max-w-sm">
-                    <p className="font-semibold">Nenhuma sessão ativa</p>
-                    <p className="text-sm text-muted-foreground">
-                      Gere um QR Code para conectar seu WhatsApp e começar a
-                      enviar mensagens automaticamente.
-                    </p>
-                  </div>
-                  <Button
-                    onClick={() => handleGenerateQR(connectionsState?.state)}
-                    className=" cursor-pointer"
-                    disabled={isLoading}
-                  >
-                    {isLoading ? (
-                      <SimpleLoading size="sm" className="text-white" />
-                    ) : (
-                      <span className="flex justify-center items-center gap-2">
-                        <QrCode className="h-4 w-4" /> Gerar QR Code
-                      </span>
-                    )}
-                  </Button>
-                </div>
-              )
-            )}
-          </CardContent>
-        )}
-      </Card>
-
-      {/* Card informativo */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-base">Sobre a integração</CardTitle>
-        </CardHeader>
-        <CardContent className="text-sm text-muted-foreground space-y-2">
-          <p>
-            A conexão é feita via WhatsApp Web. Mantenha seu celular conectado à
-            internet para que as mensagens sejam enviadas corretamente.
-          </p>
-          <p>
-            Você pode desconectar a qualquer momento por aqui ou diretamente
-            pelo aplicativo do WhatsApp em <strong>Aparelhos conectados</strong>
-            .
-          </p>
+              )}
+          </div>
         </CardContent>
       </Card>
     </div>

@@ -1,4 +1,7 @@
-import { UpdateDefaultPaymentMethodSubiscriptionParams } from "./../interfaces/subscription-manager.interface";
+import {
+  GetUseMenssagesResponse,
+  UpdateDefaultPaymentMethodSubiscriptionParams,
+} from "./../interfaces/subscription-manager.interface";
 import {
   CancelSubiscriptionParams,
   CreatePaymentMethodParams,
@@ -31,4 +34,11 @@ export const UpdateDefaultPaymentMethodSubiscription = async (
   params: UpdateDefaultPaymentMethodSubiscriptionParams,
 ): Promise<void> => {
   await api.post(`/payment-methods/:${subscriptionId}/default`, params);
+};
+
+export const GetUsageMenssages = async (): Promise<GetUseMenssagesResponse> => {
+  const response = await api.get<GetUseMenssagesResponse>(
+    "/subscription-management/whatsapp-use",
+  );
+  return response.data;
 };
