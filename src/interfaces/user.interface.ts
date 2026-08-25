@@ -15,6 +15,10 @@ export interface User {
   updated_at: Date;
   deleted_at: Date;
   department_name: string;
+  // Códigos dos módulos liberados para o departamento do usuário (mesma fonte
+  // usada pelo RequireModule no backend). ADMIN sempre tem acesso a tudo,
+  // independente do que vier aqui — trate role === "ADMIN" como bypass.
+  modules: string[];
 }
 
 export interface UpdateUserParams {
