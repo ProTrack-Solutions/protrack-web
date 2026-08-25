@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/auth";
+import { getInitialRoute } from "@/const/moduleAccess.const";
 
 export default auth((req) => {
   const isLoggedIn = !!req.auth;
@@ -8,12 +9,13 @@ export default auth((req) => {
 
   // Define se o usuário está tentando acessar a página de login
   const isAuthRoute = nextUrl.pathname === "/login";
+  const isRoot = nextUrl.pathname === "/";
 
   // Lista de páginas ou prefixos que são públicos (além do login, se houver)
   const isPublicRoute =
     isAuthRoute ||
     nextUrl.pathname === "/register" ||
-    nextUrl.pathname === "/" ||
+    isRoot ||
     nextUrl.pathname === "/forgot-password" ||
     nextUrl.pathname === "/reset-password";
 
@@ -22,9 +24,14 @@ export default auth((req) => {
     return NextResponse.redirect(new URL("/login", nextUrl));
   }
 
-  // 2. Se estiver logado e tentar ir para o login, redireciona de acordo com o vínculo da empresa
-  if (isLoggedIn && isAuthRoute) {
-    return NextResponse.redirect(new URL("/dashboard", nextUrl));
+  // 2. Se estiver logado e tentar ir para o login (ou cair na raiz), manda
+  // para a tela inicial do departamento do usuário, não sempre /dashboard.
+  if (isLoggedIn && (isAuthRoute || isRoot)) {
+    const initialRoute = getInitialRoute({
+      role: req.auth?.role,
+      modules: req.auth?.modules,
+    });
+    return NextResponse.redirect(new URL(initialRoute, nextUrl));
   }
 
   // // 3. Se estiver logado, mas não tiver empresa cadastrada e tentar acessar o dashboard

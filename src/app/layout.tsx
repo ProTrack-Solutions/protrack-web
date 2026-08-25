@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { Geist } from "next/font/google";
+import Script from "next/script";
 import { cn } from "@/lib/utils";
 import StripeProvider from "@/providers/stripe-provider";
 import { Toaster } from "sonner";
@@ -8,7 +9,12 @@ import { Toaster } from "sonner";
 const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
 
 export const metadata: Metadata = {
-  title: "ProTrack",
+  title: {
+    default: "ERP para Empresas: Estoque e Vendas | ProTrack",
+    template: "%s | ProTrack",
+  },
+  description:
+    "Sistema de gestão empresarial (ERP) para pequenas empresas: estoque, vendas parceladas, financeiro e clientes em uma única plataforma na nuvem, sem instalação.",
   icons: {
     icon: "logo.svg",
   },
@@ -20,11 +26,20 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html
-      lang="pt-BR"
-      className={cn("font-sans overflow-auto", geist.variable)}
-    >
+    <html lang="pt-BR" className={cn("font-sans", geist.variable)}>
       <body>
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-XGQK1HZGML"
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-XGQK1HZGML');
+          `}
+        </Script>
         <Toaster theme="light" richColors closeButton position="top-right" />
         <StripeProvider>{children}</StripeProvider>
       </body>

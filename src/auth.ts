@@ -71,12 +71,33 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
           // Se a API retornou o token com sucesso
           if (data && data.access_token) {
+            // Busca role/módulos do departamento pra já decidir a tela
+            // inicial certa (dashboard financeiro, estoque, vendas...) sem
+            // precisar de um segundo passo no client. Se falhar, o login
+            // segue normalmente e o usuário cai no fallback padrão.
+            let role: string | undefined;
+            let modules: string[] | undefined;
+            try {
+              const meResponse = await axios.get(
+                `${process.env.NEXT_PUBLIC_API_URL}/me`,
+                {
+                  headers: { Authorization: `Bearer ${data.access_token}` },
+                },
+              );
+              role = meResponse.data?.role;
+              modules = meResponse.data?.modules;
+            } catch (meError) {
+              console.error("Erro ao buscar /me após login:", meError);
+            }
+
             return {
               id: "1", // NextAuth precisa de uma string ID
               accessToken: data.access_token,
               refreshToken: data.refresh_token,
               accessTokenExpires: Date.now() + data.expires_in * 1000,
               hasCompany: data.has_company,
+              role,
+              modules,
             };
           }
 
@@ -98,6 +119,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           refreshToken: user.refreshToken,
           accessTokenExpires: user.accessTokenExpires,
           hasCompany: user.hasCompany,
+          role: user.role,
+          modules: user.modules,
         };
       }
 
@@ -123,6 +146,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       session.accessToken = token.accessToken as string;
       session.hasCompany = token.hasCompany as boolean;
       session.error = token.error as string | undefined;
+      session.role = token.role as string | undefined;
+      session.modules = token.modules as string[] | undefined;
       return session;
     },
   },

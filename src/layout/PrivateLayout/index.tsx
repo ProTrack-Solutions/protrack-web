@@ -1,5 +1,6 @@
 "use client";
 
+import { Fragment } from "react";
 import {
   ShoppingCart,
   Calculator,
@@ -8,7 +9,6 @@ import {
   UserPlus,
   UserSearch,
   Store,
-  BarChart3,
   BanknoteArrowUp,
   BanknoteArrowDown,
   TrendingUp,
@@ -16,6 +16,10 @@ import {
 import { useSidebar } from "@/context/SidebarContext";
 import { Sidebar } from "@/components/Sidebar/Sidebar";
 import { SidebarItem } from "@/components/Sidebar/SidebarItem";
+import { AccessDenied } from "@/components/AccessDenied";
+import { Loading } from "@/components/Loading";
+import { useModuleAccess } from "@/hooks/useModuleAccess";
+import { findRouteAccessRule } from "@/const/moduleAccess.const";
 import { usePathname } from "next/navigation";
 
 function SidebarSectionLabel({ text }: { text: string }) {
@@ -32,101 +36,153 @@ function SidebarSectionLabel({ text }: { text: string }) {
   );
 }
 
+interface SidebarItemConfig {
+  icon: React.ReactNode;
+  text: string;
+  router: string;
+  module?: string;
+}
+
+interface SidebarSectionConfig {
+  label: string;
+  items: SidebarItemConfig[];
+}
+
 // Passamos a propriedade children para renderizar as páginas dinamicamente
 export function PrivateLayout({ children }: { children: React.ReactNode }) {
   const currentPath = usePathname(); // Corrigido: Já pega o pathname diretamente
+  const { loading, canAccess } = useModuleAccess();
+
+  const rule = findRouteAccessRule(currentPath);
+  const allowed = !rule || canAccess(rule.module, rule.role);
+
+  // Seções do menu, agrupadas pra que o cabeçalho de cada uma só apareça
+  // quando sobrar pelo menos um item liberado pelo módulo do departamento.
+  const sections: SidebarSectionConfig[] = [
+    {
+      label: "Visão Geral",
+      items: [
+        {
+          icon: <Calculator size={20} />,
+          text: "Dashboard",
+          router: "/dashboard",
+          module: "financial",
+        },
+      ],
+    },
+    {
+      label: "Gestão",
+      items: [
+        {
+          icon: <PackageSearch size={20} />,
+          text: "Produtos",
+          router: "/stock",
+          module: "inventory",
+        },
+        {
+          icon: <UserSearch size={20} />,
+          text: "Clientes",
+          router: "/clients",
+          module: "customers",
+        },
+      ],
+    },
+    {
+      label: "Vendas",
+      items: [
+        {
+          icon: <Store size={20} />,
+          text: "Nova Venda",
+          router: "/sale",
+          module: "sales",
+        },
+        {
+          icon: <ShoppingCart size={20} />,
+          text: "Histórico de Vendas",
+          router: "/sales-list",
+          module: "sales",
+        },
+      ],
+    },
+    {
+      label: "Financeiro",
+      items: [
+        {
+          icon: <BanknoteArrowUp size={20} />,
+          text: "Contas a Pagar",
+          router: "/accounts-payable",
+          module: "financial",
+        },
+        {
+          icon: <BanknoteArrowDown size={20} />,
+          text: "Contas a Receber",
+          router: "/accounts-receivable",
+          module: "financial",
+        },
+        {
+          icon: <TrendingUp size={20} />,
+          text: "Fluxo de Caixa",
+          router: "/cash-flow",
+          module: "financial",
+        },
+      ],
+    },
+    {
+      label: "Cadastros",
+      items: [
+        {
+          icon: <PackagePlus size={20} />,
+          text: "Novo Produto",
+          router: "/product-registration",
+          module: "inventory",
+        },
+        {
+          icon: <UserPlus size={20} />,
+          text: "Novo Cliente",
+          router: "/client-registration",
+          module: "customers",
+        },
+      ],
+    },
+  ];
 
   return (
-    <div className="flex h-screen">
+    <div className="flex h-screen overflow-hidden">
       <Sidebar>
-        <SidebarSectionLabel text="Visão Geral" />
-        <SidebarItem
-          icon={<Calculator size={20} />}
-          text="Dashboard"
-          router="/dashboard"
-          active={currentPath === "/dashboard"}
-          requiredRoles={["ADMIN", "financeiro"]}
-        />
+        {!loading &&
+          sections.map((section) => {
+            const visibleItems = section.items.filter((item) =>
+              canAccess(item.module),
+            );
 
-        <SidebarSectionLabel text="Gestão" />
-        <SidebarItem
-          icon={<PackageSearch size={20} />}
-          text="Produtos"
-          router="/stock"
-          active={currentPath === "/stock"}
-        />
-        <SidebarItem
-          icon={<UserSearch size={20} />}
-          text="Clientes"
-          router="/clients"
-          active={currentPath === "/clients"}
-        />
+            if (visibleItems.length === 0) return null;
 
-        <SidebarSectionLabel text="Vendas" />
-        <SidebarItem
-          icon={<Store size={20} />}
-          text="Nova Venda"
-          router="/sale"
-          active={currentPath === "/sale"}
-          requiredRoles={["ADMIN", "vendedor"]}
-        />
-        <SidebarItem
-          icon={<ShoppingCart size={20} />}
-          text="Histórico de Vendas"
-          router="/sales-list"
-          active={currentPath === "/sales-list"}
-          requiredRoles={["ADMIN", "financeiro", "vendedor"]}
-        />
-
-        <SidebarSectionLabel text="Financeiro" />
-        <SidebarItem
-          icon={<BanknoteArrowUp size={20} />}
-          text="Contas a Pagar"
-          router="/accounts-payable"
-          active={currentPath === "/accounts-payable"}
-          requiredRoles={["ADMIN", "financeiro"]}
-        />
-        <SidebarItem
-          icon={<BanknoteArrowDown size={20} />}
-          text="Contas a Receber"
-          router="/accounts-receivable"
-          active={currentPath === "/accounts-receivable"}
-          requiredRoles={["ADMIN", "financeiro"]}
-        />
-        <SidebarItem
-          icon={<TrendingUp size={20} />}
-          text="Fluxo de Caixa"
-          router="/cash-flow"
-          active={currentPath === "/cash-flow"}
-          requiredRoles={["ADMIN", "financeiro"]}
-        />
-        <SidebarItem
-          icon={<BarChart3 size={20} />}
-          text="Relatórios"
-          router="/relatorio"
-          active={currentPath === "/relatorio"}
-          requiredRoles={["ADMIN", "financeiro"]}
-        />
-
-        <SidebarSectionLabel text="Cadastros" />
-        <SidebarItem
-          icon={<PackagePlus size={20} />}
-          text="Novo Produto"
-          router="/product-registration"
-          active={currentPath === "/product-registration"}
-          requiredRoles={["ADMIN", "operador"]}
-        />
-        <SidebarItem
-          icon={<UserPlus size={20} />}
-          text="Novo Cliente"
-          router="/client-registration"
-          active={currentPath === "/client-registration"}
-          requiredRoles={["ADMIN", "operador"]}
-        />
+            return (
+              <Fragment key={section.label}>
+                <SidebarSectionLabel text={section.label} />
+                {visibleItems.map((item) => (
+                  <SidebarItem
+                    key={item.router}
+                    icon={item.icon}
+                    text={item.text}
+                    router={item.router}
+                    active={currentPath === item.router}
+                    requiredModule={item.module}
+                  />
+                ))}
+              </Fragment>
+            );
+          })}
       </Sidebar>
 
       <main className="w-full overflow-auto">
-        {children} {/* Corrigido: Substitui o <Outlet /> do antigo Router */}
+        {loading ? (
+          <Loading />
+        ) : allowed ? (
+          children // Corrigido: Substitui o <Outlet /> do antigo Router
+        ) : (
+          <AccessDenied message="Seu departamento não tem acesso a este módulo." />
+        )}
       </main>
     </div>
   );

@@ -5,8 +5,9 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { AppInput } from "@/components/AppInput";
 import { AppButton } from "@/components/AppButton";
-import { signIn } from "next-auth/react";
+import { signIn, getSession } from "next-auth/react";
 import { LoginParams } from "@/interfaces/auth.interface";
+import { getInitialRoute } from "@/const/moduleAccess.const";
 
 export default function Login() {
   const [loginParams, setLoginParams] = useState<LoginParams>({
@@ -39,7 +40,12 @@ export default function Login() {
         setError("Credenciais inválidas ou erro ao conectar com o servidor.");
         console.log("Login", result.error);
       } else {
-        router.push("/dashboard");
+        // Manda pra tela inicial do departamento do usuário (financeiro,
+        // vendas, estoque...), não sempre /dashboard.
+        const session = await getSession();
+        router.push(
+          getInitialRoute({ role: session?.role, modules: session?.modules }),
+        );
         router.refresh();
       }
     } catch (error) {
