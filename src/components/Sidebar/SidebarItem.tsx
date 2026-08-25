@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { useSidebar } from "../../context/SidebarContext";
-import { useMe } from "@/hooks/useMe";
+import { useModuleAccess } from "@/hooks/useModuleAccess";
 
 type SidebarItemProps = {
   active?: boolean;
@@ -8,7 +8,8 @@ type SidebarItemProps = {
   text: string;
   alert?: boolean;
   router?: string; // rota para navegação
-  requiredRoles?: string[]; // roles necessárias para exibir o item
+  requiredModule?: string; // módulo de departamento necessário para exibir o item
+  requiredRole?: string; // role exata necessária (ignora módulo), ex.: "ADMIN"
 };
 
 export function SidebarItem({
@@ -17,20 +18,16 @@ export function SidebarItem({
   text,
   alert = false,
   router,
-  requiredRoles,
+  requiredModule,
+  requiredRole,
 }: SidebarItemProps) {
   const { expanded } = useSidebar();
-  const { user, loading } = useMe();
+  const { loading, canAccess } = useModuleAccess();
 
-  if (requiredRoles && requiredRoles.length > 0) {
+  if (requiredModule || requiredRole) {
     if (loading) return null;
 
-    const userRoles = Array.isArray(user?.role) ? user.role : [user?.role];
-    const hasPermission = requiredRoles.some((role) =>
-      userRoles.includes(role),
-    );
-
-    if (!hasPermission) {
+    if (!canAccess(requiredModule, requiredRole)) {
       return null;
     }
   }

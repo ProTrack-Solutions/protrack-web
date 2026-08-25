@@ -14,6 +14,10 @@ import {
   Building2,
   Crown,
 } from "lucide-react";
+import { useModuleAccess } from "@/hooks/useModuleAccess";
+import { findRouteAccessRule } from "@/const/moduleAccess.const";
+import { AccessDenied } from "@/components/AccessDenied";
+import { Loading } from "@/components/Loading";
 
 export default function LayoutConfig({
   children,
@@ -22,6 +26,7 @@ export default function LayoutConfig({
 }) {
   const pathname = usePathname();
   const router = useRouter();
+  const { loading, canAccess } = useModuleAccess();
 
   const menuConfiguracoes = [
     {
@@ -37,6 +42,7 @@ export default function LayoutConfig({
       titulo: "Financeiras",
       icone: CreditCard,
       descricao: "Contas, métodos de pagamento e categorias",
+      module: "financial",
     },
     {
       id: "categorias-produto",
@@ -44,6 +50,7 @@ export default function LayoutConfig({
       titulo: "Categorias de Produto",
       icone: Package,
       descricao: "Cadastro e gestão de categorias",
+      module: "inventory",
     },
     {
       id: "fornecedores",
@@ -51,6 +58,7 @@ export default function LayoutConfig({
       titulo: "Fornecedores",
       icone: Truck,
       descricao: "Cadastro e gerenciamento de fornecedores",
+      module: "inventory",
     },
     {
       id: "departamentos",
@@ -65,6 +73,7 @@ export default function LayoutConfig({
       titulo: "Sistema",
       icone: Settings,
       descricao: "Configurações gerais do sistema",
+      role: "ADMIN",
     },
     {
       id: "seguranca",
@@ -80,7 +89,10 @@ export default function LayoutConfig({
       icone: Crown,
       descricao: "Gerencie a sua assinatura e pagamentos",
     },
-  ];
+  ].filter((item) => loading || canAccess(item.module, item.role));
+
+  const rule = findRouteAccessRule(pathname);
+  const allowed = !rule || canAccess(rule.module, rule.role);
 
   return (
     <div className="flex h-screen w-full overflow-hidden">
@@ -144,7 +156,15 @@ export default function LayoutConfig({
       </div>
 
       {/* Conteúdo principal */}
-      <div className="flex-1 p-6 overflow-y-auto">{children}</div>
+      <div className="flex-1 p-6 overflow-y-auto">
+        {loading ? (
+          <Loading />
+        ) : allowed ? (
+          children
+        ) : (
+          <AccessDenied message="Seu departamento não tem acesso a esta configuração." />
+        )}
+      </div>
     </div>
   );
 }

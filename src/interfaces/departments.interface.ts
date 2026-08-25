@@ -1,3 +1,5 @@
+import { ModulesResponse } from "./modules.interface";
+
 export interface GetDepartmentsResponse {
   created_at: Date;
   created_by: string;
@@ -9,11 +11,13 @@ export interface GetDepartmentsResponse {
   status: string;
   updated_at: Date;
   updated_by: string;
+  modules: ModulesResponse[];
 }
 
 export interface CreateDepartmentsParams {
   description: string;
   name: string;
+  modules: ModulesResponse[];
 }
 
 export interface UpdateStatusDepartmentParams {
@@ -23,4 +27,5 @@ export interface UpdateStatusDepartmentParams {
 export interface UpdateDepartmentParams {
   description: string;
   name: string;
+  modules: ModulesResponse[];
 }
