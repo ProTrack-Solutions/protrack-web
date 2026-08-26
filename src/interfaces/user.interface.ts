@@ -34,3 +34,15 @@ export interface UpdatePasswordParams {
   current_password: string;
   password: string;
 }
+
+export interface CreateUserParams {
+  name: string;
+  email: string;
+  username: string;
+  password: string;
+  department_id: string;
+}
+
+export interface UpdateUserStatusParams {
+  status: string;
+}
