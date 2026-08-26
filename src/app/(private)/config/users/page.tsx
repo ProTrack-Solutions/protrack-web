@@ -34,6 +34,7 @@ import {
 import { useUsers } from "@/hooks/useUsers";
 import { User } from "@/interfaces/user.interface";
 import { UpdateUserStatus } from "@/service/user.service";
+import { translateUserStatus } from "@/utils/statusUsers";
 
 const roleLabels: Record<string, string> = {
   ADMIN: "Administrador",
@@ -41,9 +42,8 @@ const roleLabels: Record<string, string> = {
 };
 
 const statusBadgeClass: Record<string, string> = {
-  ativo: "bg-emerald-600 hover:bg-emerald-700",
-  inativo: "bg-gray-500 hover:bg-gray-600",
-  bloqueado: "bg-red-600 hover:bg-red-700",
+  Ativado: "bg-emerald-600 hover:bg-emerald-700",
+  Desativado: "bg-gray-500 hover:bg-gray-600",
 };
 
 export default function Users() {
@@ -61,12 +61,12 @@ export default function Users() {
   );
 
   const handleToggleStatus = async (user: User) => {
-    const newStatus = user.status === "ativo" ? "inativo" : "ativo";
+    const newStatus = user.status === "ACTIVE" ? "INACTIVE" : "ACTIVE";
 
     try {
       await UpdateUserStatus(user.id, { status: newStatus });
       toast.success(
-        newStatus === "ativo"
+        newStatus === "ACTIVE"
           ? "Usuário ativado com sucesso!"
           : "Usuário desativado com sucesso!",
       );
@@ -185,9 +185,13 @@ export default function Users() {
                         </div>
                       </TableCell>
                       <TableCell>{user.email}</TableCell>
-                      <TableCell>{roleLabels[user.role] ?? user.role}</TableCell>
+                      <TableCell>
+                        {roleLabels[user.role] ?? user.role}
+                      </TableCell>
                       <TableCell>{user.department_name || "—"}</TableCell>
-                      <TableCell>{getStatusBadge(user.status)}</TableCell>
+                      <TableCell>
+                        {getStatusBadge(translateUserStatus(user.status))}
+                      </TableCell>
                       <TableCell>
                         {user.last_login_at
                           ? new Date(user.last_login_at).toLocaleDateString(
@@ -214,7 +218,7 @@ export default function Users() {
                             className="cursor-pointer"
                             onClick={() => handleToggleStatus(user)}
                           >
-                            {user.status === "ativo" ? (
+                            {user.status === "ACTIVE" ? (
                               <UserX className="h-4 w-4 text-red-600" />
                             ) : (
                               <UserCheck className="h-4 w-4 text-emerald-600" />

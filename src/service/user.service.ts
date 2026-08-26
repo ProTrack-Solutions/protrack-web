@@ -25,7 +25,7 @@ export const UpdateUser = async (
   userId: string,
   params: UpdateUserParams,
 ): Promise<void> => {
-  await api.put(`/users/${userId}`, params);
+  await api.put(`/user/${userId}`, params);
 };
 
 export const UpdateUserStatus = async (
