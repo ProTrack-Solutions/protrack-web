@@ -32,7 +32,7 @@ export const UpdateUserStatus = async (
   userId: string,
   params: UpdateUserStatusParams,
 ): Promise<void> => {
-  await api.put(`/users/status/${userId}`, params);
+  await api.put(`/user/status/${userId}`, params);
 };
 
 export const UpdatePassword = async (
