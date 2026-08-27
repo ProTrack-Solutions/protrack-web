@@ -13,6 +13,7 @@ import {
   Truck,
   Building2,
   Crown,
+  Users,
 } from "lucide-react";
 import { useModuleAccess } from "@/hooks/useModuleAccess";
 import { findRouteAccessRule } from "@/const/moduleAccess.const";
@@ -81,6 +82,13 @@ export default function LayoutConfig({
       titulo: "Segurança",
       icone: Shield,
       descricao: "Senhas, autenticação e permissões",
+    },
+    {
+      id: "usuarios",
+      href: "/config/users",
+      titulo: "Usuarios",
+      icone: Users,
+      descricao: "Gerenciar usuarios do sistema e suas permições",
     },
     {
       id: "signature",
