@@ -67,6 +67,7 @@ export default function LayoutConfig({
       titulo: "Departamentos",
       icone: Building2,
       descricao: "Cadastro e gerenciamento de departamentos",
+      role: "ADMIN",
     },
     {
       id: "sistema",
@@ -89,6 +90,7 @@ export default function LayoutConfig({
       titulo: "Usuarios",
       icone: Users,
       descricao: "Gerenciar usuarios do sistema e suas permições",
+      role: "ADMIN",
     },
     {
       id: "signature",
@@ -96,6 +98,7 @@ export default function LayoutConfig({
       titulo: "Assinatura",
       icone: Crown,
       descricao: "Gerencie a sua assinatura e pagamentos",
+      role: "ADMIN",
     },
   ].filter((item) => loading || canAccess(item.module, item.role));
 
