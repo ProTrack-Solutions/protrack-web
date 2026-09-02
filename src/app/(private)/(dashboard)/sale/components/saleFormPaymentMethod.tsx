@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { Badge } from "@/components/ui/badge";
-import { CreditCard, Wallet, CalendarDays, Percent } from "lucide-react";
+import { CreditCard, Wallet, CalendarDays,  CircleDollarSign } from "lucide-react";
 import { CreateSaleParams } from "@/interfaces/sale.interface";
 import { PaymentMethod } from "@/enum/methodPayments";
 import { getPaymentMethodLabel } from "@/utils/paymentMethodFormat";
@@ -117,14 +117,13 @@ export function SaleFormPaymentMethod() {
             render={({ field }) => (
               <FormItem>
                 <FormLabel className="flex items-center gap-1">
-                  <Percent className="h-4 w-4" /> Desconto (R$)
+                  <CircleDollarSign className="h-4 w-4" /> Desconto (R$)
                 </FormLabel>
                 <FormControl>
                   <Input
                     type="number"
                     step="0.01"
                     min="0"
-                    max="100"
                     {...field}
                     value={field.value ?? 0}
                     onChange={(e) => field.onChange(Number(e.target.value))}
