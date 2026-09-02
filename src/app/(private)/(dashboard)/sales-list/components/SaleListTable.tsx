@@ -112,7 +112,7 @@ export const SaleListTable = ({
                       </TableCell>
                       <TableCell className="text-right text-sm text-destructive">
                         {venda.sale.discount_amount > 0
-                          ? `-${venda.sale.discount_amount}%`
+                          ? `R$-${formatCurrency(venda.sale.discount_amount)}`
                           : "—"}
                       </TableCell>
                       <TableCell className="text-right font-medium">
