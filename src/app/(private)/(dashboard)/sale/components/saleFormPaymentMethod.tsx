@@ -117,7 +117,7 @@ export function SaleFormPaymentMethod() {
             render={({ field }) => (
               <FormItem>
                 <FormLabel className="flex items-center gap-1">
-                  <Percent className="h-4 w-4" /> Desconto (%)
+                  <Percent className="h-4 w-4" /> Desconto (R$)
                 </FormLabel>
                 <FormControl>
                   <Input
