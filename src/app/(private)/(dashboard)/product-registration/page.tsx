@@ -64,6 +64,11 @@ export default function ProductRegistration() {
     }
   };
 
+  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    handleCreateProduct();
+  };
+
   return (
     <div className="p-6 space-y-6">
       <Header
@@ -71,7 +76,10 @@ export default function ProductRegistration() {
         text="Aqui você pode cadastrar novos produtos no estoque."
       />
       <div className="p-6 space-y-6 mx-auto">
-        <form className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <form
+          className="grid grid-cols-1 lg:grid-cols-3 gap-6"
+          onSubmit={handleSubmit}
+        >
           <div className="lg:col-span-2 space-y-6">
             <FormInfoBasica formData={formData} onChange={handleChange} />
             <FormEstoque formData={formData} onChange={handleChange} />
@@ -82,7 +90,6 @@ export default function ProductRegistration() {
             <CadastroProdutoResumo
               formData={formData}
               onReset={handleReset}
-              handleCreateProduct={handleCreateProduct}
               loading={loading}
             />
           </div>
