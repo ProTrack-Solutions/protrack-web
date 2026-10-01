@@ -41,6 +41,8 @@ export interface PlanDetailsResponse {
   active: boolean;
   highlight: boolean;
   icon: string;
+  original_price_cents: number | null;
+  trial_days: number;
 }
 
 export interface PaymentMethodDetails {

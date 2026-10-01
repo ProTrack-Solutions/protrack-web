@@ -2,6 +2,10 @@ import { Check } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { usePlans } from "@/hooks/usePlans";
 import { PlansResponse } from "@/interfaces/plans.interface";
+import {
+  getDiscountPercent,
+  getOriginalPriceCents,
+} from "@/utils/planPricing";
 
 interface PlanStepProps {
   selectedPlan: PlansResponse;
@@ -19,6 +23,8 @@ export default function PlanStep({
         plans?.map((p) => {
           // const Icon = p.name;
           const isSelected = selectedPlan === p;
+          const originalPriceCents = getOriginalPriceCents(p);
+          const discountPercent = getDiscountPercent(p);
           return (
             <button
               key={p.id}
@@ -51,6 +57,16 @@ export default function PlanStep({
                       {p.name}
                     </h3>
                     <div className="text-right shrink-0">
+                      {originalPriceCents && (
+                        <div className="flex items-center justify-end gap-1.5">
+                          <span className="text-xs text-muted-foreground line-through">
+                            R${originalPriceCents / 100}
+                          </span>
+                          <span className="text-xs font-bold text-emerald-600">
+                            -{discountPercent}%
+                          </span>
+                        </div>
+                      )}
                       <span className="text-2xl font-bold text-blue-700">
                         R${p.price_cents / 100}
                       </span>
@@ -62,6 +78,11 @@ export default function PlanStep({
                   <p className="text-xs text-muted-foreground mb-2">
                     {p.description}
                   </p>
+                  {p.trial_days > 0 && (
+                    <p className="text-xs font-semibold text-emerald-600 mb-2">
+                      {p.trial_days} dias grátis para testar
+                    </p>
+                  )}
                   <div className="flex flex-wrap gap-x-3 gap-y-1">
                     {p.features?.map((f) => (
                       <span

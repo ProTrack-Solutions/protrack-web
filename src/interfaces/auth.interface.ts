@@ -60,13 +60,18 @@ export interface PaymentData {
 
 export interface RegisterResponse {
   company_id: string;
-  // Status da assinatura no Stripe logo após a criação (ex: "incomplete").
+  // Status da assinatura no Stripe logo após a criação (ex: "incomplete",
+  // ou "trialing" quando o plano tem teste grátis).
   subscription_status: string;
-  // client_secret do PaymentIntent da primeira invoice. Presente quando o
-  // pagamento ainda precisa ser confirmado no navegador (via
-  // stripe.confirmCardPayment), incluindo autenticação 3D Secure.
+  // Segredo para concluir a autenticação do cartão (incluindo 3D Secure) no
+  // navegador. O método do Stripe.js depende de client_secret_type:
+  //   - "payment_intent": stripe.confirmCardPayment (cobrança imediata)
+  //   - "setup_intent": stripe.confirmCardSetup (plano com teste grátis)
   client_secret?: string;
+  client_secret_type?: "payment_intent" | "setup_intent";
   requires_action: boolean;
+  // Fim do teste grátis (ISO 8601); ausente quando o plano não tem trial.
+  trial_end?: string;
 }
 
 export interface RegisterParams {
