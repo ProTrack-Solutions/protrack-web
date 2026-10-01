@@ -11,6 +11,8 @@ declare module "next-auth" {
     // verdade em cada página usa sempre o /me ao vivo (useMe/useModuleAccess).
     role?: string;
     modules?: string[];
+    // Sessão aberta pelo botão "Ver demonstração" (empresa demo, dados fictícios).
+    isDemo?: boolean;
   }
 
   interface User {
@@ -20,6 +22,7 @@ declare module "next-auth" {
     hasCompany: boolean;
     role?: string;
     modules?: string[];
+    isDemo?: boolean;
   }
 }
 
@@ -32,5 +35,6 @@ declare module "next-auth/jwt" {
     error?: string;
     role?: string;
     modules?: string[];
+    isDemo?: boolean;
   }
 }

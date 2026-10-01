@@ -17,6 +17,7 @@ import { useSidebar } from "@/context/SidebarContext";
 import { Sidebar } from "@/components/Sidebar/Sidebar";
 import { SidebarItem } from "@/components/Sidebar/SidebarItem";
 import { AccessDenied } from "@/components/AccessDenied";
+import { DemoBanner } from "@/components/DemoBanner";
 import { Loading } from "@/components/Loading";
 import { useModuleAccess } from "@/hooks/useModuleAccess";
 import { findRouteAccessRule } from "@/const/moduleAccess.const";
@@ -147,43 +148,46 @@ export function PrivateLayout({ children }: { children: React.ReactNode }) {
   ];
 
   return (
-    <div className="flex h-screen overflow-hidden">
-      <Sidebar>
-        {!loading &&
-          sections.map((section) => {
-            const visibleItems = section.items.filter((item) =>
-              canAccess(item.module),
-            );
+    <div className="flex h-screen flex-col overflow-hidden">
+      <DemoBanner />
+      <div className="flex min-h-0 flex-1 overflow-hidden">
+        <Sidebar>
+          {!loading &&
+            sections.map((section) => {
+              const visibleItems = section.items.filter((item) =>
+                canAccess(item.module),
+              );
 
-            if (visibleItems.length === 0) return null;
+              if (visibleItems.length === 0) return null;
 
-            return (
-              <Fragment key={section.label}>
-                <SidebarSectionLabel text={section.label} />
-                {visibleItems.map((item) => (
-                  <SidebarItem
-                    key={item.router}
-                    icon={item.icon}
-                    text={item.text}
-                    router={item.router}
-                    active={currentPath === item.router}
-                    requiredModule={item.module}
-                  />
-                ))}
-              </Fragment>
-            );
-          })}
-      </Sidebar>
+              return (
+                <Fragment key={section.label}>
+                  <SidebarSectionLabel text={section.label} />
+                  {visibleItems.map((item) => (
+                    <SidebarItem
+                      key={item.router}
+                      icon={item.icon}
+                      text={item.text}
+                      router={item.router}
+                      active={currentPath === item.router}
+                      requiredModule={item.module}
+                    />
+                  ))}
+                </Fragment>
+              );
+            })}
+        </Sidebar>
 
-      <main className="w-full overflow-auto">
-        {loading ? (
-          <Loading />
-        ) : allowed ? (
-          children // Corrigido: Substitui o <Outlet /> do antigo Router
-        ) : (
-          <AccessDenied message="Seu departamento não tem acesso a este módulo." />
-        )}
-      </main>
+        <main className="w-full overflow-auto">
+          {loading ? (
+            <Loading />
+          ) : allowed ? (
+            children // Corrigido: Substitui o <Outlet /> do antigo Router
+          ) : (
+            <AccessDenied message="Seu departamento não tem acesso a este módulo." />
+          )}
+        </main>
+      </div>
     </div>
   );
 }

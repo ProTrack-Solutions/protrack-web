@@ -10,10 +10,15 @@ export default auth((req) => {
   // Define se o usuário está tentando acessar a página de login
   const isAuthRoute = nextUrl.pathname === "/login";
   const isRoot = nextUrl.pathname === "/";
+  // Entrada da demonstração: só faz sentido deslogado. Quem já tem sessão
+  // (cliente real ou a própria demo) vai direto pra tela inicial, sem trocar
+  // a sessão atual pela da empresa demo.
+  const isDemoRoute = nextUrl.pathname === "/demo";
 
   // Lista de páginas ou prefixos que são públicos (além do login, se houver)
   const isPublicRoute =
     isAuthRoute ||
+    isDemoRoute ||
     nextUrl.pathname === "/register" ||
     isRoot ||
     nextUrl.pathname === "/forgot-password" ||
@@ -26,7 +31,7 @@ export default auth((req) => {
 
   // 2. Se estiver logado e tentar ir para o login (ou cair na raiz), manda
   // para a tela inicial do departamento do usuário, não sempre /dashboard.
-  if (isLoggedIn && (isAuthRoute || isRoot)) {
+  if (isLoggedIn && (isAuthRoute || isRoot || isDemoRoute)) {
     const initialRoute = getInitialRoute({
       role: req.auth?.role,
       modules: req.auth?.modules,
