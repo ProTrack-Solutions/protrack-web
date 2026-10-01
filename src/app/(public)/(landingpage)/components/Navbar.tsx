@@ -46,6 +46,13 @@ export function Navbar({ scrolled }: NavbarProps) {
           </Button>
           <Button
             asChild
+            variant="outline"
+            className="hidden border-border bg-card/70 text-foreground hover:bg-secondary sm:inline-flex"
+          >
+            <Link href="/demo">Ver demo</Link>
+          </Button>
+          <Button
+            asChild
             className="bg-gradient-primary font-semibold text-primary-foreground shadow-sm hover:opacity-90"
           >
             <Link href="/register">
@@ -74,6 +81,13 @@ export function Navbar({ scrolled }: NavbarProps) {
               {label}
             </a>
           ))}
+          <Link
+            href="/demo"
+            onClick={() => setMenuOpen(false)}
+            className="block py-2.5 text-sm font-semibold uppercase tracking-wider text-primary"
+          >
+            Ver demonstração
+          </Link>
         </div>
       )}
     </header>
