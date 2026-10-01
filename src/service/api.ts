@@ -1,5 +1,6 @@
 import axios from "axios";
 import { getSession, signOut } from "next-auth/react";
+import { toast } from "sonner";
 
 export const api = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL,
@@ -32,6 +33,17 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
+    // Ações bloqueadas para a empresa demo (assinatura, senha, usuários...).
+    if (
+      error.response?.status === 403 &&
+      error.response.data?.code === "DEMO_READONLY"
+    ) {
+      toast.info("Esta ação não está disponível no modo demonstração.", {
+        id: "demo-readonly",
+        description: "Crie sua conta para usar todos os recursos.",
+      });
+    }
+
     if (error.response && error.response.status === 401) {
       const { signOut } = await import("next-auth/react");
       await signOut({ callbackUrl: "/login" });

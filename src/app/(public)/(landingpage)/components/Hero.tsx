@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowRight, ChevronDown, Sparkles } from "lucide-react";
+import { ArrowRight, ChevronDown, Play, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Reveal } from "./Reveal";
@@ -77,9 +77,9 @@ export function Hero({ offset }: HeroProps) {
               variant="outline"
               className="h-14 border-border bg-card/70 px-8 text-base font-semibold uppercase tracking-wide text-foreground backdrop-blur hover:bg-secondary"
             >
-              {/* <Link href="/estoque">
-                <Play className="mr-2 h-4 w-4" /> Ver o sistema
-              </Link> */}
+              <Link href="/demo">
+                <Play className="mr-2 h-4 w-4" /> Ver demonstração
+              </Link>
             </Button>
           </div>
         </Reveal>
