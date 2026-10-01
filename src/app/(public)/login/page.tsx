@@ -9,6 +9,26 @@ import { signIn, getSession } from "next-auth/react";
 import { LoginParams } from "@/interfaces/auth.interface";
 import { getInitialRoute } from "@/const/moduleAccess.const";
 
+// Mensagens por código de erro do backend (POST /auth/login).
+const LOGIN_ERROR_MESSAGES: Record<string, string> = {
+  INVALID_CREDENTIALS: "E-mail ou senha inválidos.",
+  TOO_MANY_ATTEMPTS:
+    "Muitas tentativas de login. Aguarde 15 minutos e tente novamente.",
+  SUBSCRIPTION_NOT_FOUND:
+    "Não encontramos uma assinatura para a sua empresa. Entre em contato com o suporte.",
+  SUBSCRIPTION_CANCELED:
+    "A assinatura da sua empresa foi cancelada. Entre em contato com o suporte para reativar.",
+  SUBSCRIPTION_PAUSED:
+    "A assinatura da sua empresa está pausada por falta de pagamento. Verifique o cartão cadastrado ou entre em contato com o suporte.",
+  SUBSCRIPTION_EXPIRED:
+    "A assinatura da sua empresa expirou. Entre em contato com o suporte para renovar.",
+  SUBSCRIPTION_INCOMPLETE:
+    "O pagamento da assinatura ainda não foi confirmado. Se você acabou de se cadastrar, aguarde alguns instantes e tente novamente.",
+};
+
+const DEFAULT_LOGIN_ERROR =
+  "Credenciais inválidas ou erro ao conectar com o servidor.";
+
 export default function Login() {
   const [loginParams, setLoginParams] = useState<LoginParams>({
     email: "",
@@ -37,8 +57,11 @@ export default function Login() {
       });
 
       if (!result || result.error) {
-        setError("Credenciais inválidas ou erro ao conectar com o servidor.");
-        console.log("Login", result.error);
+        setError(
+          (result?.code && LOGIN_ERROR_MESSAGES[result.code]) ||
+            DEFAULT_LOGIN_ERROR,
+        );
+        console.log("Login", result?.error, result?.code);
       } else {
         // Manda pra tela inicial do departamento do usuário (financeiro,
         // vendas, estoque...), não sempre /dashboard.

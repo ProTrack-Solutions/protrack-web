@@ -6,12 +6,15 @@ import {
   PaymentData,
 } from "@/interfaces/auth.interface";
 import { PlansResponse } from "@/interfaces/plans.interface";
+import { formatDate } from "@/utils/dateFormat";
 
 interface SuccessStepProps {
   user: UserData;
   company: CompanyData;
   payment: PaymentData;
   plan: PlansResponse;
+  // Fim do teste grátis retornado pelo cadastro; null quando não há trial.
+  trialEnd: string | null;
   onFinish: () => void;
 }
 
@@ -20,6 +23,7 @@ export default function SuccessStep({
   company,
   payment,
   plan,
+  trialEnd,
   onFinish,
 }: SuccessStepProps) {
   return (
@@ -32,7 +36,15 @@ export default function SuccessStep({
           Bem-vindo(a), <strong>{user.name.split(" ")[0] || "usuário"}</strong>!
         </p>
         <p className="text-muted-foreground text-sm mt-1">
-          Plano <strong>{plan.name}</strong> ativado com sucesso.
+          {trialEnd ? (
+            <>
+              Seu teste grátis do plano <strong>{plan.name}</strong> começou.
+            </>
+          ) : (
+            <>
+              Plano <strong>{plan.name}</strong> ativado com sucesso.
+            </>
+          )}
         </p>
       </div>
       <div className="rounded-xl bg-muted/40 border p-4 space-y-2 text-left text-sm">
@@ -60,6 +72,12 @@ export default function SuccessStep({
             {payment.card_brand} •••• {payment.card_last_four}
           </span>
         </div>
+        {trialEnd && (
+          <div className="flex justify-between">
+            <span className="text-muted-foreground">Teste grátis até:</span>
+            <span className="font-medium">{formatDate(trialEnd)}</span>
+          </div>
+        )}
         <div className="flex justify-between pt-2 border-t">
           <span className="text-muted-foreground">Total mensal:</span>
           <span className="font-bold text-blue-700">
