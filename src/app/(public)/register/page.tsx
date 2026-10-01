@@ -72,6 +72,8 @@ export default function Register() {
     id: "",
     name: "",
     price_cents: 0,
+    original_price_cents: null,
+    trial_days: 0,
     updated_at: new Date(),
   });
 
@@ -148,6 +150,7 @@ export default function Register() {
   const stripe = useStripe();
   const elements = useElements();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [trialEnd, setTrialEnd] = useState<string | null>(null);
 
   const handleSubmit = async (): Promise<void> => {
     if (!stripe || !elements) {
@@ -214,10 +217,36 @@ export default function Register() {
 
       const registerResponse = await register(payload);
 
-      // Se o Stripe exigir confirmação do PaymentIntent (inclusive 3D
-      // Secure), precisamos confirmar aqui antes de considerar o cadastro
-      // concluído — senão a assinatura fica "incomplete" e expira sozinha.
-      if (registerResponse.requires_action && registerResponse.client_secret) {
+      // Com teste grátis a primeira fatura é de R$0: o Stripe devolve um
+      // SetupIntent só para validar o cartão (inclusive 3D Secure), que será
+      // cobrado no fim do teste.
+      if (
+        registerResponse.requires_action &&
+        registerResponse.client_secret &&
+        registerResponse.client_secret_type === "setup_intent"
+      ) {
+        const { error: confirmError, setupIntent } =
+          await stripe.confirmCardSetup(registerResponse.client_secret);
+
+        if (confirmError) {
+          throw new Error(
+            confirmError.message ||
+              "Não foi possível validar o cartão. Verifique os dados e tente novamente.",
+          );
+        }
+
+        if (setupIntent?.status !== "succeeded") {
+          throw new Error(
+            "Cartão não validado. Tente novamente ou utilize outro cartão.",
+          );
+        }
+      } else if (
+        registerResponse.requires_action &&
+        registerResponse.client_secret
+      ) {
+        // Se o Stripe exigir confirmação do PaymentIntent (inclusive 3D
+        // Secure), precisamos confirmar aqui antes de considerar o cadastro
+        // concluído — senão a assinatura fica "incomplete" e expira sozinha.
         const { error: confirmError, paymentIntent } =
           await stripe.confirmCardPayment(registerResponse.client_secret);
 
@@ -234,6 +263,8 @@ export default function Register() {
           );
         }
       }
+
+      setTrialEnd(registerResponse.trial_end ?? null);
 
       if (currentStep < steps.length) setCurrentStep(currentStep + 1);
     } catch (error) {
@@ -322,6 +353,7 @@ export default function Register() {
               company={company}
               payment={payment || ({} as PaymentData)}
               plan={selectedPlan}
+              trialEnd={trialEnd}
               onFinish={handleFinish}
             />
           )}

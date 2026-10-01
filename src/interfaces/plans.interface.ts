@@ -11,6 +11,10 @@ export interface PlansResponse {
   external_id: string;
   highlight: boolean;
   icon: string;
+  // Preço "de" exibido riscado; null quando o plano não tem desconto.
+  original_price_cents: number | null;
+  // Dias de teste grátis; 0 = cobrança imediata.
+  trial_days: number;
   features: PlanFeature[];
 }
 

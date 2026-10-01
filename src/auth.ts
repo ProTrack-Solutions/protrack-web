@@ -1,8 +1,17 @@
-import NextAuth, { User } from "next-auth";
+import NextAuth, { CredentialsSignin, User } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import axios from "axios";
 import { cookies } from "next/headers";
 import { JWT } from "next-auth/jwt";
+
+// Repassa para o client o código estável de erro do backend (ex:
+// SUBSCRIPTION_PAUSED); o signIn() devolve esse valor em `result.code`.
+class BackendLoginError extends CredentialsSignin {
+  constructor(code: string) {
+    super();
+    this.code = code;
+  }
+}
 
 async function refreshAccessToken(token: JWT): Promise<JWT> {
   try {
@@ -116,6 +125,12 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           return buildSessionUser(response.data, false);
         } catch (error) {
           console.error("Erro na autenticação:", error);
+          const code = axios.isAxiosError(error)
+            ? error.response?.data?.code
+            : undefined;
+          if (typeof code === "string" && code) {
+            throw new BackendLoginError(code);
+          }
           return null;
         }
       },

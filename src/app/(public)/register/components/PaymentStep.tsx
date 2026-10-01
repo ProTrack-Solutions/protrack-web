@@ -6,6 +6,10 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { labelClass } from "../constants";
 import { PaymentData } from "@/interfaces/auth.interface";
 import { PlansResponse } from "@/interfaces/plans.interface";
+import {
+  getFirstChargeDate,
+  getOriginalPriceCents,
+} from "@/utils/planPricing";
 
 interface PaymentStepProps {
   payment: PaymentData;
@@ -35,6 +39,9 @@ export default function PaymentStep({
   setPayment,
   plan,
 }: PaymentStepProps) {
+  const originalPriceCents = getOriginalPriceCents(plan);
+  const hasTrial = plan.trial_days > 0;
+
   return (
     <div className="space-y-5">
       <RadioGroup
@@ -93,12 +100,32 @@ export default function PaymentStep({
           <p className="font-bold text-blue-950">{plan.name}</p>
         </div>
         <div className="text-right">
-          <p className="text-xs text-muted-foreground">Total mensal</p>
+          <p className="text-xs text-muted-foreground">
+            {hasTrial ? "Total hoje" : "Total mensal"}
+          </p>
+          {!hasTrial && originalPriceCents && (
+            <p className="text-xs text-muted-foreground line-through">
+              R${originalPriceCents / 100}
+            </p>
+          )}
           <p className="text-2xl font-bold text-blue-700">
-            R${plan.price_cents / 100}
+            {hasTrial ? "R$0" : `R$${plan.price_cents / 100}`}
           </p>
         </div>
       </div>
+
+      {hasTrial && (
+        <div className="rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-900">
+          <p className="font-semibold">
+            {plan.trial_days} dias grátis para testar
+          </p>
+          <p className="mt-1 text-xs">
+            Nada será cobrado agora. A primeira cobrança de R$
+            {plan.price_cents / 100} será feita em{" "}
+            {getFirstChargeDate(plan.trial_days)}, caso você não cancele antes.
+          </p>
+        </div>
+      )}
 
       <div className="flex items-center gap-2 text-xs text-muted-foreground">
         <Lock className="h-3 w-3" /> Os dados do cartão são processados

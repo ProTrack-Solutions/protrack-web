@@ -34,6 +34,8 @@ const PLANO_VAZIO: PlansResponse = {
   external_id: "",
   highlight: false,
   icon: "",
+  original_price_cents: null,
+  trial_days: 0,
   features: [],
 };
 
@@ -81,6 +83,8 @@ const Assinatura = () => {
         external_id: subscription.plan.external_id,
         highlight: subscription.plan.highlight,
         icon: subscription.plan.icon,
+        original_price_cents: subscription.plan.original_price_cents ?? null,
+        trial_days: subscription.plan.trial_days ?? 0,
         features: subscription.features.map((f) => ({
           id: f.id,
           name: f.name,
