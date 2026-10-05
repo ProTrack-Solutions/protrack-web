@@ -27,6 +27,7 @@ import { getPaymentMethodLabel } from "@/utils/paymentMethodFormat";
 
 const metodosAPrazo: PaymentMethod[] = [
   PaymentMethod.CreditCard,
+  PaymentMethod.Installments,
   PaymentMethod.Other,
 ];
 
@@ -45,12 +46,20 @@ export function SaleFormPaymentMethod() {
   const parcelasPreview = (() => {
     if (!isAPrazo || !installments || installments < 1 || !dueDays) return [];
 
+    // due_days é o dia do mês do vencimento: a 1ª parcela vence na próxima
+    // ocorrência desse dia e as demais nos meses seguintes, no mesmo dia.
+    const hoje = new Date();
+    const offsetInicial = hoje.getDate() < dueDays ? 0 : 1;
+
     return Array.from({ length: installments }, (_, i) => {
-      const vencimento = new Date();
-      vencimento.setDate(vencimento.getDate() + dueDays * (i + 1));
+      const ano = hoje.getFullYear();
+      const mes = hoje.getMonth() + offsetInicial + i;
+      // Ajusta para o último dia do mês quando o dia não existe (ex.: 30 em fevereiro)
+      const ultimoDiaDoMes = new Date(ano, mes + 1, 0).getDate();
+      const vencimento = new Date(ano, mes, Math.min(dueDays, ultimoDiaDoMes));
       return {
         numero: i + 1,
-        vencimento: vencimento.toISOString().split("T")[0],
+        vencimento,
       };
     });
   })();
@@ -246,9 +255,7 @@ export function SaleFormPaymentMethod() {
                         Parcela {p.numero}
                       </div>
                       <div className="text-[11px] text-muted-foreground">
-                        {new Date(
-                          p.vencimento + "T00:00:00",
-                        ).toLocaleDateString("pt-BR")}
+                        {p.vencimento.toLocaleDateString("pt-BR")}
                       </div>
                     </div>
                   ))}
