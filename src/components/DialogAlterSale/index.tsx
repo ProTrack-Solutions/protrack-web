@@ -53,10 +53,6 @@ import { toast } from "sonner";
 import { getApiErrorMessage } from "@/utils/apiError";
 import { useQueryClient } from "@tanstack/react-query";
 
-// O back grava o desconto em R$; o formulário trabalha em %, igual à criação da venda.
-const discountToPercentage = (discount: number, subtotal: number) =>
-  subtotal > 0 ? Math.round((discount / subtotal) * 10000) / 100 : 0;
-
 interface DialogAlterVendaProps {
   sale: ListSalesWithInstallmentsResponse;
   open: boolean;
@@ -87,10 +83,7 @@ export function DialogAlterSale({
 
   const defaultValues = useMemo<UpdateSaleParams>(
     () => ({
-      discount_amount: discountToPercentage(
-        Number(sale.sale.discount_amount ?? 0),
-        Number(sale.sale.subtotal ?? 0),
-      ),
+      discount_amount: Number(sale.sale.discount_amount ?? 0),
       due_days: 10,
       payment_method: sale.sale.payment_method,
       installments_count: sale.sale.installments_count || 1,
@@ -116,13 +109,7 @@ export function DialogAlterSale({
 
   const onSubmit = async (data: UpdateSaleParams) => {
     try {
-      const payload = { ...data };
-      // Sem alteração, deixa o back manter o desconto em R$ atual (evita arredondamento do %)
-      if (payload.discount_amount === defaultValues.discount_amount) {
-        delete payload.discount_amount;
-      }
-
-      await UpdateSale(payload, sale.sale.sale_id);
+      await UpdateSale(data, sale.sale.sale_id);
       toast.success("Venda atualizada com sucesso");
       await queryClient.invalidateQueries({ queryKey: ["sales"] });
       setOpen(false);
@@ -244,7 +231,23 @@ export function DialogAlterSale({
             </div>
 
             {paymentMethod === PaymentMethod.Installments && (
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label>Desconto</Label>
+                  <div className="relative">
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground text-sm">
+                      R$
+                    </span>
+                    <Input
+                      type="number"
+                      step="0.01"
+                      min="0"
+                      max={Number(sale.sale.subtotal ?? 0)}
+                      className="pl-10"
+                      {...register("discount_amount", { valueAsNumber: true })}
+                    />
+                  </div>
+                </div>
                 <div className="space-y-2">
                   <Label>Entrada</Label>
                   <div className="relative">
