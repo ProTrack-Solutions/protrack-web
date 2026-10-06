@@ -50,6 +50,13 @@ import {
 import { getSaleStatusLabel } from "@/utils/salesStatus";
 import { UpdateSale } from "@/service/sale.service";
 import { toast } from "sonner";
+import { isAxiosError } from "axios";
+import { useQueryClient } from "@tanstack/react-query";
+
+// O back grava o desconto em R$; o formulário trabalha em %, igual à criação da venda.
+const discountToPercentage = (discount: number, subtotal: number) =>
+  subtotal > 0 ? Math.round((discount / subtotal) * 10000) / 100 : 0;
+
 interface DialogAlterVendaProps {
   sale: ListSalesWithInstallmentsResponse;
   open: boolean;
@@ -76,27 +83,31 @@ export function DialogAlterSale({
     }),
   );
 
-  const { control, register, reset, handleSubmit } = useForm<UpdateSaleParams>({
-    defaultValues: {
-      discount_amount: Number(sale.sale.discount_amount ?? 0),
+  const queryClient = useQueryClient();
+
+  const defaultValues = useMemo<UpdateSaleParams>(
+    () => ({
+      discount_amount: discountToPercentage(
+        Number(sale.sale.discount_amount ?? 0),
+        Number(sale.sale.subtotal ?? 0),
+      ),
       due_days: 10,
       payment_method: sale.sale.payment_method,
-      installments_count: sale.sale.installments_count ?? 1,
-      prohibited: 0,
-    },
+      installments_count: sale.sale.installments_count || 1,
+      prohibited: Number(sale.sale.down_payments ?? 0),
+    }),
+    [sale],
+  );
+
+  const { control, register, reset, handleSubmit } = useForm<UpdateSaleParams>({
+    defaultValues,
   });
 
   useEffect(() => {
     if (open) {
-      reset({
-        discount_amount: Number(sale.sale.discount_amount ?? 0),
-        due_days: 10,
-        payment_method: sale.sale.payment_method,
-        installments_count: sale.sale.installments_count ?? 1,
-        prohibited: 0,
-      });
+      reset(defaultValues);
     }
-  }, [open, sale, reset]);
+  }, [open, defaultValues, reset]);
 
   const paymentMethod = useWatch({
     control,
@@ -105,11 +116,22 @@ export function DialogAlterSale({
 
   const onSubmit = async (data: UpdateSaleParams) => {
     try {
-      await UpdateSale(data, sale.sale.sale_id);
-      toast.success("Procuto atualizado com sucesso");
+      const payload = { ...data };
+      // Sem alteração, deixa o back manter o desconto em R$ atual (evita arredondamento do %)
+      if (payload.discount_amount === defaultValues.discount_amount) {
+        delete payload.discount_amount;
+      }
+
+      await UpdateSale(payload, sale.sale.sale_id);
+      toast.success("Venda atualizada com sucesso");
+      await queryClient.invalidateQueries({ queryKey: ["sales"] });
+      setOpen(false);
     } catch (error) {
       console.log(error);
-      toast.error("Erro ao atualizar produto");
+      const message = isAxiosError<{ error?: string }>(error)
+        ? error.response?.data?.error
+        : undefined;
+      toast.error(message ?? "Erro ao atualizar venda");
     }
   };
 
@@ -163,7 +185,7 @@ export function DialogAlterSale({
                 <div className="rounded-lg border p-3 text-center">
                   <p className="text-xs text-muted-foreground">Desconto</p>
                   <p className="text-sm font-semibold text-destructive">
-                    - {Number(sale.sale.discount_amount ?? 0)}%
+                    - R$ {formatCurrency(Number(sale.sale.discount_amount ?? 0))}
                   </p>
                 </div>
                 <div className="rounded-lg border p-3 text-center">
@@ -465,7 +487,7 @@ export function DialogAlterSale({
                         Preço Unit.
                       </TableHead>
                       <TableHead className="text-center w-24">
-                        Desc. (%)
+                        Desconto
                       </TableHead>
                       <TableHead className="text-right w-28">
                         Subtotal
@@ -485,7 +507,7 @@ export function DialogAlterSale({
                           R$ {formatCurrency(Number(item.unit_price ?? 0))}
                         </TableCell>
                         <TableCell className="text-center">
-                          {item.item_discount}%
+                          R$ {formatCurrency(Number(item.item_discount ?? 0))}
                         </TableCell>
                         <TableCell className="text-right font-medium">
                           R${" "}
