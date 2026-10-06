@@ -50,7 +50,7 @@ export const modules = [
     title: "Vendas",
     kicker: "Do balcão ao boleto",
     description:
-      "Venda à vista ou a prazo com entrada, desconto percentual, parcelamento automático e vencimentos. Cada parcela nasce com status próprio e cobrança rastreada.",
+      "Venda à vista ou a prazo com entrada, desconto em reais, parcelamento automático e vencimentos. Cada parcela nasce com status próprio e cobrança rastreada.",
     image: tileVendas,
     to: "/vendas",
     icon: ShoppingCart,

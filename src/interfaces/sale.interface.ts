@@ -53,7 +53,7 @@ interface CreateSaleItemParams {
 }
 
 export interface UpdateSaleParams {
-  /** Desconto em % (0–100). Omitido mantém o desconto atual da venda. */
+  /** Desconto em R$. Omitido mantém o desconto atual da venda. */
   discount_amount?: number;
   due_days: number;
   payment_method: PaymentMethod;
