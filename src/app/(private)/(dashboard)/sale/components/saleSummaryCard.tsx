@@ -29,7 +29,7 @@ export function SaleSummaryCard({ products }: Props) {
     return sum + preco * quantidade;
   }, 0);
 
-  const totalAmount = totalValue - totalValue * (Number(desconto) / 100);
+  const totalAmount = totalValue - desconto;
 
   return (
     <Card>

@@ -10,13 +10,11 @@ interface CadastroProdutoResumoProps {
   formData: CreateProductParams;
   loading: boolean;
   onReset: () => void;
-  handleCreateProduct: () => void;
 }
 
 export function CadastroProdutoResumo({
   formData,
   onReset,
-  handleCreateProduct,
   loading,
 }: CadastroProdutoResumoProps) {
   const precoVenda = Number(formData.sale_price || 0)
@@ -92,7 +90,7 @@ export function CadastroProdutoResumo({
           <Button
             type="submit"
             className="w-full h-11 bg-blue-600 hover:bg-blue-700 text-white font-semibold shadow-sm cursor-pointer"
-            onClick={() => handleCreateProduct()}
+            disabled={loading}
           >
             <Save className="w-4 h-4 mr-2" />
             {loading ? "Cadastrando ..." : "Cadastrar produto"}
