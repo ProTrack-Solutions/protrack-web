@@ -19,6 +19,7 @@ import { useInfiniteClients } from "@/hooks/useInfiniteClients";
 import { Loading } from "@/components/Loading";
 import { CreateSale } from "@/service/sale.service";
 import { toast } from "sonner";
+import { getApiErrorMessage } from "@/utils/apiError";
 import { Product } from "@/interfaces/products.interface";
 
 function useDebouncedValue<T>(value: T, delay: number): T {
@@ -77,17 +78,17 @@ export default function Sale() {
         delete payload.customer_id;
       }
 
-      console.log("Dados prontos para enviar para o back-end:", payload);
       await CreateSale(payload);
-      toast.success("Venda cadastrado com sucesso!");
-    } catch (error) {
-      console.log(error);
-      toast.error("Erro ao cadastrar venda!");
-    } finally {
+      toast.success("Venda cadastrada com sucesso!");
+
+      // Só limpa o formulário quando a venda foi gravada; em caso de erro o usuário corrige e reenvia
       form.reset();
       setSelectedProducts({});
       setProductSearch("");
       setClientSearch("");
+    } catch (error) {
+      console.log(error);
+      toast.error(getApiErrorMessage(error, "Erro ao cadastrar venda"));
     }
   };
 
