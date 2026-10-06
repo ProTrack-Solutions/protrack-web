@@ -1,20 +1,24 @@
 import { useFormContext } from "react-hook-form";
 import { Button } from "@/components/ui/button";
-import { VendaForm } from "@/schemas/sale.schema";
+import { CreateSaleParams } from "@/interfaces/sale.interface";
 
 export function SaleFormActions() {
-  const { formState } = useFormContext<VendaForm>();
+  const { formState, reset } = useFormContext<CreateSaleParams>();
 
   return (
     <div className="flex justify-end space-x-4">
       <Button
         type="button"
         variant="outline"
-        onClick={() => console.log(formState)}
+        disabled={formState.isSubmitting}
+        onClick={() => reset()}
       >
         Cancelar
       </Button>
-      <Button type="submit">Cadastrar Venda</Button>
+      {/* Desabilita durante o envio para não cadastrar a mesma venda duas vezes */}
+      <Button type="submit" disabled={formState.isSubmitting}>
+        {formState.isSubmitting ? "Cadastrando..." : "Cadastrar Venda"}
+      </Button>
     </div>
   );
 }

@@ -50,7 +50,7 @@ import {
 import { getSaleStatusLabel } from "@/utils/salesStatus";
 import { UpdateSale } from "@/service/sale.service";
 import { toast } from "sonner";
-import { isAxiosError } from "axios";
+import { getApiErrorMessage } from "@/utils/apiError";
 import { useQueryClient } from "@tanstack/react-query";
 
 // O back grava o desconto em R$; o formulário trabalha em %, igual à criação da venda.
@@ -128,10 +128,7 @@ export function DialogAlterSale({
       setOpen(false);
     } catch (error) {
       console.log(error);
-      const message = isAxiosError<{ error?: string }>(error)
-        ? error.response?.data?.error
-        : undefined;
-      toast.error(message ?? "Erro ao atualizar venda");
+      toast.error(getApiErrorMessage(error, "Erro ao atualizar venda"));
     }
   };
 
