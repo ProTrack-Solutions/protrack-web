@@ -43,6 +43,10 @@ export const UpdateSale = async (
   await api.put(`/sales/${saleId}`, params);
 };
 
+export const DeleteSale = async (saleId: string): Promise<void> => {
+  await api.delete(`/sales/${saleId}`);
+};
+
 export const GetSalesSummary = async (): Promise<GetSalesSummaryResponse> => {
   const response = await api.get<GetSalesSummaryResponse>(
     "/sales/total-amount",
