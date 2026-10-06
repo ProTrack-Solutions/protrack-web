@@ -1,5 +1,8 @@
 import { Fragment, useState } from "react";
-import { ChevronDown, ChevronRight, Pencil } from "lucide-react";
+import { isAxiosError } from "axios";
+import { useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
+import { ChevronDown, ChevronRight, Pencil, Trash2 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import {
   Table,
@@ -15,6 +18,8 @@ import { Badge } from "@/components/ui/badge";
 import { getPaymentMethodLabel } from "@/utils/paymentMethodFormat";
 import { getSaleStatusLabel, getSaleStatusVariant } from "@/utils/salesStatus";
 import { DialogAlterSale } from "@/components/DialogAlterSale";
+import { DialogConfirm } from "@/components/DialogConfirm";
+import { DeleteSale } from "@/service/sale.service";
 import { ListSalesWithInstallmentsResponse } from "@/interfaces/sale.interface";
 
 const formatCurrency = (value: number) =>
@@ -40,6 +45,24 @@ export const SaleListTable = ({
     ListSalesWithInstallmentsResponse | undefined
   >(undefined);
 
+  const [saleToDelete, setSaleToDelete] = useState<string | null>(null);
+
+  const queryClient = useQueryClient();
+
+  const handleDeleteSale = async (saleId: string) => {
+    try {
+      await DeleteSale(saleId);
+      toast.success("Venda cancelada com sucesso");
+      await queryClient.invalidateQueries({ queryKey: ["sales"] });
+    } catch (error) {
+      console.log(error);
+      const message = isAxiosError<{ error?: string }>(error)
+        ? error.response?.data?.error
+        : undefined;
+      toast.error(message ?? "Erro ao cancelar venda");
+    }
+  };
+
   return (
     <Card>
       <CardContent className="p-0">
@@ -62,7 +85,7 @@ export const SaleListTable = ({
             {filteredVendas.length === 0 ? (
               <TableRow>
                 <TableCell
-                  colSpan={9}
+                  colSpan={10}
                   className="text-center py-10 text-muted-foreground"
                 >
                   Nenhuma venda encontrada.
@@ -112,7 +135,7 @@ export const SaleListTable = ({
                       </TableCell>
                       <TableCell className="text-right text-sm text-destructive">
                         {venda.sale.discount_amount > 0
-                          ? `-${venda.sale.discount_amount}%`
+                          ? `- R$ ${formatCurrency(venda.sale.discount_amount)}`
                           : "—"}
                       </TableCell>
                       <TableCell className="text-right font-medium">
@@ -126,17 +149,33 @@ export const SaleListTable = ({
                         </Badge>
                       </TableCell>
                       <TableCell className="text-center">
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="cursor-pointer"
-                          onClick={() => {
-                            setOpenDialog(true);
-                            setSelectSale(venda);
-                          }}
-                        >
-                          <Pencil className="h-4 w-4" />
-                        </Button>
+                        <div className="flex items-center justify-center gap-1">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="cursor-pointer"
+                            title="Editar venda"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setOpenDialog(true);
+                              setSelectSale(venda);
+                            }}
+                          >
+                            <Pencil className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="cursor-pointer text-destructive hover:text-destructive"
+                            title="Cancelar venda"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setSaleToDelete(venda.sale.sale_id);
+                            }}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
                       </TableCell>
                     </TableRow>
 
@@ -146,7 +185,7 @@ export const SaleListTable = ({
                         key={`${venda.sale.sale_id}-parcelas`}
                         className="bg-muted/30 hover:bg-muted/30"
                       >
-                        <TableCell colSpan={9} className="p-0">
+                        <TableCell colSpan={10} className="p-0">
                           <div className="px-6 py-4">
                             <p className="text-sm font-semibold mb-3">
                               Parcelas ({venda.sale.installments_count!}x)
@@ -209,6 +248,19 @@ export const SaleListTable = ({
           </TableBody>
         </Table>
       </CardContent>
+
+      {saleToDelete && (
+        <DialogConfirm
+          id={saleToDelete}
+          open={!!saleToDelete}
+          onOpenChange={(isOpen) => {
+            if (!isOpen) setSaleToDelete(null);
+          }}
+          title="Cancelar venda?"
+          description="Esta ação não pode ser desfeita. O estoque dos produtos será devolvido e as parcelas em aberto serão canceladas, abatendo o saldo devedor do cliente."
+          onDelete={handleDeleteSale}
+        />
+      )}
 
       {selectSale && (
         <DialogAlterSale
