@@ -1,7 +1,7 @@
 import { Fragment, useState } from "react";
-import { isAxiosError } from "axios";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { getApiErrorMessage } from "@/utils/apiError";
 import { ChevronDown, ChevronRight, Pencil, Trash2 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -56,10 +56,7 @@ export const SaleListTable = ({
       await queryClient.invalidateQueries({ queryKey: ["sales"] });
     } catch (error) {
       console.log(error);
-      const message = isAxiosError<{ error?: string }>(error)
-        ? error.response?.data?.error
-        : undefined;
-      toast.error(message ?? "Erro ao cancelar venda");
+      toast.error(getApiErrorMessage(error, "Erro ao cancelar venda"));
     }
   };
 
