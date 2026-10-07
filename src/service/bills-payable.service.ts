@@ -11,7 +11,7 @@ import { api } from "./api";
 export const GetBillsPayableSummary =
   async (): Promise<GetBillsPayableSummaryResponse> => {
     const response = await api.get<GetBillsPayableSummaryResponse>(
-      "/bills-payable/summary",
+      "/bills-payable/dashboard",
     );
     return response.data;
   };

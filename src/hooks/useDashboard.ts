@@ -12,7 +12,7 @@ import {
   SumBillsPayable,
 } from "@/service/bills-payable.service";
 import { GetCashFlow } from "@/service/cash-flow.service";
-import { ListAnnouncements } from "@/service/announcements.service";
+import { ListTopAnnouncementsOfDay } from "@/service/announcements.service";
 
 export const useDashboard = () => {
   const { data, isLoading, isError, refetch } = useQuery({
@@ -38,7 +38,7 @@ export const useDashboard = () => {
         GetBillsPayableSummary(),
         GetCashFlow(),
         GetInventoryTurnover(),
-        ListAnnouncements(),
+        ListTopAnnouncementsOfDay(),
         SumBillsPayable(),
       ]);
 
@@ -68,7 +68,7 @@ export const useDashboard = () => {
     billsPayableSummary: data?.billsPayableSummary,
     cashFlow: data?.cashFlow,
     inventoryTurnover: data?.inventoryTurnover,
-    announcements: data?.announcements.data,
+    announcements: data?.announcements,
     totalBillsPayable: data?.totalBillsPayable,
     loading: isLoading,
     error: isError
