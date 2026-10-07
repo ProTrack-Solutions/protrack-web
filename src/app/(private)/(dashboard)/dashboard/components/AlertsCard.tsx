@@ -4,12 +4,16 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { AlertTriangle } from "lucide-react";
 import { AnnouncementsResponse } from "@/interfaces/announcements.interface";
+import { useState } from "react";
+import { AnnouncementsBoardDialog } from "./AnnouncementsBoardDialog";
 
 interface AlertsCardProps {
   announcements: AnnouncementsResponse[];
 }
 
 export function AlertsCard({ announcements }: AlertsCardProps) {
+  const [isBoardOpen, setIsBoardOpen] = useState(false);
+
   return (
     <Card>
       <CardHeader>
@@ -36,10 +40,20 @@ export function AlertsCard({ announcements }: AlertsCardProps) {
             </div>
           ))
         )}
-        <Button variant="outline" size="sm" className="w-full mt-4">
+        <Button
+          variant="outline"
+          size="sm"
+          className="w-full mt-4"
+          onClick={() => setIsBoardOpen(true)}
+        >
           Ver Todos os Alertas
         </Button>
       </CardContent>
+
+      <AnnouncementsBoardDialog
+        open={isBoardOpen}
+        onOpenChange={setIsBoardOpen}
+      />
     </Card>
   );
 }
