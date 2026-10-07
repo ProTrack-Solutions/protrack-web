@@ -80,11 +80,10 @@ export default function DashBoard() {
         <AccountsPayableCard
           billsPayableSummary={
             billsPayableSummary ?? {
-              general_status: "",
+              total_due_today: 0,
+              total_next_7_days: 0,
               total_overdue: 0,
-              total_quantity: 0,
-              total_scheduled: 0,
-              total_to_pay: 0,
+              total_pending: 0,
             }
           }
         />
