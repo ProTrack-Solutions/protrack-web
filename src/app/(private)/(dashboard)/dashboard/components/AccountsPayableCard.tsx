@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Calendar } from "lucide-react";
 import { GetBillsPayableSummaryResponse } from "@/interfaces/bills-payable.interface";
 import { formatCurrency } from "@/utils/currencyFormat";
+import { useRouter } from "next/navigation";
 
 interface AccountsPayableCardProps {
   billsPayableSummary: GetBillsPayableSummaryResponse;
@@ -13,6 +14,8 @@ interface AccountsPayableCardProps {
 export function AccountsPayableCard({
   billsPayableSummary,
 }: AccountsPayableCardProps) {
+  const route = useRouter();
+
   return (
     <Card>
       <CardHeader>
@@ -25,7 +28,7 @@ export function AccountsPayableCard({
         <div className="space-y-4">
           <div>
             <p className="text-2xl font-bold text-destructive">
-              R$ {formatCurrency(billsPayableSummary.total_to_pay ?? 0)}
+              R$ {formatCurrency(billsPayableSummary.total_pending ?? 0)}
             </p>
             <p className="text-sm text-muted-foreground">Total pendente</p>
           </div>
@@ -39,17 +42,22 @@ export function AccountsPayableCard({
             <div className="flex justify-between text-sm">
               <span>Vencem hoje</span>
               <span className="font-medium text-secondary">
-                R$ {formatCurrency(billsPayableSummary.total_scheduled ?? 0)}
+                R$ {formatCurrency(billsPayableSummary.total_due_today ?? 0)}
               </span>
             </div>
             <div className="flex justify-between text-sm">
               <span>Próximos 7 dias</span>
               <span className="font-medium">
-                R$ {formatCurrency(billsPayableSummary.total_quantity ?? 0)}
+                R$ {formatCurrency(billsPayableSummary.total_next_7_days ?? 0)}
               </span>
             </div>
           </div>
-          <Button variant="outline" size="sm" className="w-full">
+          <Button
+            variant="outline"
+            size="sm"
+            className="w-full"
+            onClick={() => route.push("/accounts-payable")}
+          >
             Gerenciar Contas
           </Button>
         </div>

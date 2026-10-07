@@ -13,11 +13,10 @@ export interface BillsPayablePaginationParams extends Pagination {
 }
 
 export interface GetBillsPayableSummaryResponse {
-  general_status: string;
+  total_pending: number;
   total_overdue: number;
-  total_quantity: number;
-  total_scheduled: number;
-  total_to_pay: number;
+  total_due_today: number;
+  total_next_7_days: number;
 }
 
 export interface BillsPayable {
@@ -39,6 +38,7 @@ export interface BillsPayable {
   updated_at: string;
   vendor_id: string;
   vendor_name: string;
+  days_overdue: number;
 }
 
 export interface ListBillsPayableResponse {
