@@ -7,6 +7,7 @@ import { Package } from "lucide-react";
 import { GetTotalInStockResponse } from "@/interfaces/products.interface";
 import { formatCurrency } from "@/utils/currencyFormat";
 import { GetInventoryTurnoverResponse } from "@/interfaces/sale.interface";
+import { useRouter } from "next/navigation";
 
 interface Props {
   totalValueInStock: GetTotalInStockResponse;
@@ -17,6 +18,8 @@ export function StockValueCard({
   totalValueInStock,
   inventoryTurnover,
 }: Props) {
+  const route = useRouter();
+
   return (
     <Card>
       <CardHeader>
@@ -45,7 +48,14 @@ export function StockValueCard({
               className="h-2"
             />
           </div>
-          <Button variant="outline" size="sm" className="w-full">
+          <Button
+            variant="outline"
+            size="sm"
+            className="w-full"
+            onClick={() => {
+              route.push("/stock");
+            }}
+          >
             Ver Detalhes
           </Button>
         </div>

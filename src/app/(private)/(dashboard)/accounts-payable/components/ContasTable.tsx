@@ -86,9 +86,9 @@ export function ContasPagarTable({ contas }: ContasPagarTableProps) {
                   <ContaPagarStatusBadge status={conta.status} />
                 </TableCell>
                 <TableCell>
-                  {1 > 0 ? (
+                  {conta.days_overdue > 0 ? (
                     <span className="text-destructive font-medium">
-                      {1} dias
+                      {conta.days_overdue} dias
                     </span>
                   ) : (
                     <span className="text-muted-foreground">-</span>
