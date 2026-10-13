@@ -2,7 +2,14 @@ import { Fragment, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { getApiErrorMessage } from "@/utils/apiError";
-import { ChevronDown, ChevronRight, Pencil, Trash2 } from "lucide-react";
+import {
+  ChevronDown,
+  ChevronRight,
+  Loader2,
+  Pencil,
+  Printer,
+  Trash2,
+} from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import {
   Table,
@@ -19,7 +26,7 @@ import { getPaymentMethodLabel } from "@/utils/paymentMethodFormat";
 import { getSaleStatusLabel, getSaleStatusVariant } from "@/utils/salesStatus";
 import { DialogAlterSale } from "@/components/DialogAlterSale";
 import { DialogConfirm } from "@/components/DialogConfirm";
-import { DeleteSale } from "@/service/sale.service";
+import { DeleteSale, GetSaleReceipt } from "@/service/sale.service";
 import { ListSalesWithInstallmentsResponse } from "@/interfaces/sale.interface";
 
 const formatCurrency = (value: number) =>
@@ -47,7 +54,37 @@ export const SaleListTable = ({
 
   const [saleToDelete, setSaleToDelete] = useState<string | null>(null);
 
+  const [printingSaleId, setPrintingSaleId] = useState<string | null>(null);
+
   const queryClient = useQueryClient();
+
+  const handlePrintSale = async (saleId: string) => {
+    setPrintingSaleId(saleId);
+    try {
+      const blob = await GetSaleReceipt(saleId);
+      const url = window.URL.createObjectURL(blob);
+
+      // Carrega o PDF num iframe invisível e abre a janela de impressão do navegador
+      const iframe = document.createElement("iframe");
+      iframe.style.display = "none";
+      iframe.src = url;
+      iframe.onload = () => {
+        iframe.contentWindow?.focus();
+        iframe.contentWindow?.print();
+        // Limpeza depois que a janela de impressão já leu o arquivo
+        setTimeout(() => {
+          iframe.remove();
+          window.URL.revokeObjectURL(url);
+        }, 60_000);
+      };
+      document.body.appendChild(iframe);
+    } catch (error) {
+      console.log(error);
+      toast.error(getApiErrorMessage(error, "Erro ao gerar recibo da venda"));
+    } finally {
+      setPrintingSaleId(null);
+    }
+  };
 
   const handleDeleteSale = async (saleId: string) => {
     try {
@@ -75,7 +112,7 @@ export const SaleListTable = ({
               <TableHead className="text-right">Desconto</TableHead>
               <TableHead className="text-center">Total</TableHead>
               <TableHead>Status</TableHead>
-              <TableHead className="text-center w-24">Ações</TableHead>
+              <TableHead className="text-center w-32">Ações</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -147,6 +184,23 @@ export const SaleListTable = ({
                       </TableCell>
                       <TableCell className="text-center">
                         <div className="flex items-center justify-center gap-1">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="cursor-pointer"
+                            title="Imprimir recibo"
+                            disabled={printingSaleId === venda.sale.sale_id}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handlePrintSale(venda.sale.sale_id);
+                            }}
+                          >
+                            {printingSaleId === venda.sale.sale_id ? (
+                              <Loader2 className="h-4 w-4 animate-spin" />
+                            ) : (
+                              <Printer className="h-4 w-4" />
+                            )}
+                          </Button>
                           <Button
                             variant="ghost"
                             size="icon"
