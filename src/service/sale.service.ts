@@ -1,3 +1,4 @@
+import { isAxiosError } from "axios";
 import { api } from "./api";
 import {
   CreateSaleParams,
@@ -45,6 +46,26 @@ export const UpdateSale = async (
 
 export const DeleteSale = async (saleId: string): Promise<void> => {
   await api.delete(`/sales/${saleId}`);
+};
+
+export const GetSaleReceipt = async (saleId: string): Promise<Blob> => {
+  try {
+    const response = await api.get(`/sales/${saleId}/receipt`, {
+      responseType: "blob",
+    });
+    return new Blob([response.data], { type: "application/pdf" });
+  } catch (error) {
+    // Com responseType: 'blob' o JSON de erro ({ error }) também chega como Blob;
+    // converte de volta para o getApiErrorMessage conseguir ler a mensagem
+    if (isAxiosError(error) && error.response?.data instanceof Blob) {
+      try {
+        error.response.data = JSON.parse(await error.response.data.text());
+      } catch {
+        error.response.data = {};
+      }
+    }
+    throw error;
+  }
 };
 
 export const GetSalesSummary = async (): Promise<GetSalesSummaryResponse> => {
