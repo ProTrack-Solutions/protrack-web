@@ -11,11 +11,12 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Package, Pencil } from "lucide-react";
+import { ArrowDownUp, Package, Pencil } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useProductsCategories } from "@/hooks/useProductsCategories";
 import { SetStateAction, useState } from "react";
 import { DialogEditProduct } from "@/components/DialogAlterProduct";
+import { DialogStockMovement } from "@/components/DialogStockMovement";
 import { getQuantityStyle, getUnitBadgeStyle } from "@/utils/productsQuantity";
 import { Checkbox } from "@/components/ui/checkbox";
 
@@ -39,6 +40,7 @@ export function EstoqueTable({
   const { productsCategories } = useProductsCategories();
 
   const [openDialog, setOpenDialog] = useState(false);
+  const [openStockDialog, setOpenStockDialog] = useState(false);
 
   // Os produtos são buscados paginados, então o header considera o total
   // de produtos (todas as páginas), e não apenas os itens da página atual.
@@ -86,6 +88,12 @@ export function EstoqueTable({
               </TableHead>
               <TableHead className="font-semibold text-foreground text-right">
                 Preço
+              </TableHead>
+              <TableHead className="font-semibold text-foreground text-center">
+                Cadastrados
+              </TableHead>
+              <TableHead className="font-semibold text-foreground text-center">
+                Vendidos
               </TableHead>
               <TableHead className="font-semibold text-foreground text-center">
                 Estoque
@@ -151,6 +159,12 @@ export function EstoqueTable({
                         product.unit
                       : product.sale_price.toFixed(2).replace(".", ",")}
                   </TableCell>
+                  <TableCell className="text-center font-medium text-muted-foreground">
+                    {product.sell_in_bulk ? "—" : (product.total_registered ?? 0)}
+                  </TableCell>
+                  <TableCell className="text-center font-medium text-muted-foreground">
+                    {product.sell_in_bulk ? "—" : (product.total_sold ?? 0)}
+                  </TableCell>
                   <TableCell className="text-center">
                     <Badge
                       variant="outline"
@@ -159,12 +173,27 @@ export function EstoqueTable({
                       {product.sell_in_bulk ? product.unit : product.quantity}
                     </Badge>
                   </TableCell>
-                  <TableCell className="text-right">
+                  <TableCell className="text-right whitespace-nowrap">
+                    {!product.sell_in_bulk && (
+                      <Button
+                        onClick={() => {
+                          setOpenStockDialog(true);
+                          setProductSelect(product);
+                        }}
+                        variant="ghost"
+                        size="icon"
+                        title="Movimentar estoque"
+                        className="h-9 w-9 cursor-pointer text-muted-foreground hover:text-emerald-600 hover:bg-emerald-50 dark:hover:bg-emerald-500/10"
+                      >
+                        <ArrowDownUp className="w-4 h-4" />
+                      </Button>
+                    )}
                     <Button
                       onClick={() => {
                         setOpenDialog(true);
                         setProductSelect(product);
                       }}
+                      title="Editar produto"
                       variant="ghost"
                       size="icon"
                       className="h-9 w-9 cursor-pointer text-muted-foreground hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-500/10"
@@ -178,7 +207,7 @@ export function EstoqueTable({
             {products.length === 0 && (
               <TableRow>
                 <TableCell
-                  colSpan={6}
+                  colSpan={10}
                   className="h-32 text-center text-muted-foreground"
                 >
                   Nenhum produto encontrado.
@@ -195,6 +224,15 @@ export function EstoqueTable({
         key={productSelect?.id}
         onOpenChange={setOpenDialog}
       />
+
+      {openStockDialog && (
+        <DialogStockMovement
+          open={openStockDialog}
+          product={productSelect}
+          key={`stock-${productSelect?.id}`}
+          onOpenChange={setOpenStockDialog}
+        />
+      )}
     </Card>
   );
 }
