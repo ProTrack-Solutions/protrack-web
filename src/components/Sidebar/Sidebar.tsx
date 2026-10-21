@@ -39,12 +39,12 @@ export function Sidebar({ children }: SidebarProps) {
         <div className="p-3 pb-1 flex justify-between items-center">
           <div
             className={`overflow-hidden transition-all duration-300 relative ${
-              expanded ? "w-22 h-8" : "w-0"
+              expanded ? "w-40 h-9" : "w-0"
             }`}
           >
             <Image
               src="/logo.svg"
-              alt="Logo"
+              alt="ProTrack Gerencial"
               fill
               className="object-contain"
               priority
