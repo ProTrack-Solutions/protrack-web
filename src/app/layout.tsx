@@ -10,13 +10,13 @@ const geist = Geist({ subsets: ["latin"], variable: "--font-sans" });
 
 export const metadata: Metadata = {
   title: {
-    default: "ERP para Empresas: Estoque e Vendas | ProTrack",
-    template: "%s | ProTrack",
+    default: "ERP para Empresas: Estoque e Vendas | ProTrack Gerencial",
+    template: "%s | ProTrack Gerencial",
   },
   description:
     "Sistema de gestão empresarial (ERP) para pequenas empresas: estoque, vendas parceladas, financeiro e clientes em uma única plataforma na nuvem, sem instalação.",
   icons: {
-    icon: "logo.svg",
+    icon: "/icon.svg",
   },
 };
 

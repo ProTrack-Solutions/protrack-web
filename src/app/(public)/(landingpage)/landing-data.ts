@@ -9,9 +9,9 @@ import {
   Users,
   Zap,
 } from "lucide-react";
-import tileEstoque from "@/assets/tile-estoque.png";
-import tileFinanceiro from "@/assets/tile-financeiro.png";
-import tileVendas from "@/assets/tile-vendas.png";
+
+/** Palavras que se alternam no título do hero */
+export const heroWords = ["produtos", "vendas", "clientes", "carnês", "pagamentos"];
 
 export const marqueeWords = [
   "Estoque inteligente",
@@ -31,30 +31,33 @@ export const modules = [
     kicker: "Controle total",
     description:
       "Cadastro completo de produtos com código de barras, categorias coloridas, tamanhos, custo, preço e margem calculada automaticamente. Alertas de estoque mínimo antes da ruptura.",
-    image: tileEstoque,
-    to: "/estoque",
+    art: "estoque" as const,
+    id: "modulo-estoque",
     icon: Boxes,
     tone: "blue" as const,
+    points: ["Código de barras", "Margem automática", "Estoque mínimo"],
   },
   {
     title: "Financeiro",
     kicker: "Caixa sob controle",
     description:
       "Contas a pagar e a receber, baixas parciais, agendamento de pagamentos, métodos com taxas e prazos, e um fluxo de caixa que se atualiza a cada movimento.",
-    image: tileFinanceiro,
-    to: "/fluxo-caixa",
+    art: "financeiro" as const,
+    id: "modulo-financeiro",
     icon: DollarSign,
     tone: "green" as const,
+    points: ["Contas a pagar", "Contas a receber", "Fluxo de caixa"],
   },
   {
     title: "Vendas",
     kicker: "Do balcão ao boleto",
     description:
       "Venda à vista ou a prazo com entrada, desconto em reais, parcelamento automático e vencimentos. Cada parcela nasce com status próprio e cobrança rastreada.",
-    image: tileVendas,
-    to: "/vendas",
+    art: "vendas" as const,
+    id: "modulo-vendas",
     icon: ShoppingCart,
     tone: "peach" as const,
+    points: ["À vista ou a prazo", "Parcelas automáticas", "Comprovante impresso"],
   },
 ];
 
@@ -123,7 +126,7 @@ export const steps = [
 export const faqs = [
   {
     q: "Preciso instalar alguma coisa?",
-    a: "Não. O Pro Track roda direto no navegador, em qualquer computador, tablet ou celular. Basta entrar com seu usuário e a operação continua de onde parou.",
+    a: "Não. O ProTrack Gerencial roda direto no navegador, em qualquer computador, tablet ou celular. Basta entrar com seu usuário e a operação continua de onde parou.",
   },
   {
     q: "Consigo controlar vendas parceladas?",

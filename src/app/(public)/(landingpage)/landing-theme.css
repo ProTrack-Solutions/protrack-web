@@ -1,38 +1,58 @@
 /* ============================================================
-   Pro Track — Tema claro/pastel
-   Paleta base: azul suave (Estoque) + verde suave (Financeiro)
-   + pêssego suave (Vendas) como terceira cor complementar
+   ProTrack Gerencial — Landing
+   Inspiração: discord.com — hero noturno com estrelas, tipografia
+   pesada, botões em pílula e muito movimento ao rolar a página.
+   Paleta base: azul (Estoque) + verde (Financeiro) + pêssego (Vendas)
    ============================================================ */
 
 .landing-light {
   /* --- Superfícies --- */
-  --background: 210 50% 98%; /* #F6FAFE — Ligeiramente mais claro e límpido */
-  --foreground: 222 35% 15%; /* #171E2D — Texto principal mais escuro */
+  --background: 210 50% 98%;
+  --foreground: 222 35% 15%;
 
-  --card: 0 0% 100%; /* branco puro - mantido para máximo contraste */
+  --card: 0 0% 100%;
   --card-foreground: 222 35% 15%;
-  --secondary: 210 40% 96%; /* #EDF3F9 — Ligeiramente mais claro */
+  --secondary: 210 40% 96%;
   --secondary-foreground: 222 30% 20%;
 
   --muted: 210 35% 94%;
-  --muted-foreground: 220 16% 40%; /* #555C6A — Texto secundário mais escuro */
+  --muted-foreground: 220 16% 40%;
 
-  --border: 213 30% 85%; /* #D1DDEB — Ligeiramente mais definida */
+  --border: 213 30% 85%;
 
   /* --- Marca --- */
-  /* Azul e Verde mantêm o tom (H) e saturação (S), mas reduzem a luminosidade (L) sutilmente */
-  --primary: 211 79% 60%; /* #4F94E5 — Mais profundo, melhor leitura */
+  --primary: 211 79% 60%;
   --primary-foreground: 0 0% 100%;
 
-  --accent-green: 155 55% 45%; /* #31A16C — Mais profundo, melhor leitura */
+  --accent-green: 155 55% 45%;
   --accent-green-foreground: 0 0% 100%;
 
-  --accent-peach: 21 90% 65%; /* #F08E58 — Levemente mais saturado e escuro */
-  --accent-peach-foreground: 20 45% 15%; /* Texto sobre pêssego bem mais escuro */
+  --accent-peach: 21 90% 65%;
+  --accent-peach-foreground: 20 45% 15%;
 
-  --accent-lilac: 255 60% 75%; /* #AB94EE — Levemente mais vivo */
+  --accent-lilac: 255 60% 75%;
 
   --ring: 211 79% 60%;
+
+  /* --- Noite (hero, CTA final, rodapé) --- */
+  --night: 226 58% 8%;
+  --night-2: 224 55% 13%;
+  --night-3: 222 50% 20%;
+
+  /* O @theme do Tailwind resolve --color-* no :root; sem redeclarar aqui,
+     os utilitários (bg-secondary, text-foreground…) ignorariam a paleta acima */
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+  --color-border: hsl(var(--border));
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-ring: hsl(var(--ring));
 
   color-scheme: light;
 }
@@ -41,6 +61,18 @@
 .landing-light {
   background-color: hsl(var(--background));
   color: hsl(var(--foreground));
+}
+
+/* Rolagem suave nos links âncora + compensação da navbar fixa */
+html:has(.landing-light) {
+  scroll-behavior: smooth;
+}
+.landing-light [id] {
+  scroll-margin-top: 5rem;
+}
+
+.landing-light .font-display {
+  font-family: var(--font-display), var(--font-sans), sans-serif;
 }
 
 /* --- Utilitários de marca --- */
@@ -63,7 +95,41 @@
   color: transparent;
 }
 
-/* Painel com leve blur usado no header/menu mobile */
+/* Gradiente animado para títulos sobre fundo escuro */
+.landing-light .text-gradient-live {
+  background-image: linear-gradient(
+    100deg,
+    hsl(211 90% 70%),
+    hsl(155 65% 58%),
+    hsl(21 95% 72%),
+    hsl(211 90% 70%)
+  );
+  background-size: 300% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: gradient-pan 8s linear infinite;
+}
+
+.landing-light .bg-night {
+  background-color: hsl(var(--night));
+  background-image:
+    radial-gradient(
+      120% 80% at 50% 0%,
+      hsl(var(--night-3)) 0%,
+      transparent 60%
+    ),
+    linear-gradient(180deg, hsl(var(--night)) 0%, hsl(var(--night-2)) 100%);
+}
+
+/* Painel de vidro escuro (navbar ao rolar / menu mobile) */
+.landing-light .glass-night {
+  background-color: hsl(var(--night) / 0.86);
+  backdrop-filter: blur(16px) saturate(140%);
+  -webkit-backdrop-filter: blur(16px) saturate(140%);
+}
+
+/* Mantido para outras telas que reutilizam a classe */
 .landing-light .glass-panel {
   background-color: hsl(0 0% 100% / 0.75);
   backdrop-filter: blur(14px);
@@ -71,7 +137,6 @@
   border-color: hsl(var(--border));
 }
 
-/* Véu sutil sobre imagens (hero, tiles, cta final) — clareado para o tema light */
 .landing-light .veil {
   background-image: linear-gradient(
     180deg,
@@ -81,7 +146,6 @@
   );
 }
 
-/* Brilho ambiente atrás da seção de recursos, agora em azul/verde pastel */
 .landing-light .ambient-glow {
   background: radial-gradient(
     closest-side,
@@ -91,7 +155,7 @@
   );
 }
 
-/* Cartões por cor de módulo — usados no ModulesSection */
+/* Chips por cor de módulo */
 .landing-light .chip-blue {
   background-color: hsl(211 79% 63% / 0.12);
   color: hsl(211 65% 42%);
@@ -105,7 +169,500 @@
   color: hsl(21 70% 40%);
 }
 
-/* --- Animações mantidas do design original --- */
+/* --- Botões em pílula (estilo Discord) --- */
+.landing-light .btn-pill {
+  position: relative;
+  overflow: hidden;
+  border-radius: 9999px;
+  transition:
+    transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1),
+    box-shadow 0.25s ease,
+    background-color 0.25s ease,
+    color 0.25s ease;
+}
+.landing-light .btn-pill:hover {
+  transform: translateY(-2px);
+}
+.landing-light .btn-pill:active {
+  transform: translateY(0) scale(0.98);
+}
+/* Reflexo que atravessa o botão no hover */
+.landing-light .btn-shine::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    110deg,
+    transparent 30%,
+    hsl(0 0% 100% / 0.45) 50%,
+    transparent 70%
+  );
+  transform: translateX(-120%);
+  transition: transform 0.7s ease;
+  pointer-events: none;
+}
+.landing-light .btn-shine:hover::after {
+  transform: translateX(120%);
+}
+
+/* Link com sublinhado que cresce */
+.landing-light .link-grow {
+  background-image: linear-gradient(currentColor, currentColor);
+  background-size: 0% 2px;
+  background-position: 0 100%;
+  background-repeat: no-repeat;
+  transition:
+    background-size 0.3s ease,
+    color 0.2s ease;
+}
+.landing-light .link-grow:hover {
+  background-size: 100% 2px;
+}
+
+/* --- Reveal ao rolar (controlado pelo componente Reveal) --- */
+.landing-light .reveal {
+  opacity: 0;
+  transition:
+    opacity 0.8s cubic-bezier(0.2, 0.8, 0.2, 1),
+    transform 0.9s cubic-bezier(0.2, 0.8, 0.2, 1),
+    filter 0.8s ease;
+  will-change: opacity, transform;
+}
+.landing-light .reveal-up {
+  transform: translate3d(0, 48px, 0);
+}
+.landing-light .reveal-left {
+  transform: translate3d(-64px, 0, 0);
+}
+.landing-light .reveal-right {
+  transform: translate3d(64px, 0, 0);
+}
+.landing-light .reveal-zoom {
+  transform: scale(0.9);
+  filter: blur(6px);
+}
+.landing-light .reveal.is-visible {
+  opacity: 1;
+  transform: none;
+  filter: none;
+}
+
+/* --- Entrada do hero (CSS puro: não depende de hidratação) --- */
+.landing-light .hero-in {
+  opacity: 0;
+  animation: hero-in 1s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+/* --- Palavra rotativa do hero --- */
+.landing-light .word-stack {
+  display: inline-grid;
+  vertical-align: bottom;
+  overflow: hidden;
+  padding-bottom: 0.08em;
+}
+.landing-light .word-stack > span {
+  grid-area: 1 / 1;
+  opacity: 0;
+  transform: translateY(100%);
+  transition:
+    transform 0.6s cubic-bezier(0.7, 0, 0.2, 1),
+    opacity 0.6s ease;
+}
+.landing-light .word-stack > span[data-state="active"] {
+  opacity: 1;
+  transform: translateY(0);
+}
+.landing-light .word-stack > span[data-state="leaving"] {
+  opacity: 0;
+  transform: translateY(-100%);
+}
+
+/* --- Estrelas / brilhos --- */
+.landing-light .star {
+  position: absolute;
+  border-radius: 9999px;
+  background: white;
+  animation: twinkle var(--dur, 4s) ease-in-out var(--delay, 0s) infinite;
+}
+.landing-light .sparkle {
+  position: absolute;
+  color: white;
+  animation: sparkle var(--dur, 3s) ease-in-out var(--delay, 0s) infinite;
+}
+
+/* --- Spotlight nos cards de recursos --- */
+.landing-light .spotlight {
+  position: relative;
+  isolation: isolate;
+}
+.landing-light .spotlight::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: radial-gradient(
+    420px circle at var(--x, 50%) var(--y, 50%),
+    hsl(211 79% 63% / 0.16),
+    hsl(155 55% 50% / 0.08) 40%,
+    transparent 70%
+  );
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+.landing-light .spotlight:hover::before {
+  opacity: 1;
+}
+
+/* --- Barras do gráfico do mockup --- */
+.landing-light .bar-grow {
+  transform-origin: bottom;
+  transform: scaleY(0);
+  animation: bar-grow 1.1s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+/* --- SVG: ícones que se "desenham" (traço percorrendo o contorno) --- */
+.landing-light .svg-draw :is(path, circle, rect, line, polyline, polygon, ellipse) {
+  stroke-dasharray: 80;
+  stroke-dashoffset: 80;
+  transition: stroke-dashoffset 1.4s cubic-bezier(0.65, 0, 0.35, 1);
+}
+.landing-light .svg-draw.is-drawn :is(path, circle, rect, line, polyline, polygon, ellipse),
+.landing-light .is-visible .svg-draw :is(path, circle, rect, line, polyline, polygon, ellipse) {
+  stroke-dashoffset: 0;
+}
+.landing-light .is-visible .svg-draw :is(path, circle, rect, line, polyline, polygon, ellipse) {
+  transition-delay: 0.25s;
+}
+
+/* --- SVG: ondas divisórias em loop --- */
+.landing-light .wave-layer {
+  animation: wave-slide var(--dur, 14s) linear infinite;
+}
+@keyframes wave-slide {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* --- SVG: palavra sublinhada à mão --- */
+.landing-light .scribble path {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  transition: stroke-dashoffset 1.2s cubic-bezier(0.65, 0, 0.35, 1) 0.4s;
+}
+.landing-light .is-visible .scribble path,
+.landing-light .scribble.is-drawn path {
+  stroke-dashoffset: 0;
+}
+
+/* --- Ilustrações SVG dos módulos (ModuleArt.tsx) ---
+   Ficam pausadas até o Reveal ao redor ficar visível. */
+.landing-light .art * {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.landing-light .art [class*="a-"] {
+  animation-play-state: paused;
+}
+.landing-light .is-visible .art [class*="a-"] {
+  animation-play-state: running;
+}
+.landing-light .art .a-drop {
+  animation: art-drop 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+.landing-light .art .a-up {
+  animation: art-up 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+.landing-light .art .a-pop {
+  animation: art-pop 0.5s cubic-bezier(0.3, 1.6, 0.5, 1) both;
+}
+.landing-light .art .a-fade {
+  animation: art-fade 1s ease both;
+}
+.landing-light .art .a-fill {
+  transform-origin: left center;
+  animation: art-fill 1.2s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+.landing-light .art .a-draw {
+  stroke-dasharray: 1;
+  animation: art-draw 1.6s cubic-bezier(0.65, 0, 0.35, 1) both;
+}
+.landing-light .art .a-draw-fast {
+  animation-duration: 0.4s;
+}
+.landing-light .art .a-print {
+  animation: art-print 2.4s cubic-bezier(0.3, 0.7, 0.3, 1) 0.5s both;
+}
+.landing-light .art .a-scan {
+  animation: art-scan 2.2s ease-in-out 1.4s infinite both;
+}
+.landing-light .art .a-rise {
+  animation: art-rise 3.2s ease-in-out 1.6s infinite both;
+}
+.landing-light .art .a-coin {
+  animation: art-coin 3.2s cubic-bezier(0.5, 0, 0.5, 1) 2s infinite both;
+}
+.landing-light .art .a-pulse {
+  animation: art-pulse 1.8s ease-out infinite both;
+}
+.landing-light .art .a-bob {
+  animation: art-bob 3s ease-in-out infinite;
+}
+.landing-light .art .a-blink {
+  animation: art-blink 1.1s steps(2, jump-none) infinite;
+}
+
+@keyframes art-drop {
+  from {
+    opacity: 0;
+    transform: translateY(-140px);
+  }
+  60% {
+    opacity: 1;
+    transform: translateY(5px);
+  }
+  80% {
+    transform: translateY(-3px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes art-up {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes art-pop {
+  from {
+    opacity: 0;
+    transform: scale(0);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+@keyframes art-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes art-fill {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+@keyframes art-draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+@keyframes art-print {
+  from {
+    transform: translateY(130px);
+  }
+  to {
+    transform: none;
+  }
+}
+@keyframes art-scan {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(50px);
+  }
+}
+@keyframes art-rise {
+  0% {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  20%,
+  70% {
+    opacity: 1;
+    transform: translateY(-8px);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+}
+@keyframes art-coin {
+  0% {
+    opacity: 0;
+    transform: translateY(-110px);
+  }
+  15% {
+    opacity: 1;
+  }
+  45%,
+  80% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(0);
+  }
+}
+@keyframes art-pulse {
+  from {
+    opacity: 0.6;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(2.4);
+  }
+}
+@keyframes art-bob {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+@keyframes art-blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.25;
+  }
+}
+
+/* --- Keyframes --- */
+@keyframes hero-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 32px, 0);
+    filter: blur(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+    filter: none;
+  }
+}
+
+@keyframes gradient-pan {
+  to {
+    background-position: 300% 0;
+  }
+}
+
+@keyframes twinkle {
+  0%,
+  100% {
+    opacity: 0.15;
+    transform: scale(0.7);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes sparkle {
+  0%,
+  100% {
+    opacity: 0;
+    transform: scale(0.3) rotate(0deg);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1) rotate(90deg);
+  }
+}
+
+@keyframes drift {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  33% {
+    transform: translate3d(6%, -8%, 0) scale(1.1);
+  }
+  66% {
+    transform: translate3d(-5%, 6%, 0) scale(0.95);
+  }
+}
+.animate-drift {
+  animation: drift 18s ease-in-out infinite;
+}
+
+@keyframes bar-grow {
+  to {
+    transform: scaleY(1);
+  }
+}
+
+@keyframes slide-in-row {
+  from {
+    opacity: 0;
+    transform: translateX(-16px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.animate-slide-in-row {
+  opacity: 0;
+  animation: slide-in-row 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+@keyframes ping-soft {
+  0% {
+    transform: scale(1);
+    opacity: 0.7;
+  }
+  100% {
+    transform: scale(2.4);
+    opacity: 0;
+  }
+}
+.animate-ping-soft {
+  animation: ping-soft 1.8s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+@keyframes orbit {
+  from {
+    transform: rotate(0deg) translateX(var(--radius, 160px)) rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg) translateX(var(--radius, 160px)) rotate(-360deg);
+  }
+}
+.animate-orbit {
+  animation: orbit var(--dur, 24s) linear infinite;
+}
+
 @keyframes marquee {
   from {
     transform: translateX(0);
@@ -117,6 +674,13 @@
 .animate-marquee {
   animation: marquee 28s linear infinite;
 }
+.animate-marquee-reverse {
+  animation: marquee 32s linear infinite reverse;
+}
+.marquee-pause:hover .animate-marquee,
+.marquee-pause:hover .animate-marquee-reverse {
+  animation-play-state: paused;
+}
 
 @keyframes float {
   0%,
@@ -124,11 +688,14 @@
     transform: translateY(0);
   }
   50% {
-    transform: translateY(-8px);
+    transform: translateY(-10px);
   }
 }
 .animate-float {
   animation: float 4s ease-in-out infinite;
+}
+.animate-float-slow {
+  animation: float 6s ease-in-out infinite;
 }
 
 @keyframes glow {
@@ -159,4 +726,22 @@
 }
 .animate-scroll-hint {
   animation: scroll-hint 1.8s ease-in-out infinite;
+}
+
+/* --- Acessibilidade: quem pediu menos movimento recebe a página estática --- */
+@media (prefers-reduced-motion: reduce) {
+  .landing-light *,
+  .landing-light *::before,
+  .landing-light *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .landing-light .reveal,
+  .landing-light .hero-in {
+    opacity: 1;
+    transform: none;
+    filter: none;
+  }
 }

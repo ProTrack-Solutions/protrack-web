@@ -34,7 +34,7 @@ export function AuthShell({ title, description, children }: AuthShellProps) {
           <h1 className="text-4xl font-bold text-blue-950 leading-tight">
             Sistema de gestão empresarial
           </h1>
-          <h2 className="text-3xl font-bold text-blue-700 mt-3">Pro Track</h2>
+          <h2 className="text-3xl font-bold text-blue-700 mt-3">ProTrack Gerencial</h2>
           <p className="text-blue-950/80 mt-6 font-medium leading-relaxed">
             Recupere o acesso à sua conta com segurança e continue gerenciando
             seu negócio sem interrupções.
@@ -70,7 +70,7 @@ export function AuthShell({ title, description, children }: AuthShellProps) {
       <div className="w-full lg:w-1/2 flex items-center justify-center p-6 sm:p-10">
         <div className="w-full max-w-md">
           <div className="lg:hidden mb-8 text-center">
-            <h2 className="text-3xl font-bold text-primary">Pro Track</h2>
+            <h2 className="text-3xl font-bold text-primary">ProTrack Gerencial</h2>
             <p className="text-muted-foreground text-sm mt-1">
               Sistema de gestão empresarial
             </p>

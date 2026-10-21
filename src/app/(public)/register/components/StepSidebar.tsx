@@ -12,7 +12,7 @@ export default function StepSidebar({ currentStep }: StepSidebarProps) {
         <h1 className="text-4xl font-bold text-blue-950 leading-tight">
           Sistema de gestão empresarial
         </h1>
-        <h2 className="text-3xl font-bold text-blue-700 mt-3">Pro Track</h2>
+        <h2 className="text-3xl font-bold text-blue-700 mt-3">ProTrack Gerencial</h2>
         <p className="text-blue-950/80 mt-6 font-medium leading-relaxed">
           Cadastre-se agora e comece a otimizar sua empresa com controle,
           eficiência e crescimento garantidos.

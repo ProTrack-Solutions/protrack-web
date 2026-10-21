@@ -3,6 +3,7 @@ import { Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Reveal } from "./Reveal";
+import { Scribble } from "./Scribble";
 import { usePlans } from "@/hooks/usePlans";
 import { getDiscountPercent, getOriginalPriceCents } from "@/utils/planPricing";
 
@@ -20,15 +21,15 @@ export function PricingSection() {
   return (
     <section
       id="planos"
-      className="border-y border-border bg-secondary/40 py-24 sm:py-32"
+      className="bg-secondary py-20 sm:py-24"
     >
       <div className="mx-auto max-w-7xl px-5">
         <Reveal className="mb-14 text-center">
           <p className="mb-3 text-xs font-bold uppercase tracking-[0.3em] text-primary">
             Planos
           </p>
-          <h2 className="text-[clamp(2rem,5vw,3.75rem)] font-black uppercase leading-[0.95] tracking-tight text-foreground">
-            Escolha o seu tamanho
+          <h2 className="font-display text-[clamp(2.2rem,5.5vw,4.25rem)] font-extrabold leading-[0.95] tracking-tight text-foreground">
+            Escolha o seu <Scribble>tamanho</Scribble>
           </h2>
           <p className="mx-auto mt-5 max-w-xl text-lg text-muted-foreground">
             Todos os planos incluem atualizações, acesso em nuvem e seus dados
@@ -42,16 +43,16 @@ export function PricingSection() {
             const discountPercent = getDiscountPercent(p);
 
             return (
-              <Reveal key={p.name} delay={i * 120}>
+              <Reveal key={p.name} delay={i * 120} variant="zoom">
                 <div
-                  className={`relative flex h-full flex-col rounded-2xl border p-8 transition-all duration-500 hover:-translate-y-1.5 ${
+                  className={`relative flex h-full flex-col rounded-3xl border p-8 transition-all duration-500 hover:-translate-y-2 ${
                     p.highlight
-                      ? "border-primary/50 bg-card shadow-lg"
-                      : "border-border bg-card/80 shadow-sm"
+                      ? "border-primary/50 bg-card shadow-[0_30px_70px_-30px_hsl(211_79%_50%/0.6)] ring-2 ring-primary/20 lg:scale-[1.03]"
+                      : "border-border bg-card shadow-sm hover:shadow-xl"
                   }`}
                 >
                   {p.highlight && (
-                    <Badge className="absolute -top-3 left-8 bg-gradient-primary text-primary-foreground">
+                    <Badge className="absolute -top-3 left-8 animate-float rounded-full bg-gradient-primary px-3 text-primary-foreground">
                       Mais escolhido
                     </Badge>
                   )}
@@ -72,7 +73,7 @@ export function PricingSection() {
                     className={`${originalPriceCents ? "mt-1" : "mt-4"} flex items-end gap-1.5`}
                   >
                     <span className="text-sm text-muted-foreground">R$</span>
-                    <span className="text-5xl font-black leading-none text-card-foreground">
+                    <span className="font-display text-5xl font-extrabold leading-none text-card-foreground">
                       {p.price_cents / 100}
                     </span>
                     <span className="pb-1 text-sm text-muted-foreground">
@@ -102,10 +103,10 @@ export function PricingSection() {
                   </ul>
                   <Button
                     asChild
-                    className={`mt-8 h-12 w-full font-bold uppercase tracking-wide ${
+                    className={`btn-pill mt-8 h-12 w-full font-bold ${
                       p.highlight
-                        ? "bg-gradient-primary text-primary-foreground hover:opacity-90"
-                        : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
+                        ? "btn-shine bg-gradient-primary text-primary-foreground hover:opacity-95"
+                        : "bg-[hsl(var(--night))] text-white hover:bg-[hsl(var(--night-3))]"
                     }`}
                   >
                     <Link href="/register">
