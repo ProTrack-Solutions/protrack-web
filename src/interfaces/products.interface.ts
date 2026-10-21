@@ -19,6 +19,8 @@ export interface Product {
   deleted_at: string | null;
   sell_in_bulk: boolean;
   unit: string;
+  total_registered: number;
+  total_sold: number;
 }
 
 export interface ProductResponse {
@@ -45,7 +47,6 @@ export interface ProductUpdateParams {
   cost_price: number;
   description: string;
   name: string;
-  quantity: number;
   sale_price: number;
   size: string;
   unit: string;
@@ -87,4 +88,23 @@ export interface CreateProductParams {
 
 export interface GetTotalInStockResponse {
   cost_total: number;
+}
+
+// ENTRY soma ao estoque (reposição); ADJUSTMENT corrige o saldo e exige motivo
+export type StockMovementType = "ENTRY" | "ADJUSTMENT";
+
+export interface CreateStockMovementParams {
+  type: StockMovementType;
+  quantity: number;
+  reason?: string;
+}
+
+export interface StockMovement {
+  id: string;
+  product_id: string;
+  type: StockMovementType;
+  quantity: number;
+  reason: string;
+  current_quantity: number;
+  created_at: string;
 }

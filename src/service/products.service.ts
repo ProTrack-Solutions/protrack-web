@@ -4,6 +4,8 @@ import {
   ProductUpdateParams,
   CreateProductParams,
   GetTotalInStockResponse,
+  CreateStockMovementParams,
+  StockMovement,
 } from "@/interfaces/products.interface";
 import { api } from "./api";
 import { Pagination } from "@/interfaces/pagination.interface";
@@ -36,6 +38,17 @@ export const UpdateProcut = async (
 ) => {
   const response = await api.put(`/product/${productId}`, params);
   return response.data;
+};
+
+export const CreateStockMovement = async (
+  productId: string,
+  params: CreateStockMovementParams,
+): Promise<StockMovement> => {
+  const response = await api.post<{ stock_movement: StockMovement }>(
+    `/product/${productId}/stock-movements`,
+    params,
+  );
+  return response.data.stock_movement;
 };
 
 export const GetTopProducts = async (): Promise<GetTopProductsResponse[]> => {
