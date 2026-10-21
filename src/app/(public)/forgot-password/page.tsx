@@ -49,7 +49,7 @@ export default function ForgotPasswordPage() {
               Sistema de gestão empresarial
             </strong>
             <strong className="text-3xl bg-linear-to-r from-blue-600 to-purple-400 bg-clip-text text-transparent">
-              Pro Track
+              ProTrack Gerencial
             </strong>
             <span className="text-zinc-500 font-semibold">
               Otimize sua empresa com nosso sistema de gestão: eficiência,

@@ -1,54 +1,82 @@
 import Link from "next/link";
-import { ArrowRight, FileText } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { ArrowRight, Boxes, DollarSign, ShoppingCart, Users } from "lucide-react";
 import { Reveal } from "./Reveal";
-import heroImage from "@/assets/hero-cinematic.png";
-import Image from "next/image";
+import { Starfield } from "./Starfield";
+import { Scribble } from "./Scribble";
+import { WaveDivider } from "./WaveDivider";
+
+const orbiters = [
+  { icon: Boxes, tone: "chip-blue", dur: "26s", delay: "0s" },
+  { icon: ShoppingCart, tone: "chip-peach", dur: "26s", delay: "-6.5s" },
+  { icon: DollarSign, tone: "chip-green", dur: "26s", delay: "-13s" },
+  { icon: Users, tone: "chip-blue", dur: "26s", delay: "-19.5s" },
+];
 
 export function FinalCta() {
   return (
-    <section className="relative overflow-hidden border-t border-border py-28">
-      <div className="pointer-events-none absolute inset-0 z-0">
-        <Image
-          src={heroImage}
-          alt=""
-          aria-hidden="true"
-          loading="lazy"
-          width={1920}
-          height={1088}
-          className="h-full w-full object-cover opacity-15"
-        />
-        <div className="absolute inset-0 bg-background/85" />
-      </div>
+    <>
+      <WaveDivider
+        from="text-background"
+        to="text-[hsl(var(--night))]"
+        accent="text-[hsl(211_79%_60%)]"
+      />
+      <section className="relative overflow-hidden bg-[hsl(var(--night))] pb-28 pt-16 text-white">
+        <Starfield stars={50} sparkles={6} />
 
-      <Reveal className="relative z-10 mx-auto max-w-3xl px-5 text-center">
-        <FileText className="mx-auto mb-6 h-10 w-10 animate-float text-primary" />
-        <h2 className="text-[clamp(2rem,6vw,4.5rem)] font-black uppercase leading-[0.92] tracking-tight text-foreground">
-          Pronto para assumir o controle?
-        </h2>
-        <p className="mx-auto mt-6 max-w-xl text-lg text-muted-foreground">
-          Crie sua conta, cadastre sua empresa e comece a operar hoje mesmo.
-        </p>
-        <div className="mt-10 flex flex-wrap justify-center gap-4">
-          <Button
-            asChild
-            size="lg"
-            className="h-14 bg-gradient-primary px-9 text-base font-bold uppercase tracking-wide text-primary-foreground shadow-[0_10px_30px_-8px_hsl(211,79%,60%/0.55)] transition-transform hover:scale-[1.03]"
+        {/* órbita de módulos ao redor do título */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute left-1/2 top-1/2 hidden -translate-x-1/2 -translate-y-1/2 md:block"
+        >
+          <svg
+            viewBox="0 0 720 720"
+            className="absolute left-1/2 top-1/2 h-[720px] w-[720px] -translate-x-1/2 -translate-y-1/2 animate-[spin_80s_linear_infinite] opacity-25"
           >
-            <Link href="/register">
-              Criar conta grátis <ArrowRight className="ml-2 h-5 w-5" />
-            </Link>
-          </Button>
-          <Button
-            asChild
-            size="lg"
-            variant="outline"
-            className="h-14 border-border bg-card/70 px-9 text-base font-semibold uppercase tracking-wide text-foreground backdrop-blur hover:bg-secondary"
-          >
-            <Link href="/login">Já sou cliente</Link>
-          </Button>
+            <circle cx="360" cy="360" r="340" fill="none" stroke="white" strokeWidth="1" strokeDasharray="4 10" />
+            <circle cx="360" cy="360" r="250" fill="none" stroke="white" strokeWidth="1" strokeDasharray="2 14" />
+          </svg>
+          {orbiters.map((o, i) => (
+            <span
+              key={i}
+              className="animate-orbit absolute left-0 top-0 -ml-6 -mt-6"
+              style={
+                { "--radius": "340px", "--dur": o.dur, animationDelay: o.delay } as React.CSSProperties
+              }
+            >
+              <span className={`grid h-12 w-12 place-items-center rounded-2xl bg-white shadow-lg ${o.tone}`}>
+                <o.icon className="h-6 w-6" />
+              </span>
+            </span>
+          ))}
         </div>
-      </Reveal>
-    </section>
+
+        <Reveal variant="zoom" className="relative z-10 mx-auto max-w-3xl px-5 text-center">
+          <h2 className="font-display text-[clamp(2.4rem,7vw,5.5rem)] font-extrabold leading-[0.92] tracking-tight">
+            Chega de planilha.
+            <br />
+            <Scribble color="hsl(155 65% 55%)">
+              <span className="text-gradient-live">Bora crescer?</span>
+            </Scribble>
+          </h2>
+          <p className="mx-auto mt-8 max-w-xl text-lg text-white/70">
+            Crie sua conta, cadastre sua empresa e comece a operar hoje mesmo.
+          </p>
+          <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
+            <Link
+              href="/register"
+              className="btn-pill btn-shine inline-flex h-14 items-center bg-white px-9 text-base font-bold text-[hsl(var(--night))] shadow-[0_12px_40px_-10px_rgb(255_255_255/0.5)] hover:shadow-[0_18px_50px_-10px_hsl(155_70%_50%/0.9)]"
+            >
+              Testar grátis <ArrowRight className="ml-2 h-5 w-5" />
+            </Link>
+            <Link
+              href="/login"
+              className="btn-pill inline-flex h-14 items-center border border-white/20 bg-white/10 px-9 text-base font-semibold text-white hover:bg-white/20"
+            >
+              Já sou cliente
+            </Link>
+          </div>
+        </Reveal>
+      </section>
+    </>
   );
 }
