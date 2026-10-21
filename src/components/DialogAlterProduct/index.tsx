@@ -43,19 +43,17 @@ export const DialogEditProduct = ({
   onOpenChange,
   product,
 }: DialogEditProductProps) => {
-  const [formData, setFormData] = useState<ProductUpdateParams>(
-    () =>
-      product ?? {
-        barcode: "",
-        category_id: "",
-        cost_price: 0,
-        description: "",
-        name: "",
-        quantity: 0,
-        sale_price: 0,
-        size: "",
-      },
-  );
+  // A quantidade não é editada aqui: entradas e ajustes passam pelo "Movimentar estoque"
+  const [formData, setFormData] = useState<ProductUpdateParams>(() => ({
+    barcode: product?.barcode ?? "",
+    category_id: product?.category_id ?? "",
+    cost_price: product?.cost_price ?? 0,
+    description: product?.description ?? "",
+    name: product?.name ?? "",
+    sale_price: product?.sale_price ?? 0,
+    size: product?.size ?? "",
+    unit: product?.unit ?? "",
+  }));
 
   const handleChange = (
     field: keyof ProductUpdateParams,
@@ -238,14 +236,15 @@ export const DialogEditProduct = ({
                   <Input
                     id="edit-quantity"
                     type="number"
-                    min="0"
-                    placeholder="0"
-                    value={formData.quantity}
-                    onChange={(e) =>
-                      handleChange("quantity", parseInt(e.target.value) || 0)
-                    }
-                    className="h-11"
+                    value={product.quantity ?? 0}
+                    readOnly
+                    disabled
+                    className="h-11 bg-muted"
                   />
+                  <p className="text-xs text-muted-foreground">
+                    Para repor ou ajustar, use o botão &quot;Movimentar
+                    estoque&quot; na tabela.
+                  </p>
                 </div>
 
                 <div className="space-y-2">
@@ -398,7 +397,7 @@ export const DialogEditProduct = ({
                   Estoque
                 </p>
                 <p className="text-lg font-bold text-foreground mt-1">
-                  {formData.quantity}
+                  {product.sell_in_bulk ? product.unit : product.quantity}
                 </p>
               </div>
               <div className="rounded-lg border border-border/60 bg-background p-3">
