@@ -171,3 +171,63 @@ All colors MUST be HSL.
     @apply bg-background text-foreground;
   }
 }
+
+/* --- Dashboard: entrada escalonada dos cards (só CSS, sem JS) --- */
+@keyframes dash-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 12px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes dash-shimmer {
+  to {
+    background-position: -200% 0;
+  }
+}
+@layer utilities {
+  .dash-in {
+    animation: dash-in 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  }
+  .dash-skeleton {
+    background: linear-gradient(
+        90deg,
+        hsl(var(--muted)) 0%,
+        hsl(var(--muted) / 0.4) 50%,
+        hsl(var(--muted)) 100%
+      )
+      0 0 / 200% 100%;
+    animation: dash-shimmer 1.4s linear infinite;
+  }
+}
+@keyframes dash-bar {
+  from {
+    transform: scaleX(0);
+  }
+}
+@keyframes dash-donut {
+  from {
+    transform: rotate(-90deg) scale(0.85);
+    opacity: 0;
+  }
+}
+@layer utilities {
+  .dash-bar {
+    transform-origin: left center;
+    animation: dash-bar 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  }
+  .dash-donut {
+    animation: dash-donut 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .dash-bar,
+  .dash-donut,
+  .dash-in,
+  .dash-skeleton {
+    animation: none;
+  }
+}
