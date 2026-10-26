@@ -1,13 +1,29 @@
 "use client";
 
-import { Checkbox } from "@/components/ui/checkbox";
 import { useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { AppInput } from "@/components/AppInput";
-import { AppButton } from "@/components/AppButton";
+import { ArrowRight, Eye, EyeOff, Loader2, Lock, Mail } from "lucide-react";
 import { signIn, getSession } from "next-auth/react";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  AuthCardHeader,
+  AuthShell,
+  authIconClass,
+  authInputClass,
+  authLinkClass,
+  authPrimaryButtonClass,
+  authToggleClass,
+} from "@/components/AuthShell";
 import { LoginParams } from "@/interfaces/auth.interface";
 import { getInitialRoute } from "@/const/moduleAccess.const";
+
+const highlights = [
+  "Acesso seguro de qualquer lugar",
+  "Seus dados sincronizados em tempo real",
+  "Suporte quando você precisar",
+];
 
 // Mensagens por código de erro do backend (POST /auth/login).
 const LOGIN_ERROR_MESSAGES: Record<string, string> = {
@@ -80,84 +96,115 @@ export default function Login() {
   }
 
   return (
-    <div className="flex justify-center gap-10">
-      <div
-        className="bg-no-repeat bg-cover bg-center h-screen w-133 flex items-center justify-center"
-        style={{ backgroundImage: `url('/mesh-gradient.svg')` }}
-      >
-        <div className="flex w-100 h-90 bg-zinc-400/30 rounded-2xl justify-center items-center">
-          <div className="flex flex-col w-87 h-48 space-y-2">
-            <strong className="text-3xl text-blue-800">
-              Sistema de gestão empresarial
-            </strong>
-            <strong className="text-3xl bg-linear-to-r from-blue-600 to-purple-400 bg-clip-text text-transparent">
-              ProTrack Gerencial
-            </strong>
-            <span className="text-zinc-500 font-semibold">
-              Otimize sua empresa com nosso sistema de gestão: eficiência,
-              controle e crescimento garantidos!
-            </span>
-          </div>
-        </div>
-      </div>
-      <div className="bg-transparent w-110 flex justify-center items-center">
-        <div className="flex-1 flex-col gap-2 p-10">
-          <div className="flex flex-col">
-            <strong className="text-3xl text-blue-800">Bem vindo!</strong>
-            <span className="text-sm text-zinc-500">
-              Insira suas credenciais para acessar sua conta.
-            </span>
-          </div>
-          <form onSubmit={handleSubmit} className="space-y-1">
-            <AppInput
-              label="Email"
-              type="text"
+    <AuthShell
+      heading={
+        <>
+          Que bom ter
+          <br />
+          você <span className="text-gradient-live">de volta.</span>
+        </>
+      }
+      tagline="Estoque, vendas, clientes e financeiro esperando por você — tudo visível, tudo rastreável, tudo em tempo real."
+      highlights={highlights}
+    >
+      <AuthCardHeader
+        title="Bem-vindo!"
+        description="Insira suas credenciais para acessar sua conta."
+      />
+
+      <form onSubmit={handleSubmit} className="space-y-5">
+        <div className="space-y-1.5">
+          <Label htmlFor="email" className="text-sm font-semibold">
+            E-mail
+          </Label>
+          <div className="relative">
+            <Mail className={authIconClass} />
+            <Input
+              id="email"
+              type="email"
+              autoComplete="email"
+              placeholder="voce@empresa.com"
+              required
+              className={authInputClass}
               value={loginParams.email}
               onChange={(e) =>
                 setLoginParams({ ...loginParams, email: e.target.value })
               }
             />
-            <AppInput
-              label="Senha"
+          </div>
+        </div>
+
+        <div className="space-y-1.5">
+          <div className="flex items-center justify-between">
+            <Label htmlFor="password" className="text-sm font-semibold">
+              Senha
+            </Label>
+            <Link
+              href="/forgot-password"
+              className={`${authLinkClass} text-sm`}
+            >
+              Esqueceu a senha?
+            </Link>
+          </div>
+          <div className="relative">
+            <Lock className={authIconClass} />
+            <Input
+              id="password"
               type={mostrarSenha ? "text" : "password"}
+              autoComplete="current-password"
+              placeholder="••••••••"
+              required
+              className={`${authInputClass} pr-11`}
               value={loginParams.password}
               onChange={(e) =>
                 setLoginParams({ ...loginParams, password: e.target.value })
               }
             />
-            <div className="flex justify-between">
-              <label className="inline-flex items-center space-x-2 cursor-pointer">
-                <Checkbox
-                  className="border-2 rounded-sm"
-                  checked={mostrarSenha}
-                  onCheckedChange={handleCheckboxChange}
-                />
-                <span className="text-[#16164D] font-semibold text-sm">
-                  Mostrar senha
-                </span>
-              </label>
-
-              <span
-                className="text-blue-600 font-semibold cursor-pointer text-sm"
-                onClick={() => router.push("/forgot-password")}
-              >
-                Esqueceu a senha?
-              </span>
-            </div>
-            <AppButton
-              text="Entrar"
-              type="submit"
-              isLoading={isLoading}
-              className="w-1/1 h-10 bg-blue-500 cursor-pointer"
-            />
-            {error && (
-              <div className="mt-2 p-2 bg-red-100 border border-red-400 text-red-700 rounded w-full">
-                {error}
-              </div>
-            )}
-          </form>
+            <button
+              type="button"
+              onClick={handleCheckboxChange}
+              aria-label={mostrarSenha ? "Ocultar senha" : "Mostrar senha"}
+              className={authToggleClass}
+            >
+              {mostrarSenha ? (
+                <EyeOff className="h-4 w-4" />
+              ) : (
+                <Eye className="h-4 w-4" />
+              )}
+            </button>
+          </div>
         </div>
-      </div>
-    </div>
+
+        {error && (
+          <div
+            role="alert"
+            className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"
+          >
+            {error}
+          </div>
+        )}
+
+        <button
+          type="submit"
+          disabled={isLoading}
+          className={authPrimaryButtonClass}
+        >
+          {isLoading ? (
+            <Loader2 className="h-5 w-5 animate-spin" />
+          ) : (
+            <>
+              Entrar <ArrowRight className="ml-2 h-5 w-5" />
+            </>
+          )}
+        </button>
+      </form>
+
+      <p className="mt-8 text-center text-sm text-muted-foreground">
+        Ainda não tem conta?{" "}
+        <Link href="/register" className={authLinkClass}>
+          Teste grátis
+        </Link>
+      </p>
+    </AuthShell>
   );
 }
