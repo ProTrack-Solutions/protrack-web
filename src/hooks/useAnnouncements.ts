@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { ListAnnouncements } from "@/service/announcements.service";
 import { Pagination } from "@/interfaces/pagination.interface";
 
@@ -12,6 +12,8 @@ export const useAnnouncements = (
     queryKey: ["announcements", pagination.Page, pagination.PerPage],
     queryFn: () => ListAnnouncements(pagination),
     enabled,
+    // Mantém a página anterior na tela enquanto a próxima carrega
+    placeholderData: keepPreviousData,
     refetchOnWindowFocus: true,
   });
 
