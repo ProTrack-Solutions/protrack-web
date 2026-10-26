@@ -1,5 +1,5 @@
 import { CheckCircle2, ArrowRight } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { authPrimaryButtonClass } from "@/components/AuthShell";
 import {
   UserData,
   CompanyData,
@@ -28,11 +28,17 @@ export default function SuccessStep({
 }: SuccessStepProps) {
   return (
     <div className="text-center space-y-6">
-      <div className="w-20 h-20 mx-auto rounded-full bg-linear-to-br from-blue-500 to-purple-500 flex items-center justify-center">
-        <CheckCircle2 className="h-10 w-10 text-white" />
+      <div className="relative mx-auto h-20 w-20">
+        <span
+          aria-hidden="true"
+          className="animate-ping-soft bg-gradient-primary absolute inset-0 rounded-full"
+        />
+        <span className="bg-gradient-primary relative grid h-20 w-20 place-items-center rounded-full shadow-[0_16px_40px_-12px_hsl(155_55%_45%/0.8)]">
+          <CheckCircle2 className="h-10 w-10 text-white" />
+        </span>
       </div>
       <div>
-        <p className="text-lg text-blue-950">
+        <p className="text-lg">
           Bem-vindo(a), <strong>{user.name.split(" ")[0] || "usuário"}</strong>!
         </p>
         <p className="text-muted-foreground text-sm mt-1">
@@ -47,7 +53,7 @@ export default function SuccessStep({
           )}
         </p>
       </div>
-      <div className="rounded-xl bg-muted/40 border p-4 space-y-2 text-left text-sm">
+      <div className="space-y-2 rounded-2xl border border-border bg-secondary/60 p-5 text-left text-sm">
         <div className="flex justify-between">
           <span className="text-muted-foreground">Usuário:</span>
           <span className="font-medium truncate ml-2">{user.username}</span>
@@ -78,20 +84,20 @@ export default function SuccessStep({
             <span className="font-medium">{formatDate(trialEnd)}</span>
           </div>
         )}
-        <div className="flex justify-between pt-2 border-t">
+        <div className="flex justify-between border-t border-border pt-3">
           <span className="text-muted-foreground">Total mensal:</span>
-          <span className="font-bold text-blue-700">
+          <span className="font-display text-base font-extrabold">
             R${plan.price_cents / 100}
           </span>
         </div>
       </div>
-      <Button
-        size="lg"
+      <button
+        type="button"
         onClick={onFinish}
-        className="w-full h-12 bg-blue-600 hover:bg-blue-700"
+        className={authPrimaryButtonClass}
       >
-        Acessar sistema <ArrowRight className="h-4 w-4 ml-2" />
-      </Button>
+        Acessar sistema <ArrowRight className="ml-2 h-5 w-5" />
+      </button>
     </div>
   );
 }

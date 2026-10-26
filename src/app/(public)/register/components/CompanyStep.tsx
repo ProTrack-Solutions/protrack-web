@@ -7,7 +7,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { estados, inputClass, labelClass, onlyDigits } from "../constants";
+import {
+  estados,
+  inputClass,
+  labelClass,
+  onlyDigits,
+  selectTriggerClass,
+} from "../constants";
 import { CompanyData } from "@/interfaces/auth.interface";
 
 interface CompanyStepProps {
@@ -88,7 +94,10 @@ export default function CompanyStep({ company, setCompany }: CompanyStepProps) {
       </div>
 
       <div className="pt-2">
-        <h3 className="text-sm font-bold text-blue-950 mb-3">Endereço</h3>
+        <h3 className="mb-4 flex items-center gap-3 text-xs font-bold uppercase tracking-widest text-muted-foreground">
+          Endereço
+          <span aria-hidden="true" className="h-px flex-1 bg-border" />
+        </h3>
         <div className="grid gap-5 md:grid-cols-3">
           <div className="space-y-2 md:col-span-2">
             <Label className={labelClass}>Rua</Label>
@@ -169,7 +178,7 @@ export default function CompanyStep({ company, setCompany }: CompanyStepProps) {
                 setCompany({ ...company, address_state: v })
               }
             >
-              <SelectTrigger className="h-11 bg-muted/50">
+              <SelectTrigger className={selectTriggerClass}>
                 <SelectValue placeholder="Selecione o estado" />
               </SelectTrigger>
               <SelectContent className="max-h-64">
@@ -189,7 +198,7 @@ export default function CompanyStep({ company, setCompany }: CompanyStepProps) {
                 setCompany({ ...company, address_country: v })
               }
             >
-              <SelectTrigger className="h-11 bg-muted/50">
+              <SelectTrigger className={selectTriggerClass}>
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -205,7 +214,7 @@ export default function CompanyStep({ company, setCompany }: CompanyStepProps) {
               value={company.timezone}
               onValueChange={(v) => setCompany({ ...company, timezone: v })}
             >
-              <SelectTrigger className="h-11 bg-muted/50">
+              <SelectTrigger className={selectTriggerClass}>
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>

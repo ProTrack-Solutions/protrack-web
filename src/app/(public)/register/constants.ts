@@ -5,6 +5,11 @@ import {
   Sparkles,
   CheckCircle2,
 } from "lucide-react";
+import {
+  authFieldClass,
+  authLabelClass,
+  authSelectTriggerClass,
+} from "@/components/AuthShell";
 
 // Ordem alterada: Empresa (1) -> Usuário (2) -> Plano (3) -> Pagamento (4) -> Pronto (5)
 export const steps = [
@@ -67,5 +72,6 @@ export const estados = [
 
 export const onlyDigits = (v: string) => v.replace(/\D/g, "");
 
-export const inputClass = "h-11 bg-muted/50";
-export const labelClass = "text-blue-700 font-semibold";
+export const inputClass = authFieldClass;
+export const selectTriggerClass = authSelectTriggerClass;
+export const labelClass = authLabelClass;
