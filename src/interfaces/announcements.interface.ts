@@ -1,3 +1,6 @@
+// Espelha o enum announcement_type do backend
+export type AnnouncementType = "info" | "warning" | "success" | "maintenance";
+
 export interface ListAnnouncementsResponse {
   data: AnnouncementsResponse[];
   page: number;
@@ -7,17 +10,24 @@ export interface ListAnnouncementsResponse {
 }
 
 export interface AnnouncementsResponse {
-  content: string;
-  expires_at: Date;
-  starts_at: Date;
+  id: string;
   title: string;
-  type: string;
+  content: string;
+  type: AnnouncementType;
+  // Só vem na listagem completa; os avisos do dia são sempre ativos
+  is_active?: boolean;
+  starts_at: string;
+  // Aviso sem data de fim chega como "0001-01-01T00:00:00Z"
+  expires_at: string;
+  created_at: string;
 }
 
-export interface ListTopAnnouncementsOfDayResponse {
-  content: string;
-  expires_at: Date;
-  starts_at: Date;
+export type ListTopAnnouncementsOfDayResponse = AnnouncementsResponse;
+
+export interface CreateAnnouncementParams {
   title: string;
-  type: string;
+  content: string;
+  type: AnnouncementType;
+  starts_at: string;
+  expires_at?: string;
 }

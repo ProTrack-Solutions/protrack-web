@@ -4,13 +4,26 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { isAxiosError } from "axios";
-import { ArrowLeft, Eye, EyeOff, Loader2, Lock } from "lucide-react";
+import {
+  ArrowLeft,
+  ArrowRight,
+  Eye,
+  EyeOff,
+  Loader2,
+  Lock,
+} from "lucide-react";
 import { toast } from "sonner";
 
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
+import {
+  authBackLinkClass,
+  authIconClass,
+  authInputClass,
+  authPrimaryButtonClass,
+  authToggleClass,
+} from "@/components/AuthShell";
 import { ResetPassword } from "@/service/auth.service";
 
 const DEFAULT_ERROR_MESSAGE =
@@ -45,20 +58,22 @@ export function ResetPasswordForm() {
 
   if (!token) {
     return (
-      <div className="mt-4 space-y-4">
-        <p className="text-sm text-red-600">
+      <div className="space-y-5">
+        <p
+          role="alert"
+          className="rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700"
+        >
           Link inválido ou expirado. Solicite um novo link de redefinição.
         </p>
-        <Button asChild className="w-1/1 h-10 bg-blue-500">
-          <Link href="/forgot-password">Solicitar novo link</Link>
-        </Button>
-        <Link
-          href="/login"
-          className="inline-flex items-center gap-2 text-sm font-medium text-zinc-500 transition-colors hover:text-blue-800"
-        >
-          <ArrowLeft className="h-4 w-4" />
-          Voltar para o login
+        <Link href="/forgot-password" className={authPrimaryButtonClass}>
+          Solicitar novo link
         </Link>
+        <div className="text-center">
+          <Link href="/login" className={authBackLinkClass}>
+            <ArrowLeft className="h-4 w-4" />
+            Voltar para o login
+          </Link>
+        </div>
       </div>
     );
   }
@@ -100,11 +115,13 @@ export function ResetPasswordForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 mt-4">
-      <div className="space-y-2">
-        <Label htmlFor="password">Nova senha</Label>
+    <form onSubmit={handleSubmit} className="space-y-5">
+      <div className="space-y-1.5">
+        <Label htmlFor="password" className="text-sm font-semibold">
+          Nova senha
+        </Label>
         <div className="relative">
-          <Lock className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <Lock className={authIconClass} />
           <Input
             id="password"
             type={showPassword ? "text" : "password"}
@@ -112,13 +129,13 @@ export function ResetPasswordForm() {
             placeholder="••••••••"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="pl-9 pr-10"
+            className={`${authInputClass} pr-11`}
           />
           <button
             type="button"
             onClick={() => setShowPassword((v) => !v)}
             aria-label={showPassword ? "Ocultar senha" : "Mostrar senha"}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground transition-colors hover:text-foreground"
+            className={authToggleClass}
           >
             {showPassword ? (
               <EyeOff className="h-4 w-4" />
@@ -141,7 +158,7 @@ export function ResetPasswordForm() {
                 />
               ))}
             </div>
-            <p className="text-xs text-zinc-500">
+            <p className="text-xs text-muted-foreground">
               Força da senha:{" "}
               <span className="font-medium text-foreground">
                 {strength.label}
@@ -151,10 +168,12 @@ export function ResetPasswordForm() {
         )}
       </div>
 
-      <div className="space-y-2">
-        <Label htmlFor="confirmPassword">Confirmar nova senha</Label>
+      <div className="space-y-1.5">
+        <Label htmlFor="confirmPassword" className="text-sm font-semibold">
+          Confirmar nova senha
+        </Label>
         <div className="relative">
-          <Lock className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <Lock className={authIconClass} />
           <Input
             id="confirmPassword"
             type={showConfirm ? "text" : "password"}
@@ -162,13 +181,13 @@ export function ResetPasswordForm() {
             placeholder="••••••••"
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
-            className="pl-9 pr-10"
+            className={`${authInputClass} pr-11`}
           />
           <button
             type="button"
             onClick={() => setShowConfirm((v) => !v)}
             aria-label={showConfirm ? "Ocultar senha" : "Mostrar senha"}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground transition-colors hover:text-foreground"
+            className={authToggleClass}
           >
             {showConfirm ? (
               <EyeOff className="h-4 w-4" />
@@ -179,28 +198,34 @@ export function ResetPasswordForm() {
         </div>
       </div>
 
-      <ul className="space-y-1 rounded-md border border-border bg-muted/40 p-3 text-xs text-zinc-500">
+      <ul className="space-y-1 rounded-2xl border border-border bg-secondary/60 p-4 text-xs text-muted-foreground">
         <li>Mínimo de 8 caracteres</li>
         <li>Pelo menos 1 letra maiúscula e 1 minúscula</li>
         <li>Pelo menos 1 número</li>
       </ul>
 
-      <Button
+      <button
         type="submit"
-        className="w-1/1 h-10 bg-blue-500 cursor-pointer"
+        className={authPrimaryButtonClass}
         disabled={isLoading}
       >
-        {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-        {isLoading ? "Redefinindo..." : "Redefinir senha"}
-      </Button>
+        {isLoading ? (
+          <>
+            <Loader2 className="mr-2 h-5 w-5 animate-spin" /> Redefinindo...
+          </>
+        ) : (
+          <>
+            Redefinir senha <ArrowRight className="ml-2 h-5 w-5" />
+          </>
+        )}
+      </button>
 
-      <Link
-        href="/login"
-        className="inline-flex items-center gap-2 text-sm font-medium text-zinc-500 transition-colors hover:text-blue-800"
-      >
-        <ArrowLeft className="h-4 w-4" />
-        Voltar para o login
-      </Link>
+      <div className="pt-3 text-center">
+        <Link href="/login" className={authBackLinkClass}>
+          <ArrowLeft className="h-4 w-4" />
+          Voltar para o login
+        </Link>
+      </div>
     </form>
   );
 }

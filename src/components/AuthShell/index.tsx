@@ -1,89 +1,184 @@
 import { ReactNode } from "react";
-import { BarChart3, ShieldCheck, Zap } from "lucide-react";
+import Link from "next/link";
+import Image from "next/image";
+import { Bricolage_Grotesque } from "next/font/google";
+import { ArrowLeft, Check } from "lucide-react";
+import logo from "@/assets/logo-gerencial-dark.svg";
+import { Starfield } from "@/app/(public)/(landingpage)/components/Starfield";
+import "@/app/(public)/(landingpage)/landing-theme.css";
 
-const highlights = [
-  {
-    icon: ShieldCheck,
-    title: "Recuperação segura",
-    desc: "Links de uso único com expiração automática",
-  },
-  {
-    icon: BarChart3,
-    title: "Sua conta protegida",
-    desc: "Nunca compartilhamos seus dados de acesso",
-  },
-  {
-    icon: Zap,
-    title: "Rápido e simples",
-    desc: "Volte a usar o sistema em poucos minutos",
-  },
-];
+const display = Bricolage_Grotesque({
+  subsets: ["latin"],
+  variable: "--font-display",
+});
+
+/** Classes do wrapper que ativa o tema da landing (cores + fonte display) */
+export const authThemeClass = `landing-light ${display.variable}`;
+
+/* Estilos compartilhados pelos formulários de autenticação */
+export const authFieldClass =
+  "h-12 rounded-2xl border-border bg-secondary/60 px-3.5 text-base transition-colors focus-visible:border-[hsl(var(--primary))] focus-visible:bg-card focus-visible:ring-[hsl(var(--primary)/0.25)]";
+
+/** Campo com ícone à esquerda */
+export const authInputClass = `${authFieldClass} pl-10`;
+
+export const authSelectTriggerClass = `${authFieldClass} w-full data-[size=default]:h-12`;
+
+export const authLabelClass = "text-sm font-semibold text-foreground";
+
+export const authIconClass =
+  "pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground";
+
+export const authToggleClass =
+  "absolute right-2 top-1/2 grid h-8 w-8 cursor-pointer -translate-y-1/2 place-items-center rounded-full text-muted-foreground transition-colors hover:bg-muted hover:text-foreground";
+
+export const authPrimaryButtonClass =
+  "btn-pill btn-shine inline-flex h-12 w-full cursor-pointer items-center justify-center bg-[hsl(var(--night))] text-base font-bold text-white shadow-[0_12px_30px_-12px_hsl(var(--night))] hover:shadow-[0_18px_40px_-12px_hsl(211_79%_55%/0.8)] disabled:pointer-events-none disabled:opacity-70";
+
+export const authSecondaryButtonClass =
+  "btn-pill inline-flex h-12 w-full cursor-pointer items-center justify-center border border-border bg-card text-base font-semibold text-foreground hover:bg-secondary disabled:pointer-events-none disabled:opacity-60";
+
+export const authLinkClass = "link-grow font-semibold text-[hsl(211_65%_45%)]";
+
+export const authBackLinkClass =
+  "inline-flex items-center gap-2 text-sm font-semibold text-muted-foreground transition-colors hover:text-foreground";
+
+/** Blobs de cor em movimento + estrelas — mesmos do hero da landing */
+export function NightBackdrop() {
+  return (
+    <>
+      <div aria-hidden="true" className="pointer-events-none absolute inset-0">
+        <div className="animate-drift absolute -left-[10%] top-[5%] h-[34rem] w-[34rem] rounded-full bg-[hsl(211_90%_55%/0.28)] blur-[120px]" />
+        <div
+          className="animate-drift absolute -right-[12%] top-[30%] h-[30rem] w-[30rem] rounded-full bg-[hsl(155_70%_45%/0.22)] blur-[120px]"
+          style={{ animationDelay: "-6s" }}
+        />
+        <div
+          className="animate-drift absolute bottom-[-10%] left-1/3 h-[26rem] w-[26rem] rounded-full bg-[hsl(255_70%_65%/0.2)] blur-[120px]"
+          style={{ animationDelay: "-12s" }}
+        />
+      </div>
+      <Starfield stars={60} sparkles={7} />
+    </>
+  );
+}
+
+export function AuthLogo() {
+  return (
+    <Link
+      href="/"
+      className="flex items-center"
+      aria-label="ProTrack Gerencial"
+    >
+      <Image
+        src={logo}
+        alt="ProTrack Gerencial"
+        width={174}
+        height={40}
+        priority
+        className="h-8 w-auto sm:h-9"
+      />
+    </Link>
+  );
+}
 
 interface AuthShellProps {
-  title: string;
-  description: string;
+  /** Título grande à esquerda (telas grandes) */
+  heading: ReactNode;
+  /** Texto de apoio abaixo do título */
+  tagline: string;
+  highlights: string[];
   children: ReactNode;
 }
 
-export function AuthShell({ title, description, children }: AuthShellProps) {
+export function AuthShell({
+  heading,
+  tagline,
+  highlights,
+  children,
+}: AuthShellProps) {
   return (
-    <div className="min-h-screen flex bg-background">
-      {/* Painel visual */}
-      <div className="hidden lg:flex lg:w-1/2 p-8 items-center justify-center bg-gradient-to-br from-blue-300 via-blue-400 to-purple-300">
-        <div className="max-w-md w-full rounded-3xl bg-white/20 backdrop-blur-md p-10 border border-white/30 shadow-xl">
-          <h1 className="text-4xl font-bold text-blue-950 leading-tight">
-            Sistema de gestão empresarial
-          </h1>
-          <h2 className="text-3xl font-bold text-blue-700 mt-3">ProTrack Gerencial</h2>
-          <p className="text-blue-950/80 mt-6 font-medium leading-relaxed">
-            Recupere o acesso à sua conta com segurança e continue gerenciando
-            seu negócio sem interrupções.
-          </p>
+    // landing-light fica num wrapper próprio: a regra de cor dele não é
+    // de camada e venceria o text-white se estivesse no mesmo elemento
+    <div className={`${authThemeClass} min-h-screen`}>
+      <div className="bg-night relative flex min-h-screen flex-col overflow-hidden text-white">
+        <NightBackdrop />
 
-          <div className="mt-10 space-y-3">
-            {highlights.map((h) => {
-              const Icon = h.icon;
-              return (
-                <div
-                  key={h.title}
-                  className="flex items-center gap-3 rounded-xl p-3 bg-white/20 border border-white/30"
-                >
-                  <div className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 bg-blue-600 text-white">
-                    <Icon className="h-4 w-4" />
-                  </div>
-                  <div>
-                    <div className="text-sm font-bold text-blue-950">
-                      {h.title}
-                    </div>
-                    <div className="text-xs text-blue-950/70 font-medium">
-                      {h.desc}
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </div>
+        <header className="relative z-10 mx-auto flex h-20 w-full max-w-7xl items-center justify-between px-5">
+          <AuthLogo />
+          <Link
+            href="/"
+            className="link-grow inline-flex items-center gap-1.5 text-sm font-semibold text-white/70 hover:text-white"
+          >
+            <ArrowLeft className="h-4 w-4" /> Voltar ao site
+          </Link>
+        </header>
 
-      {/* Conteúdo */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-6 sm:p-10">
-        <div className="w-full max-w-md">
-          <div className="lg:hidden mb-8 text-center">
-            <h2 className="text-3xl font-bold text-primary">ProTrack Gerencial</h2>
-            <p className="text-muted-foreground text-sm mt-1">
-              Sistema de gestão empresarial
+        <main className="relative z-10 mx-auto grid w-full max-w-7xl flex-1 items-center gap-12 px-5 py-10 lg:grid-cols-2 lg:gap-20">
+          {/* mensagem de marca */}
+          <div className="hidden lg:block">
+            <h1
+              className="hero-in font-display text-[clamp(2.6rem,5vw,4.5rem)] font-extrabold leading-[0.95] tracking-tight"
+              style={{ animationDelay: "0ms" }}
+            >
+              {heading}
+            </h1>
+            <p
+              className="hero-in mt-6 max-w-md text-lg leading-relaxed text-white/70"
+              style={{ animationDelay: "120ms" }}
+            >
+              {tagline}
             </p>
+            <ul
+              className="hero-in mt-8 space-y-3 text-sm text-white/70"
+              style={{ animationDelay: "240ms" }}
+            >
+              {highlights.map((h) => (
+                <li key={h} className="flex items-center gap-2">
+                  <Check className="h-4 w-4 text-[hsl(155_70%_55%)]" />
+                  {h}
+                </li>
+              ))}
+            </ul>
           </div>
 
-          <div className="mb-8">
-            <h1 className="text-2xl font-bold text-foreground">{title}</h1>
-            <p className="text-muted-foreground text-sm mt-1">{description}</p>
+          {/* card do formulário */}
+          <div
+            className="hero-in mx-auto w-full max-w-md"
+            style={{ animationDelay: "180ms" }}
+          >
+            <div className="rounded-3xl border border-white/60 bg-card p-8 text-foreground shadow-[0_30px_80px_-20px_rgb(0_0_0/0.6)] sm:p-10">
+              {children}
+            </div>
           </div>
-
-          {children}
-        </div>
+        </main>
       </div>
+    </div>
+  );
+}
+
+interface AuthCardHeaderProps {
+  icon?: ReactNode;
+  title: string;
+  description: string;
+}
+
+export function AuthCardHeader({
+  icon,
+  title,
+  description,
+}: AuthCardHeaderProps) {
+  return (
+    <div className="mb-8">
+      {icon && (
+        <span className="chip-blue mb-5 grid h-12 w-12 place-items-center rounded-2xl">
+          {icon}
+        </span>
+      )}
+      <h2 className="font-display text-3xl font-extrabold tracking-tight">
+        {title}
+      </h2>
+      <p className="mt-1 text-sm text-muted-foreground">{description}</p>
     </div>
   );
 }

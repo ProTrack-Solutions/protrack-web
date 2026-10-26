@@ -1,92 +1,38 @@
 "use client";
 
-import { CardsStatusFinance } from "./components/CardsStatusFinance";
+import { DashboardHeader } from "./components/DashboardHeader";
+import { KpiCards } from "./components/KpiCards";
 import { SalesSummaryCard } from "./components/SalesSummaryCard";
 import { AlertsCard } from "./components/AlertsCard";
-import { CashFlowChart } from "./components/CashFlowChart";
+import { CashFlowCard } from "./components/CashFlowCard";
 import { TopProductsChart } from "./components/TopProductsChart";
 import { PaymentMethodsChart } from "./components/PaymentMethodsChart";
 import { StockValueCard } from "./components/StockValueCard";
 import { AccountsPayableCard } from "./components/AccountsPayableCard";
-import { Header } from "@/components/Header";
-import { useDashboard } from "@/hooks/useDashboard";
-import { Loading } from "@/components/Loading";
 
+// Cada card busca o próprio dado e mostra um skeleton enquanto carrega:
+// a página aparece na hora, sem esperar o endpoint mais lento.
 export default function DashBoard() {
-  const {
-    loading,
-    totalSalesPedding,
-    salesSummaryData,
-    paymentMethodsStats,
-    topProducts,
-    totalValueInStock,
-    billsPayableSummary,
-    cashFlow,
-    inventoryTurnover,
-    announcements,
-    totalBillsPayable,
-  } = useDashboard();
-
-  if (loading) {
-    return <Loading />;
-  }
-
   return (
-    <div className="p-6 space-y-6">
-      {/* Título da Página */}
-      <Header title="Dashboard" text="Visão geral da situação da empresa" />
+    <div className="space-y-6 p-6">
+      <DashboardHeader />
 
-      {/* Cards Superiores de Status Geral */}
-      <CardsStatusFinance
-        totalSalesPedding={totalSalesPedding ?? 0}
-        totalBillsPayable={totalBillsPayable ?? 0}
-      />
+      <KpiCards />
 
-      {/* Grid: Resumo de Vendas e Painel de Alertas */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <SalesSummaryCard
-          salesSummaryData={
-            salesSummaryData ?? {
-              current_month_st: 0,
-              last_month_st: 0,
-              growth_percentage: 0,
-            }
-          }
-        />
-        <AlertsCard announcements={announcements ?? []} />
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+        <SalesSummaryCard />
+        <AlertsCard />
       </div>
 
-      {/* Grid: Seção de Gráficos Analíticos */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <CashFlowChart cashFlow={cashFlow ?? []} />
-        <TopProductsChart topProducts={topProducts ?? []} />
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+        <CashFlowCard />
+        <TopProductsChart />
       </div>
 
-      {/* Grid: Distribuição, Inventário e Pendências Financeiras */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <PaymentMethodsChart paymentMethodsStats={paymentMethodsStats ?? []} />
-        <StockValueCard
-          totalValueInStock={
-            totalValueInStock ?? {
-              cost_total: 0,
-            }
-          }
-          inventoryTurnover={
-            inventoryTurnover ?? {
-              inventory_turnover: 0,
-            }
-          }
-        />
-        <AccountsPayableCard
-          billsPayableSummary={
-            billsPayableSummary ?? {
-              total_due_today: 0,
-              total_next_7_days: 0,
-              total_overdue: 0,
-              total_pending: 0,
-            }
-          }
-        />
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <PaymentMethodsChart />
+        <StockValueCard />
+        <AccountsPayableCard />
       </div>
     </div>
   );

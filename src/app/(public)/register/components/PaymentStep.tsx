@@ -3,13 +3,10 @@ import { CardElement } from "@stripe/react-stripe-js";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { labelClass } from "../constants";
+import { inputClass, labelClass } from "../constants";
 import { PaymentData } from "@/interfaces/auth.interface";
 import { PlansResponse } from "@/interfaces/plans.interface";
-import {
-  getFirstChargeDate,
-  getOriginalPriceCents,
-} from "@/utils/planPricing";
+import { getFirstChargeDate, getOriginalPriceCents } from "@/utils/planPricing";
 
 interface PaymentStepProps {
   payment: PaymentData;
@@ -51,14 +48,16 @@ export default function PaymentStep({
       >
         <label
           htmlFor="credit_card"
-          className="flex items-center gap-3 rounded-xl border-2 border-blue-600 bg-blue-50/50 p-4 cursor-pointer"
+          className="flex cursor-pointer items-center gap-4 rounded-2xl border-2 border-[hsl(var(--primary))] bg-[hsl(var(--primary)/0.06)] p-4"
         >
           <RadioGroupItem
             value="credit_card"
             id="credit_card"
             className="sr-only"
           />
-          <CreditCard className="h-6 w-6 text-blue-600" />
+          <span className="grid h-11 w-11 place-items-center rounded-xl bg-[hsl(var(--night))] text-white">
+            <CreditCard className="h-5 w-5" />
+          </span>
           <div>
             <span className="font-semibold text-sm block">
               Cartão de crédito
@@ -82,40 +81,40 @@ export default function PaymentStep({
                 card_holder: e.target.value.toUpperCase(),
               })
             }
-            className="h-11 bg-muted/50"
+            className={inputClass}
           />
         </div>
 
         <div className="space-y-2">
           <Label className={labelClass}>Dados do cartão</Label>
-          <div className="h-11 flex items-center rounded-md border bg-muted/50 px-3">
+          <div className="flex h-12 items-center rounded-2xl border border-border bg-secondary/60 px-3.5 transition-colors focus-within:border-[hsl(var(--primary))] focus-within:bg-card focus-within:ring-3 focus-within:ring-[hsl(var(--primary)/0.25)]">
             <CardElement options={cardElementOptions} className="w-full" />
           </div>
         </div>
       </div>
 
-      <div className="rounded-xl bg-linear-to-r from-blue-50 to-purple-50 border border-blue-100 p-4 flex items-center justify-between">
+      <div className="bg-night flex items-center justify-between rounded-2xl p-5 text-white">
         <div>
-          <p className="text-xs text-muted-foreground">Plano selecionado</p>
-          <p className="font-bold text-blue-950">{plan.name}</p>
+          <p className="text-xs text-white/60">Plano selecionado</p>
+          <p className="font-display text-lg font-extrabold">{plan.name}</p>
         </div>
         <div className="text-right">
-          <p className="text-xs text-muted-foreground">
+          <p className="text-xs text-white/60">
             {hasTrial ? "Total hoje" : "Total mensal"}
           </p>
           {!hasTrial && originalPriceCents && (
-            <p className="text-xs text-muted-foreground line-through">
+            <p className="text-xs text-white/50 line-through">
               R${originalPriceCents / 100}
             </p>
           )}
-          <p className="text-2xl font-bold text-blue-700">
+          <p className="font-display text-2xl font-extrabold text-[hsl(155_70%_60%)]">
             {hasTrial ? "R$0" : `R$${plan.price_cents / 100}`}
           </p>
         </div>
       </div>
 
       {hasTrial && (
-        <div className="rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-900">
+        <div className="rounded-2xl border border-[hsl(155_55%_45%/0.3)] bg-[hsl(155_55%_48%/0.08)] p-4 text-sm text-[hsl(155_55%_22%)]">
           <p className="font-semibold">
             {plan.trial_days} dias grátis para testar
           </p>

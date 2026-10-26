@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
 import { ArrowLeft, ArrowRight, Loader2 } from "lucide-react";
 
 import StepSidebar from "./components/StepSidebar";
@@ -14,6 +13,13 @@ import SuccessStep from "./components/SuccessStep";
 import { CardElement, useStripe, useElements } from "@stripe/react-stripe-js";
 
 import { onlyDigits, steps, stepTitles } from "./constants";
+import {
+  authBackLinkClass,
+  authLinkClass,
+  authPrimaryButtonClass,
+  authSecondaryButtonClass,
+  authThemeClass,
+} from "@/components/AuthShell";
 
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
@@ -293,112 +299,131 @@ export default function Register() {
   };
 
   return (
-    <div className="min-h-screen flex bg-background">
+    <div className={`${authThemeClass} flex min-h-screen`}>
       <StepSidebar currentStep={currentStep} />
 
-      <div className="flex-1 flex flex-col p-6 lg:p-12 overflow-y-auto">
-        <div className="flex items-center justify-between mb-8">
-          <Button variant="ghost" size="sm" asChild>
-            <Link href={"/"}>
-              <ArrowLeft className="h-4 w-4 mr-2" /> Voltar
-            </Link>
-          </Button>
-          <div className="text-sm text-muted-foreground">
-            Etapa <span className="font-bold text-blue-600">{currentStep}</span>{" "}
-            de {steps.length}
+      <div className="relative flex min-w-0 flex-1 flex-col overflow-hidden px-5 py-6 sm:px-8 lg:px-12">
+        <div
+          aria-hidden="true"
+          className="ambient-glow pointer-events-none absolute -right-40 -top-40 h-[32rem] w-[32rem]"
+        />
+
+        <div className="relative z-10 mb-8 flex items-center justify-between">
+          <Link href="/" className={authBackLinkClass}>
+            <ArrowLeft className="h-4 w-4" /> Voltar ao site
+          </Link>
+          <div className="chip-blue rounded-full px-3 py-1 text-xs font-bold">
+            Etapa {currentStep} de {steps.length}
           </div>
         </div>
 
-        <div className="max-w-lg w-full mx-auto flex-1 flex flex-col justify-center">
-          <div className="mb-8">
-            <h2 className="text-3xl font-bold text-blue-700">
-              {stepTitles[currentStep].title}
-            </h2>
-            <p className="text-muted-foreground mt-2">
-              {stepTitles[currentStep].subtitle}
-            </p>
+        {/* progresso compacto para telas sem a barra lateral */}
+        <div className="relative z-10 mb-8 flex gap-1.5 lg:hidden">
+          {steps.map((s) => (
+            <span
+              key={s.id}
+              className={`h-1.5 flex-1 rounded-full transition-colors duration-500 ${
+                s.id <= currentStep ? "bg-gradient-primary" : "bg-border"
+              }`}
+            />
+          ))}
+        </div>
+
+        <div className="relative z-10 mx-auto flex w-full max-w-xl flex-1 flex-col justify-center">
+          <div
+            key={currentStep}
+            className="hero-in rounded-3xl border border-border bg-card p-6 shadow-[0_24px_60px_-28px_hsl(222_35%_15%/0.35)] sm:p-10"
+          >
+            <div className="mb-8">
+              <h2 className="font-display text-3xl font-extrabold tracking-tight sm:text-4xl">
+                {stepTitles[currentStep].title}
+              </h2>
+              <p className="mt-2 text-muted-foreground">
+                {stepTitles[currentStep].subtitle}
+              </p>
+            </div>
+
+            {currentStep === 1 && (
+              <CompanyStep company={company} setCompany={setCompany} />
+            )}
+
+            {currentStep === 2 && (
+              <UserStep
+                user={user}
+                setUser={setUser}
+                showPassword={showPassword}
+                setShowPassword={setShowPassword}
+              />
+            )}
+
+            {currentStep === 3 && (
+              <PlanStep
+                selectedPlan={selectedPlan}
+                setSelectedPlan={setSelectedPlan}
+              />
+            )}
+
+            {currentStep === 4 && (
+              <PaymentStep
+                payment={payment || ({} as PaymentData)}
+                setPayment={setPayment}
+                plan={selectedPlan}
+              />
+            )}
+
+            {currentStep === 5 && (
+              <SuccessStep
+                user={user}
+                company={company}
+                payment={payment || ({} as PaymentData)}
+                plan={selectedPlan}
+                trialEnd={trialEnd}
+                onFinish={handleFinish}
+              />
+            )}
+
+            {currentStep < 5 && (
+              <div className="mt-8 flex items-center gap-3">
+                {currentStep > 1 && (
+                  <button
+                    type="button"
+                    onClick={handleBack}
+                    disabled={isSubmitting}
+                    className={`${authSecondaryButtonClass} w-auto! px-6`}
+                  >
+                    <ArrowLeft className="mr-2 h-4 w-4" /> Voltar
+                  </button>
+                )}
+                <button
+                  type="button"
+                  onClick={currentStep === 4 ? handleSubmit : handleNext}
+                  disabled={isSubmitting}
+                  className={`${authPrimaryButtonClass} flex-1`}
+                >
+                  {isSubmitting ? (
+                    <>
+                      <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                      Confirmando pagamento...
+                    </>
+                  ) : (
+                    <>
+                      {currentStep === 4 ? "Finalizar cadastro" : "Continuar"}
+                      <ArrowRight className="ml-2 h-5 w-5" />
+                    </>
+                  )}
+                </button>
+              </div>
+            )}
           </div>
 
-          {currentStep === 1 && (
-            <CompanyStep company={company} setCompany={setCompany} />
-          )}
-
-          {currentStep === 2 && (
-            <UserStep
-              user={user}
-              setUser={setUser}
-              showPassword={showPassword}
-              setShowPassword={setShowPassword}
-            />
-          )}
-
-          {currentStep === 3 && (
-            <PlanStep
-              selectedPlan={selectedPlan}
-              setSelectedPlan={setSelectedPlan}
-            />
-          )}
-
-          {currentStep === 4 && (
-            <PaymentStep
-              payment={payment || ({} as PaymentData)}
-              setPayment={setPayment}
-              plan={selectedPlan}
-            />
-          )}
-
-          {currentStep === 5 && (
-            <SuccessStep
-              user={user}
-              company={company}
-              payment={payment || ({} as PaymentData)}
-              plan={selectedPlan}
-              trialEnd={trialEnd}
-              onFinish={handleFinish}
-            />
-          )}
-
           {currentStep < 5 && (
-            <div className="flex items-center gap-3 mt-8">
-              {currentStep > 1 && (
-                <Button
-                  variant="outline"
-                  onClick={handleBack}
-                  disabled={isSubmitting}
-                  className="h-12 px-6"
-                >
-                  <ArrowLeft className="h-4 w-4 mr-2" /> Voltar
-                </Button>
-              )}
-              <Button
-                onClick={currentStep === 4 ? handleSubmit : handleNext}
-                disabled={isSubmitting}
-                className="flex-1 h-12 bg-blue-600 hover:bg-blue-700 text-base font-semibold"
-              >
-                {isSubmitting ? (
-                  <>
-                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                    Confirmando pagamento...
-                  </>
-                ) : (
-                  <>
-                    {currentStep === 4 ? "Finalizar cadastro" : "Continuar"}
-                    <ArrowRight className="h-4 w-4 ml-2" />
-                  </>
-                )}
-              </Button>
-            </div>
+            <p className="mt-6 text-center text-sm text-muted-foreground">
+              Já tem uma conta?{" "}
+              <Link href="/login" className={authLinkClass}>
+                Entrar
+              </Link>
+            </p>
           )}
-
-          <p className="text-center text-sm text-muted-foreground mt-6">
-            Já tem uma conta?{" "}
-            <Link
-              href="/"
-              className="text-blue-600 font-semibold hover:underline"
-            >
-              Entrar
-            </Link>
-          </p>
         </div>
       </div>
     </div>
