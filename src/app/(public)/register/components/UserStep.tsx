@@ -1,6 +1,7 @@
 import { Eye, EyeOff } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import { authToggleClass } from "@/components/AuthShell";
 import { inputClass, labelClass, onlyDigits } from "../constants";
 import { UserData } from "@/interfaces/auth.interface";
 
@@ -75,12 +76,13 @@ export default function UserStep({
             placeholder="Crie uma senha segura"
             value={user.password}
             onChange={(e) => setUser({ ...user, password: e.target.value })}
-            className="h-11 bg-muted/50 pr-10"
+            className={`${inputClass} pr-11`}
           />
           <button
             type="button"
             onClick={() => setShowPassword(!showPassword)}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground cursor-pointer"
+            aria-label={showPassword ? "Ocultar senha" : "Mostrar senha"}
+            className={authToggleClass}
           >
             {showPassword ? (
               <EyeOff className="h-4 w-4" />
