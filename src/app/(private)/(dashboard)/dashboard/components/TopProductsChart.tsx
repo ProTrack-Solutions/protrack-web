@@ -2,7 +2,7 @@
 
 import { Trophy } from "lucide-react";
 import { useTopProducts } from "@/hooks/useDashboard";
-import { DashCard, Skeleton, brl } from "./shared";
+import { DashCard, Skeleton, brl } from "@/components/DashCard";
 
 const medal = ["bg-amber-400", "bg-slate-400", "bg-orange-400"];
 

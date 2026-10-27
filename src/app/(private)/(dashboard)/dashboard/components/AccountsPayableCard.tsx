@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { ArrowRight, CalendarClock } from "lucide-react";
 import { useBillsPayableSummary } from "@/hooks/useDashboard";
-import { AnimatedNumber, DashCard, Skeleton, brl } from "./shared";
+import { AnimatedNumber, DashCard, Skeleton, brl } from "@/components/DashCard";
 
 export function AccountsPayableCard() {
   const { data, isLoading } = useBillsPayableSummary();

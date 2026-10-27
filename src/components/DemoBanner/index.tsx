@@ -1,6 +1,6 @@
 "use client";
 
-import { signOut } from "next-auth/react";
+import { logout } from "@/service/api";
 import { ArrowRight, Sparkles } from "lucide-react";
 import { useIsDemo } from "@/hooks/useIsDemo";
 
@@ -20,13 +20,13 @@ export function DemoBanner() {
       </span>
       <span className="flex items-center gap-3">
         <button
-          onClick={() => signOut({ callbackUrl: "/register" })}
+          onClick={() => logout("/register")}
           className="flex cursor-pointer items-center gap-1 rounded-md bg-white px-3 py-1 font-semibold text-blue-700 transition-opacity hover:opacity-90"
         >
           Criar minha conta <ArrowRight className="h-3.5 w-3.5" />
         </button>
         <button
-          onClick={() => signOut({ callbackUrl: "/" })}
+          onClick={() => logout("/")}
           className="cursor-pointer text-white/80 underline-offset-2 hover:text-white hover:underline"
         >
           Sair da demo

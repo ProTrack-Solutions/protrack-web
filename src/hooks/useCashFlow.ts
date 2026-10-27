@@ -1,36 +1,44 @@
-import { GetTotalSummaryParams } from "@/interfaces/cash-flow.interface";
-import { GetSummaryMonth, GetTotalSummary } from "@/service/cash-flow.service";
-import { useQuery } from "@tanstack/react-query";
+import {
+  keepPreviousData,
+  useIsFetching,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
+import { useCallback } from "react";
+import { GetCashFlowOverviewParams } from "@/interfaces/cash-flow.interface";
+import { GetCashFlowOverview } from "@/service/cash-flow.service";
 
-export const useCashFlow = ({ period, quantity }: GetTotalSummaryParams) => {
-  const { data, isLoading, isError, refetch } = useQuery({
-    queryKey: ["cash-flow"],
-    queryFn: async () => {
-      const [summaryMonth, totalSummary] = await Promise.all([
-        GetSummaryMonth(),
-        GetTotalSummary({
-          period: period,
-          quantity: quantity,
-        }),
-      ]);
+const CASH_FLOW_KEY = "cash-flow";
+const INTERVAL = 60_000;
 
-      return {
-        totalSummary,
-        summaryMonth,
-      };
-    },
-
-    refetchInterval: 10000,
+// Uma única chamada traz a tela inteira (a API agrega tudo no banco).
+// keepPreviousData mantém os números antigos na tela ao trocar o filtro,
+// em vez de piscar skeletons a cada clique.
+export const useCashFlowOverview = (params: GetCashFlowOverviewParams) =>
+  useQuery({
+    queryKey: [
+      CASH_FLOW_KEY,
+      "overview",
+      params.period,
+      params.quantity,
+      params.forecast_days,
+    ],
+    queryFn: () => GetCashFlowOverview(params),
+    placeholderData: keepPreviousData,
+    staleTime: INTERVAL,
+    refetchInterval: INTERVAL,
     refetchOnWindowFocus: true,
   });
 
-  return {
-    cashFlowTotalSummary: data?.totalSummary,
-    cashFlowSummaryMonth: data?.summaryMonth,
-    loading: isLoading,
-    error: isError
-      ? "Erro ao carregar os produtos. Por favor, tente novamente."
-      : null,
-    refetch,
-  };
+/** Se a tela está buscando dados e como forçar a atualização */
+export const useCashFlowRefresh = () => {
+  const queryClient = useQueryClient();
+  const fetching = useIsFetching({ queryKey: [CASH_FLOW_KEY] });
+
+  const refresh = useCallback(
+    () => queryClient.invalidateQueries({ queryKey: [CASH_FLOW_KEY] }),
+    [queryClient],
+  );
+
+  return { isFetching: fetching > 0, refresh };
 };
