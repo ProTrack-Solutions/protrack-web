@@ -12,6 +12,7 @@ import {
   BanknoteArrowUp,
   BanknoteArrowDown,
   TrendingUp,
+  Wallet,
 } from "lucide-react";
 import { useSidebar } from "@/context/SidebarContext";
 import { Sidebar } from "@/components/Sidebar/Sidebar";
@@ -101,6 +102,12 @@ export function PrivateLayout({ children }: { children: React.ReactNode }) {
           icon: <ShoppingCart size={20} />,
           text: "Histórico de Vendas",
           router: "/sales-list",
+          module: "sales",
+        },
+        {
+          icon: <Wallet size={20} />,
+          text: "Caixa",
+          router: "/cash-register",
           module: "sales",
         },
       ],

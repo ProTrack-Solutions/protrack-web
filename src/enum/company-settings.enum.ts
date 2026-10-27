@@ -5,4 +5,5 @@ export enum CompanySettings {
   MediumStock = "mediun_stock",
   NormalStock = "normal_stock",
   SaleOverdueTemplate = "sale_overdue_template",
+  RequireOpenCashRegister = "require_open_cash_register",
 }
