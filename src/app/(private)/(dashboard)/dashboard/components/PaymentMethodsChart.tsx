@@ -7,7 +7,7 @@ import {
   getPaymentMethodLabel,
 } from "@/utils/paymentMethodFormat";
 import { usePaymentMethodsStats } from "@/hooks/useDashboard";
-import { DashCard, Skeleton } from "./shared";
+import { DashCard, Skeleton } from "@/components/DashCard";
 
 const pct = (v: number) => `${v.toFixed(1).replace(".", ",")}%`;
 

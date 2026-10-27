@@ -5,7 +5,7 @@ import dynamic from "next/dynamic";
 import Link from "next/link";
 import { ArrowRight, LineChart } from "lucide-react";
 import { useCashFlowSeries } from "@/hooks/useDashboard";
-import { AnimatedNumber, DashCard, Skeleton } from "./shared";
+import { AnimatedNumber, DashCard, Skeleton } from "@/components/DashCard";
 
 const CashFlowChart = dynamic(() => import("./CashFlowChart"), {
   ssr: false,

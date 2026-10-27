@@ -9,7 +9,7 @@ import {
   getAnnouncementTimeHint,
   getAnnouncementType,
 } from "@/utils/announcementFormat";
-import { DashCard, Skeleton } from "./shared";
+import { DashCard, Skeleton } from "@/components/DashCard";
 
 // O quadro de avisos só é baixado quando o usuário abre pela primeira vez
 const AnnouncementsBoardDialog = dynamic(

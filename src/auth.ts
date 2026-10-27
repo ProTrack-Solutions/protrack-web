@@ -201,6 +201,32 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       return session;
     },
   },
+  events: {
+    // O signOut do NextAuth só apaga a sessão dele: avisa o backend pra
+    // revogar os tokens e remove os cookies repassados no login.
+    async signOut(message) {
+      const token = "token" in message ? message.token : null;
+      if (token?.accessToken) {
+        try {
+          await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/logout`, null, {
+            headers: {
+              Authorization: `Bearer ${token.accessToken}`,
+              ...(token.refreshToken && {
+                Cookie: `refresh_token=${token.refreshToken}`,
+              }),
+            },
+          });
+        } catch (error) {
+          // Token já expirado/revogado: segue com o logout local
+          console.error("Erro ao encerrar sessão no backend:", error);
+        }
+      }
+
+      const cookieStore = await cookies();
+      cookieStore.delete("access_token");
+      cookieStore.delete("refresh_token");
+    },
+  },
   pages: {
     signIn: "/login", // Nome da sua rota pública de login
   },

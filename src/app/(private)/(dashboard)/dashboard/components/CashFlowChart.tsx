@@ -9,7 +9,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { brl, brlCompact } from "./shared";
+import { brl, brlCompact } from "@/components/DashCard";
 
 export interface CashFlowPoint {
   label: string;

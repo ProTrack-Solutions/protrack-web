@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { ArrowRight, CalendarRange, Target, TrendingUp } from "lucide-react";
 import { useSalesSummary } from "@/hooks/useDashboard";
-import { AnimatedNumber, DashCard, Skeleton, TrendBadge, brl } from "./shared";
+import { AnimatedNumber, DashCard, Skeleton, TrendBadge, brl } from "@/components/DashCard";
 
 export function SalesSummaryCard() {
   const { data, isLoading } = useSalesSummary();

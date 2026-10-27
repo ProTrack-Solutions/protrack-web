@@ -1,7 +1,6 @@
 "use client";
 
-import { ReactNode, useMemo } from "react";
-import Link from "next/link";
+import { useMemo } from "react";
 import { ArrowDownRight, ArrowUpRight, Scale, Wallet } from "lucide-react";
 import {
   useBillsPayableSummary,
@@ -10,141 +9,12 @@ import {
   useTotalReceivable,
 } from "@/hooks/useDashboard";
 import {
-  AnimatedNumber,
-  Skeleton,
+  Kpi,
+  Sparkline,
   TrendBadge,
   brl,
   percentChange,
-} from "./shared";
-
-/** Mini gráfico de linha em SVG puro — sem carregar biblioteca de gráficos */
-function Sparkline({
-  values,
-  className,
-}: {
-  values: number[];
-  className?: string;
-}) {
-  if (values.length < 2) return null;
-  const min = Math.min(...values);
-  const max = Math.max(...values);
-  const range = max - min || 1;
-  const points = values
-    .map((v, i) => {
-      const x = (i / (values.length - 1)) * 100;
-      const y = 28 - ((v - min) / range) * 24;
-      return `${x.toFixed(2)},${y.toFixed(2)}`;
-    })
-    .join(" ");
-
-  return (
-    <svg
-      viewBox="0 0 100 32"
-      preserveAspectRatio="none"
-      aria-hidden="true"
-      className={className}
-    >
-      <polyline
-        points={`0,32 ${points} 100,32`}
-        fill="currentColor"
-        opacity={0.12}
-        stroke="none"
-      />
-      <polyline
-        points={points}
-        fill="none"
-        stroke="currentColor"
-        strokeWidth={2}
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        vectorEffect="non-scaling-stroke"
-      />
-    </svg>
-  );
-}
-
-interface KpiProps {
-  label: string;
-  icon: ReactNode;
-  loading: boolean;
-  value: number;
-  footer?: ReactNode;
-  href?: string;
-  tone: "primary" | "plain";
-  accent?: string;
-  delay: number;
-  children?: ReactNode;
-}
-
-function Kpi({
-  label,
-  icon,
-  loading,
-  value,
-  footer,
-  href,
-  tone,
-  accent = "text-foreground",
-  delay,
-  children,
-}: KpiProps) {
-  const primary = tone === "primary";
-  const body = (
-    <div
-      className={`dash-in group relative h-full overflow-hidden rounded-2xl p-5 transition-all duration-300 hover:-translate-y-0.5 ${
-        primary
-          ? "bg-[image:var(--gradient-primary)] text-primary-foreground shadow-[var(--shadow-elegant)]"
-          : "border border-border/70 bg-card shadow-[var(--shadow-soft)] hover:shadow-[var(--shadow-elegant)]"
-      }`}
-      style={{ animationDelay: `${delay}ms` }}
-    >
-      <div className="flex items-start justify-between gap-3">
-        <p
-          className={`text-xs font-semibold uppercase tracking-wider ${
-            primary ? "text-primary-foreground/80" : "text-muted-foreground"
-          }`}
-        >
-          {label}
-        </p>
-        <span
-          className={`grid h-9 w-9 place-items-center rounded-xl transition-transform group-hover:scale-110 ${
-            primary ? "bg-white/20" : "bg-muted"
-          }`}
-        >
-          {icon}
-        </span>
-      </div>
-
-      {loading ? (
-        <Skeleton className={`mt-3 h-8 w-36 ${primary ? "opacity-40" : ""}`} />
-      ) : (
-        <p className={`mt-2 text-2xl font-bold ${primary ? "" : accent}`}>
-          <AnimatedNumber value={value} />
-        </p>
-      )}
-
-      <div
-        className={`mt-2 min-h-5 text-xs ${
-          primary ? "text-primary-foreground/80" : "text-muted-foreground"
-        }`}
-      >
-        {!loading && footer}
-      </div>
-      {children}
-    </div>
-  );
-
-  return href ? (
-    <Link
-      href={href}
-      className="block rounded-2xl focus-visible:outline-2 focus-visible:outline-ring"
-    >
-      {body}
-    </Link>
-  ) : (
-    body
-  );
-}
+} from "@/components/DashCard";
 
 export function KpiCards() {
   const receivable = useTotalReceivable();

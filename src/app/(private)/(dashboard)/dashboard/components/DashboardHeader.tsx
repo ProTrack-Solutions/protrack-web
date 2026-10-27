@@ -4,7 +4,7 @@ import { useState } from "react";
 import { RefreshCw } from "lucide-react";
 import { useMe } from "@/hooks/useMe";
 import { useDashboardRefresh } from "@/hooks/useDashboard";
-import { useNow } from "./shared";
+import { useNow } from "@/components/DashCard";
 
 const greeting = (hour: number) =>
   hour < 12 ? "Bom dia" : hour < 18 ? "Boa tarde" : "Boa noite";

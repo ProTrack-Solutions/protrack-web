@@ -1,6 +1,42 @@
 import axios from "axios";
 import { getSession, signOut } from "next-auth/react";
+import type { Session } from "next-auth";
 import { toast } from "sonner";
+
+// Cada getSession() é um GET /api/auth/session; sem cache o dashboard dispara
+// dezenas deles. O jwt callback renova o token 30s antes de expirar, então
+// reaproveitar a sessão por alguns segundos é seguro.
+const SESSION_CACHE_MS = 10_000;
+let sessionCache: { promise: Promise<Session | null>; at: number } | null =
+  null;
+let signingOut = false;
+
+function getCachedSession() {
+  if (!sessionCache || Date.now() - sessionCache.at > SESSION_CACHE_MS) {
+    const promise = getSession();
+    sessionCache = { promise, at: Date.now() };
+    promise.catch(() => (sessionCache = null));
+  }
+  return sessionCache.promise;
+}
+
+/**
+ * Logout da aplicação. Espera a busca de sessão pendente terminar antes do
+ * signOut: se ela respondesse depois, regravaria o cookie de sessão antigo e
+ * o usuário continuaria logado.
+ */
+export async function logout(callbackUrl = "/login") {
+  if (signingOut) return;
+  signingOut = true;
+  try {
+    await sessionCache?.promise.catch(() => null);
+    sessionCache = null;
+    await signOut({ callbackUrl });
+  } catch (error) {
+    signingOut = false;
+    throw error;
+  }
+}
 
 export const api = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL,
@@ -13,10 +49,12 @@ export const api = axios.create({
 
 api.interceptors.request.use(
   async (config) => {
-    const session = await getSession();
+    if (signingOut) return Promise.reject(new Error("Saindo da aplicação"));
+
+    const session = await getCachedSession();
 
     if (session?.error === "RefreshAccessTokenError") {
-      await signOut({ callbackUrl: "/login" });
+      await logout();
       return Promise.reject(new Error("Sessão expirada"));
     }
 
@@ -45,8 +83,7 @@ api.interceptors.response.use(
     }
 
     if (error.response && error.response.status === 401) {
-      const { signOut } = await import("next-auth/react");
-      await signOut({ callbackUrl: "/login" });
+      await logout();
     }
     return Promise.reject(error);
   },
