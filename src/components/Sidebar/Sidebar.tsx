@@ -12,7 +12,7 @@ import {
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu"; // shadcn/ui
 import { useRouter } from "next/navigation"; // Hook de navegação correto para o Next.js
-import { signOut } from "next-auth/react";
+import { logout } from "@/service/api";
 import { useMe } from "@/hooks/useMe";
 
 type SidebarProps = {
@@ -24,11 +24,16 @@ export function Sidebar({ children }: SidebarProps) {
   const router = useRouter(); // Instanciando o roteador do Next.js
   const { user } = useMe();
 
+  const [loggingOut, setLoggingOut] = useState(false);
+
   const handleLogout = async () => {
+    if (loggingOut) return;
+    setLoggingOut(true);
     try {
-      signOut({ callbackUrl: "/login" }); // Exemplo de redirecionamento pós-logout caso seu hook não o faça
+      await logout();
     } catch (error) {
       console.error("Erro ao fazer logout:", error);
+      setLoggingOut(false);
     }
   };
 
@@ -70,51 +75,54 @@ export function Sidebar({ children }: SidebarProps) {
         </SidebarContext.Provider>
 
         {/* Footer */}
-        <div className="border-t flex p-2.5 relative">
-          <Image
-            src={`https://ui-avatars.com/api/?background=c7d2fe&color=3730a3&bold=true&name=${encodeURIComponent(
-              user?.username ?? "",
-            )}`}
-            alt="Avatar"
-            width={36} // Largura explícita exigida pelo Next.js (w-9 equivaleria a 36px)
-            height={36} // Altura explícita exigida pelo Next.js (h-9 equivaleria a 36px)
-            className="rounded-md"
-            unoptimized // Mantém as requisições diretas para a API externa de avatares sem cachear no servidor do Next
-          />
-          <div
-            className={`flex justify-between items-center overflow-hidden transition-all duration-300 ${
-              expanded ? "w-52 ml-3" : "w-0"
-            }`}
-          >
-            <div className="leading-4">
-              <h4 className="font-semibold">{user?.username}</h4>
-            </div>
-
-            {/* Dropdown de Configurações */}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <button className="ml-2 p-1 rounded hover:bg-gray-100 cursor-pointer">
-                  <MoreVertical size={20} className="cursor-pointer" />
-                </button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                {
-                  <DropdownMenuItem
-                    onClick={() => router.push("/config/user")}
-                    className="cursor-pointer"
-                  >
-                    Configurações
-                  </DropdownMenuItem>
-                }
-                <DropdownMenuItem
-                  onClick={handleLogout}
-                  className="text-red-600 cursor-pointer"
+        <div className="border-t p-2.5">
+          {/* O menu abre pelo avatar também com a sidebar recolhida */}
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button
+                className="flex w-full cursor-pointer items-center rounded-md text-left hover:bg-gray-50"
+                title={expanded ? undefined : "Conta"}
+              >
+                <Image
+                  src={`https://ui-avatars.com/api/?background=c7d2fe&color=3730a3&bold=true&name=${encodeURIComponent(
+                    user?.username ?? "",
+                  )}`}
+                  alt="Avatar"
+                  width={36} // Largura explícita exigida pelo Next.js (w-9 equivaleria a 36px)
+                  height={36} // Altura explícita exigida pelo Next.js (h-9 equivaleria a 36px)
+                  className="shrink-0 rounded-md"
+                  unoptimized // Mantém as requisições diretas para a API externa de avatares sem cachear no servidor do Next
+                />
+                <div
+                  className={`flex justify-between items-center overflow-hidden transition-all duration-300 ${
+                    expanded ? "w-52 ml-3" : "w-0"
+                  }`}
                 >
-                  Sair
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
+                  <div className="leading-4">
+                    <h4 className="font-semibold">{user?.username}</h4>
+                  </div>
+                  <span className="ml-2 p-1 rounded hover:bg-gray-100">
+                    <MoreVertical size={20} />
+                  </span>
+                </div>
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" side={expanded ? "top" : "right"}>
+              <DropdownMenuItem
+                onClick={() => router.push("/config/user")}
+                className="cursor-pointer"
+              >
+                Configurações
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={handleLogout}
+                disabled={loggingOut}
+                className="text-red-600 cursor-pointer"
+              >
+                {loggingOut ? "Saindo..." : "Sair"}
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       </nav>
     </aside>

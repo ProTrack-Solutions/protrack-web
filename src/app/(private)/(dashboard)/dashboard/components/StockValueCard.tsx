@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { ArrowRight, Package } from "lucide-react";
 import { useInventoryTurnover, useStockValue } from "@/hooks/useDashboard";
-import { AnimatedNumber, DashCard, Skeleton } from "./shared";
+import { AnimatedNumber, DashCard, Skeleton } from "@/components/DashCard";
 
 // Faixas de leitura do giro para dar contexto ao número
 function turnoverInsight(turnover: number) {
