@@ -151,6 +151,8 @@ interface KpiProps {
   icon: ReactNode;
   loading: boolean;
   value: number;
+  /** Formato do número animado; padrão em reais */
+  format?: (value: number) => string;
   footer?: ReactNode;
   href?: string;
   tone: "primary" | "plain";
@@ -165,6 +167,7 @@ export function Kpi({
   icon,
   loading,
   value,
+  format = brl,
   footer,
   href,
   tone,
@@ -203,7 +206,7 @@ export function Kpi({
         <Skeleton className={`mt-3 h-8 w-36 ${primary ? "opacity-40" : ""}`} />
       ) : (
         <p className={`mt-2 text-2xl font-bold ${primary ? "" : accent}`}>
-          <AnimatedNumber value={value} />
+          <AnimatedNumber value={value} format={format} />
         </p>
       )}
 
