@@ -1,64 +1,70 @@
 import { EstoqueStatsProps } from "@/interfaces/products.interface";
-import { Card, CardContent } from "@/components/ui/card";
-import { AlertTriangle, Boxes, DollarSign, Package } from "lucide-react";
+import { Kpi } from "@/components/DashCard";
+import { AlertTriangle, Boxes, Package, Wallet } from "lucide-react";
 
-const STAT_CARDS = (stats: EstoqueStatsProps) => [
-  {
-    label: "Produtos Cadastrados",
-    value: stats.productsCount,
-    icon: Package,
-    gradient: "from-blue-500 to-blue-600",
-  },
-  {
-    label: "Itens em Estoque",
-    value: stats.itensInStock,
-    icon: Boxes,
-    gradient: "from-indigo-500 to-purple-600",
-  },
-  {
-    label: "Valor Total",
-    value: `R$ ${stats.totalValueInStock.toLocaleString("pt-BR", {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    })}`,
-    icon: DollarSign,
-    gradient: "from-emerald-500 to-teal-600",
-  },
-  {
-    label: "Estoque Baixo",
-    value: stats.lowItensInStock,
-    icon: AlertTriangle,
-    gradient: "from-rose-500 to-orange-500",
-  },
-];
+const integer = (value: number) => Math.round(value).toLocaleString("pt-BR");
 
-export function EstoqueStats(props: EstoqueStatsProps) {
+export function EstoqueStats({
+  itensInStock,
+  lowItensInStock,
+  productsCount,
+  totalValueInStock,
+  loading,
+}: EstoqueStatsProps & { loading: boolean }) {
   return (
-    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-      {STAT_CARDS(props).map((card) => (
-        <Card
-          key={card.label}
-          className="group relative overflow-hidden border-border/50 hover:shadow-md transition-all hover:-translate-y-0.5"
-        >
-          <CardContent className="p-5">
-            <div className="flex items-start justify-between">
-              <div className="space-y-1">
-                <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                  {card.label}
-                </p>
-                <p className="text-2xl font-bold text-foreground">
-                  {card.value}
-                </p>
-              </div>
-              <div
-                className={`w-11 h-11 rounded-xl bg-gradient-to-br ${card.gradient} flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform`}
-              >
-                <card.icon className="w-5 h-5 text-white" />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      ))}
+    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <Kpi
+        tone="primary"
+        label="Valor em estoque"
+        icon={<Wallet className="h-4 w-4" />}
+        loading={loading}
+        value={totalValueInStock}
+        footer="Soma dos produtos disponíveis"
+        delay={0}
+      />
+      <Kpi
+        tone="plain"
+        label="Produtos cadastrados"
+        icon={<Package className="h-4 w-4 text-primary" />}
+        loading={loading}
+        value={productsCount}
+        format={integer}
+        footer="Itens diferentes no catálogo"
+        delay={60}
+      />
+      <Kpi
+        tone="plain"
+        label="Itens em estoque"
+        icon={<Boxes className="h-4 w-4 text-secondary" />}
+        loading={loading}
+        value={itensInStock}
+        format={integer}
+        footer="Unidades disponíveis para venda"
+        delay={120}
+      />
+      <Kpi
+        tone="plain"
+        label="Estoque baixo"
+        icon={
+          <AlertTriangle
+            className={`h-4 w-4 ${lowItensInStock > 0 ? "text-destructive" : "text-muted-foreground"}`}
+          />
+        }
+        loading={loading}
+        value={lowItensInStock}
+        format={integer}
+        accent={lowItensInStock > 0 ? "text-destructive" : "text-foreground"}
+        footer={
+          lowItensInStock > 0 ? (
+            <span className="font-semibold text-destructive">
+              Precisam de reposição
+            </span>
+          ) : (
+            "Nenhum produto acabando"
+          )
+        }
+        delay={180}
+      />
     </div>
   );
 }
