@@ -1,35 +1,17 @@
-import { useFormContext, useWatch } from "react-hook-form";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { CreateSaleParams } from "@/interfaces/sale.interface";
 import { Product } from "@/interfaces/products.interface";
+import { useSaleTotal } from "./useSaleTotal";
 
 interface Props {
   products: Product[];
 }
 
 export function SaleSummaryCard({ products }: Props) {
-  const { control } = useFormContext<CreateSaleParams>();
-
-  const produtos = useWatch({ control, name: "items" }) ?? [];
-
-  const desconto = useWatch({ control, name: "discount_amount" });
-
-
-  const totalItens = produtos.length;
-  const totalQuantidade = produtos.reduce(
-    (sum, p) => sum + (p.quantity || 0),
-    0,
-  );
-
-  const totalValue = produtos.reduce((sum, item) => {
-    const correspondente = products.find((p) => p.id === item.product_id);
-    const preco = correspondente ? correspondente.sale_price : 0;
-    const quantidade = item.quantity || 0;
-
-    return sum + preco * quantidade;
-  }, 0);
-
-  const totalAmount = totalValue - (desconto || 0);
+  const {
+    itemsCount: totalItens,
+    quantity: totalQuantidade,
+    total: totalAmount,
+  } = useSaleTotal(products);
 
   return (
     <Card>

@@ -21,6 +21,10 @@ import { CreateSale } from "@/service/sale.service";
 import { toast } from "sonner";
 import { getApiErrorMessage } from "@/utils/apiError";
 import { Product } from "@/interfaces/products.interface";
+import { useQueryClient } from "@tanstack/react-query";
+import { CASH_REGISTER_KEY } from "@/hooks/useCashRegister";
+import { CashRegisterStatus } from "./components/CashRegisterStatus";
+import { PaymentMethod } from "@/enum/methodPayments";
 
 function useDebouncedValue<T>(value: T, delay: number): T {
   const [debouncedValue, setDebouncedValue] = useState(value);
@@ -70,6 +74,8 @@ export default function Sale() {
     isFetchingNextPage: isFetchingNextClientsPage,
   } = useInfiniteClients(debouncedClientSearch || undefined);
 
+  const queryClient = useQueryClient();
+
   const onSubmit = async (data: CreateSaleParams) => {
     try {
       const payload = { ...data };
@@ -78,8 +84,19 @@ export default function Sale() {
         delete payload.customer_id;
       }
 
+      // Valor recebido só vale para o que é pago em dinheiro no balcão
+      const paidInCash =
+        payload.payment_method === PaymentMethod.Cash ||
+        (payload.payment_method === PaymentMethod.Installments &&
+          payload.prohibited > 0);
+      if (!payload.amount_received || !paidInCash) {
+        delete payload.amount_received;
+      }
+
       await CreateSale(payload);
       toast.success("Venda cadastrada com sucesso!");
+      // A venda entra no resumo do caixa aberto
+      queryClient.invalidateQueries({ queryKey: [CASH_REGISTER_KEY] });
 
       // Só limpa o formulário quando a venda foi gravada; em caso de erro o usuário corrige e reenvia
       form.reset();
@@ -107,6 +124,8 @@ export default function Sale() {
         text="Aqui você pode cadastrar novas vendas."
       />
 
+      <CashRegisterStatus />
+
       <Form {...form}>
         <form className="space-y-6" onSubmit={form.handleSubmit(onSubmit)}>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -124,7 +143,7 @@ export default function Sale() {
             <SaleSummaryCard products={productsForSummary} />
           </div>
 
-          <SaleFormPaymentMethod />
+          <SaleFormPaymentMethod products={productsForSummary} />
 
           <SaleProductsTable
             products={products}

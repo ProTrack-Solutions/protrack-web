@@ -45,6 +45,8 @@ export interface CreateSaleParams {
   installments_count: number;
   items: CreateSaleItemParams[];
   prohibited: number;
+  /** Dinheiro entregue pelo cliente (total à vista ou entrada); vazio = valor exato */
+  amount_received?: number;
 }
 
 interface CreateSaleItemParams {

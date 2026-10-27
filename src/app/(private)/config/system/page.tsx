@@ -2,8 +2,10 @@
 
 import { HeaderConfig } from "@/components/HeaderConfig";
 import { ConfigWhatsApp } from "./components/ConfigWhatsApp";
+import { ConfigCashRegister } from "./components/ConfigCashRegister";
+import { ConfigStock } from "./components/ConfigStock";
 import { TabsList, TabsTrigger, TabsContent, Tabs } from "@/components/ui/tabs";
-import { MessageCircle } from "lucide-react";
+import { MessageCircle, Package, Vault } from "lucide-react";
 
 export default function SystemConfigPage() {
   return (
@@ -18,6 +20,12 @@ export default function SystemConfigPage() {
           <TabsTrigger value="whatsapp" className="gap-2">
             <MessageCircle className="h-4 w-4" /> WhatsApp
           </TabsTrigger>
+          <TabsTrigger value="cash-register" className="gap-2">
+            <Vault className="h-4 w-4" /> Caixa
+          </TabsTrigger>
+          <TabsTrigger value="stock" className="gap-2">
+            <Package className="h-4 w-4" /> Estoque
+          </TabsTrigger>
           <TabsTrigger value="email" className="gap-2">
             <MessageCircle className="h-4 w-4" /> E-mail
           </TabsTrigger>
@@ -25,6 +33,14 @@ export default function SystemConfigPage() {
 
         <TabsContent value="whatsapp" className="space-y-4 mt-4">
           <ConfigWhatsApp />
+        </TabsContent>
+
+        <TabsContent value="cash-register" className="space-y-4 mt-4">
+          <ConfigCashRegister />
+        </TabsContent>
+
+        <TabsContent value="stock" className="space-y-4 mt-4">
+          <ConfigStock />
         </TabsContent>
       </Tabs>
     </div>
