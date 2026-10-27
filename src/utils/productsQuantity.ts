@@ -1,14 +1,30 @@
 type Unit = "KG" | "G" | "L" | "ML" | string;
-export function getQuantityStyle(quantity?: number): string {
+
+/** Limite de estoque baixo quando a empresa não configurou nenhum */
+export const DEFAULT_LOW_STOCK = 5;
+/** O estoque médio vai até o dobro do limite de estoque baixo */
+export const MEDIUM_STOCK_FACTOR = 2;
+
+/** Abaixo de lowStock é baixo; até o dobro é médio; acima disso, normal */
+export function getStockLevels(lowStock: number) {
+  return { low: lowStock, medium: lowStock * MEDIUM_STOCK_FACTOR };
+}
+
+export function getQuantityStyle(
+  quantity?: number,
+  lowStock = DEFAULT_LOW_STOCK,
+): string {
+  const levels = getStockLevels(lowStock);
+
   if (quantity === undefined || quantity === null) {
     return "bg-slate-50 text-slate-600 border-slate-200 dark:bg-slate-500/10 dark:text-slate-400";
   }
 
-  if (quantity >= 10) {
+  if (quantity >= levels.medium) {
     return "bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-500/10 dark:text-emerald-400";
   }
 
-  if (quantity >= 5) {
+  if (quantity >= levels.low) {
     return "bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-500/10 dark:text-amber-400";
   }
 

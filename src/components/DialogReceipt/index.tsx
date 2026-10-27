@@ -31,6 +31,8 @@ import {
   MessageCircle,
 } from "lucide-react";
 import { toast } from "sonner";
+import { isAxiosError } from "axios";
+import { getApiErrorMessage } from "@/utils/apiError";
 import { useClients } from "@/hooks/useClients";
 import { usePaymentMethods } from "@/hooks/usePaymentMethods";
 import { Textarea } from "../ui/textarea";
@@ -90,7 +92,12 @@ export const DialogReceipt = ({
       );
     } catch (error) {
       console.log(error);
-      toast.error("Erro ao registrar o pagamento");
+      // 409: caixa fechado numa empresa que exige caixa aberto
+      toast.error(
+        isAxiosError(error) && error.response?.status === 409
+          ? getApiErrorMessage(error, "Erro ao registrar o pagamento")
+          : "Erro ao registrar o pagamento",
+      );
     } finally {
       onOpenChange(false);
       setClientId("");

@@ -24,6 +24,8 @@ import { CreditCard, Wallet, CalendarDays,  CircleDollarSign } from "lucide-reac
 import { CreateSaleParams } from "@/interfaces/sale.interface";
 import { PaymentMethod } from "@/enum/methodPayments";
 import { getPaymentMethodLabel } from "@/utils/paymentMethodFormat";
+import { Product } from "@/interfaces/products.interface";
+import { SaleCashChange } from "./saleCashChange";
 
 const metodosAPrazo: PaymentMethod[] = [
   PaymentMethod.CreditCard,
@@ -31,7 +33,7 @@ const metodosAPrazo: PaymentMethod[] = [
   PaymentMethod.Other,
 ];
 
-export function SaleFormPaymentMethod() {
+export function SaleFormPaymentMethod({ products }: { products: Product[] }) {
   const { control, setValue } = useFormContext<CreateSaleParams>();
 
   const paymentMethod = useWatch({ control, name: "payment_method" });
@@ -66,6 +68,7 @@ export function SaleFormPaymentMethod() {
 
   const handlePaymentMethodChange = (value: PaymentMethod) => {
     setValue("payment_method", value);
+    setValue("amount_received", undefined);
 
     if (!metodosAPrazo.includes(value)) {
       setValue("installments_count", 0);
@@ -264,6 +267,8 @@ export function SaleFormPaymentMethod() {
             )}
           </>
         )}
+
+        <SaleCashChange products={products} />
       </CardContent>
     </Card>
   );

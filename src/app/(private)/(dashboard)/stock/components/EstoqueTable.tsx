@@ -8,6 +8,7 @@ import { DialogEditProduct } from "@/components/DialogAlterProduct";
 import { DialogStockMovement } from "@/components/DialogStockMovement";
 import { Skeleton, brl } from "@/components/DashCard";
 import { getQuantityStyle, getUnitBadgeStyle } from "@/utils/productsQuantity";
+import { useLowStockThreshold } from "@/hooks/useCompanySettings";
 import { Checkbox } from "@/components/ui/checkbox";
 
 interface EstoqueTableProps {
@@ -42,6 +43,7 @@ export function EstoqueTable({
   footer,
 }: EstoqueTableProps) {
   const { productsCategories } = useProductsCategories();
+  const lowStock = useLowStockThreshold();
 
   const [openDialog, setOpenDialog] = useState(false);
   const [openStockDialog, setOpenStockDialog] = useState(false);
@@ -213,7 +215,7 @@ export function EstoqueTable({
                         className={`inline-flex min-w-12 items-center justify-center rounded-full border px-2.5 py-0.5 text-xs font-semibold tabular-nums ${
                           product.sell_in_bulk
                             ? getUnitBadgeStyle(product.unit)
-                            : getQuantityStyle(product.quantity)
+                            : getQuantityStyle(product.quantity, lowStock)
                         }`}
                       >
                         {product.sell_in_bulk ? product.unit : product.quantity}
