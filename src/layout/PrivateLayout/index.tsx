@@ -207,7 +207,7 @@ export function PrivateLayout({ children }: { children: React.ReactNode }) {
             })}
         </Sidebar>
 
-        <main className="w-full overflow-auto">
+        <main className="relative w-full min-w-0 overflow-auto">
           {loading ? (
             <Loading />
           ) : allowed ? (
