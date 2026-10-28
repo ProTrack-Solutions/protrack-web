@@ -6,4 +6,5 @@ export enum PaymentMethod {
   BankTransfer = "bank_transfer",
   Installments = "installments",
   Other = "other",
+  StoreCredit = "store_credit",
 }

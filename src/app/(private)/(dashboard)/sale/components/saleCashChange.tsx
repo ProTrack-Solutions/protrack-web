@@ -26,8 +26,10 @@ function useCashDue(products: Product[]) {
   const { total } = useSaleTotal(products);
   const paymentMethod = useWatch({ control, name: "payment_method" });
   const downPayment = useWatch({ control, name: "prohibited" });
+  const credit = useWatch({ control, name: "credit_amount" }) || 0;
 
-  if (paymentMethod === PaymentMethod.Cash) return Math.max(total, 0);
+  // A parte paga com vale-troca não passa pela gaveta
+  if (paymentMethod === PaymentMethod.Cash) return Math.max(total - credit, 0);
   if (paymentMethod === PaymentMethod.Installments) return downPayment || 0;
   return 0;
 }

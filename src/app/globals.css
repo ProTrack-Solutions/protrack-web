@@ -1,5 +1,10 @@
 @import "tailwindcss";
 
+/* O tema escuro é a classe .dark (mesma do shadcn), não o modo escuro do
+   sistema operacional: sem isso, quem usa o Windows/macOS escuro recebia as
+   cores dark: sobre a tela clara. */
+@custom-variant dark (&:where(.dark, .dark *));
+
 /* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
 All colors MUST be HSL.
 */

@@ -2,7 +2,9 @@ import { Fragment, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { getApiErrorMessage } from "@/utils/apiError";
+import Link from "next/link";
 import {
+  ArrowLeftRight,
   ChevronDown,
   ChevronRight,
   Loader2,
@@ -112,7 +114,7 @@ export const SaleListTable = ({
               <TableHead className="text-right">Desconto</TableHead>
               <TableHead className="text-center">Total</TableHead>
               <TableHead>Status</TableHead>
-              <TableHead className="text-center w-32">Ações</TableHead>
+              <TableHead className="text-center w-40">Ações</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -131,6 +133,13 @@ export const SaleListTable = ({
                   !!venda.sale.installments_count &&
                   venda.sale.installments_count > 0;
                 const isExpanded = expandedId === venda.sale.sale_id;
+                const isCanceled = venda.sale.sale_status === "canceled";
+                const hasReturns = (venda.sale.returned_total ?? 0) > 0;
+                // Venda com devolução ou gerada por troca não pode ser editada nem cancelada
+                const locked = hasReturns || venda.sale.is_exchange_sale;
+                const lockedTitle = venda.sale.is_exchange_sale
+                  ? "Venda gerada por uma troca"
+                  : "A venda tem trocas ou devoluções";
 
                 return (
                   <Fragment key={venda.sale.sale_id}>
@@ -176,11 +185,28 @@ export const SaleListTable = ({
                         R$ {formatCurrency(venda.sale.total_amount)}
                       </TableCell>
                       <TableCell>
-                        <Badge
-                          variant={getSaleStatusVariant(venda.sale.sale_status)}
-                        >
-                          {getSaleStatusLabel(venda.sale.sale_status)}
-                        </Badge>
+                        <div className="flex flex-wrap items-center gap-1">
+                          <Badge
+                            variant={getSaleStatusVariant(venda.sale.sale_status)}
+                          >
+                            {getSaleStatusLabel(venda.sale.sale_status)}
+                          </Badge>
+                          {hasReturns && (
+                            <span
+                              className="rounded-full bg-amber-100 px-2 py-0.5 text-xs font-semibold text-amber-900 ring-1 ring-inset ring-amber-300 dark:bg-amber-500/15 dark:text-amber-300 dark:ring-amber-500/30"
+                              title={`R$ ${formatCurrency(venda.sale.returned_total)} devolvidos`}
+                            >
+                              {venda.sale.returned_total >= venda.sale.total_amount - 0.005
+                                ? "Devolvida"
+                                : "Devolução parcial"}
+                            </span>
+                          )}
+                          {venda.sale.is_exchange_sale && (
+                            <span className="rounded-full bg-blue-100 px-2 py-0.5 text-xs font-semibold text-blue-800 ring-1 ring-inset ring-blue-200 dark:bg-blue-500/15 dark:text-blue-300 dark:ring-blue-500/30">
+                              Troca
+                            </span>
+                          )}
+                        </div>
                       </TableCell>
                       <TableCell className="text-center">
                         <div className="flex items-center justify-center gap-1">
@@ -201,11 +227,28 @@ export const SaleListTable = ({
                               <Printer className="h-4 w-4" />
                             )}
                           </Button>
+                          {!isCanceled && (
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="cursor-pointer"
+                              title="Trocar ou devolver itens"
+                              asChild
+                            >
+                              <Link
+                                href={`/returns/new?sale=${venda.sale.sale_id}`}
+                                onClick={(e) => e.stopPropagation()}
+                              >
+                                <ArrowLeftRight className="h-4 w-4" />
+                              </Link>
+                            </Button>
+                          )}
                           <Button
                             variant="ghost"
                             size="icon"
                             className="cursor-pointer"
-                            title="Editar venda"
+                            title={locked ? lockedTitle : "Editar venda"}
+                            disabled={locked}
                             onClick={(e) => {
                               e.stopPropagation();
                               setOpenDialog(true);
@@ -218,7 +261,8 @@ export const SaleListTable = ({
                             variant="ghost"
                             size="icon"
                             className="cursor-pointer text-destructive hover:text-destructive"
-                            title="Cancelar venda"
+                            title={locked ? lockedTitle : "Cancelar venda"}
+                            disabled={locked}
                             onClick={(e) => {
                               e.stopPropagation();
                               setSaleToDelete(venda.sale.sale_id);

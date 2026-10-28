@@ -2,6 +2,7 @@
 
 import { Fragment } from "react";
 import {
+  ArrowLeftRight,
   ShoppingCart,
   Calculator,
   PackagePlus,
@@ -110,6 +111,12 @@ export function PrivateLayout({ children }: { children: React.ReactNode }) {
           icon: <ShoppingCart size={20} />,
           text: "Histórico de Vendas",
           router: "/sales-list",
+          module: "sales",
+        },
+        {
+          icon: <ArrowLeftRight size={20} />,
+          text: "Trocas e Devoluções",
+          router: "/returns",
           module: "sales",
         },
         {

@@ -30,3 +30,17 @@ export const useLowStockThreshold = () => {
   )?.value;
   return typeof value === "number" && value > 0 ? value : DEFAULT_LOW_STOCK;
 };
+
+/** Prazo de troca em dias (0 = sem prazo); padrão de 30 dias, igual à API */
+export const DEFAULT_RETURN_WINDOW_DAYS = 30;
+
+export const useReturnWindowDays = () => {
+  const { companySettings } = useCompanySettings();
+  const value = companySettings?.find(
+    (cs) => cs.key === CompanySettings.ReturnWindowDays,
+  )?.value;
+  const days = typeof value === "string" ? Number(value) : value;
+  return typeof days === "number" && Number.isInteger(days) && days >= 0
+    ? days
+    : DEFAULT_RETURN_WINDOW_DAYS;
+};

@@ -72,7 +72,9 @@ export function DialogAlterSale({
     }
   }, [sale.sale.sale_at]);
 
-  const paymentMethodOptions = Object.entries(PaymentMethod).map(
+  const paymentMethodOptions = Object.entries(PaymentMethod)
+    .filter(([, value]) => value !== PaymentMethod.StoreCredit)
+    .map(
     ([key, value]) => ({
       id: key,
       name: value,

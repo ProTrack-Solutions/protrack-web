@@ -23,6 +23,7 @@ import { getApiErrorMessage } from "@/utils/apiError";
 import { Product } from "@/interfaces/products.interface";
 import { useQueryClient } from "@tanstack/react-query";
 import { CASH_REGISTER_KEY } from "@/hooks/useCashRegister";
+import { CUSTOMER_CREDIT_KEY } from "@/hooks/useReturns";
 import { CashRegisterStatus } from "./components/CashRegisterStatus";
 import { PaymentMethod } from "@/enum/methodPayments";
 
@@ -84,6 +85,15 @@ export default function Sale() {
         delete payload.customer_id;
       }
 
+      // Vale-troca só com cliente e fora da venda a prazo
+      if (
+        !payload.credit_amount ||
+        !payload.customer_id ||
+        payload.payment_method === PaymentMethod.Installments
+      ) {
+        delete payload.credit_amount;
+      }
+
       // Valor recebido só vale para o que é pago em dinheiro no balcão
       const paidInCash =
         payload.payment_method === PaymentMethod.Cash ||
@@ -97,6 +107,9 @@ export default function Sale() {
       toast.success("Venda cadastrada com sucesso!");
       // A venda entra no resumo do caixa aberto
       queryClient.invalidateQueries({ queryKey: [CASH_REGISTER_KEY] });
+      if (payload.credit_amount) {
+        queryClient.invalidateQueries({ queryKey: [CUSTOMER_CREDIT_KEY] });
+      }
 
       // Só limpa o formulário quando a venda foi gravada; em caso de erro o usuário corrige e reenvia
       form.reset();
