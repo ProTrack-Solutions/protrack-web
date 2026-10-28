@@ -15,7 +15,13 @@ import { useCompanySettings } from "@/hooks/useCompanySettings";
 import { useConfigSettings } from "@/hooks/useSubscriptionManager";
 import { UpsetCompanySettingsRequest } from "@/interfaces/company-settings.interface";
 import { UpsetCompanySettings } from "@/service/company-settings.service";
-import { FileText, CheckCircle2, Send, AlertTriangle } from "lucide-react";
+import {
+  FileText,
+  CheckCircle2,
+  Send,
+  AlertTriangle,
+  BellRing,
+} from "lucide-react";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
 
@@ -65,6 +71,12 @@ export const ConfigWhatsApp = () => {
         );
       } else if (params.key == CompanySettings.SaleOverdueTemplate) {
         toast.success(`Template "${params.value}" selecionado.`);
+      } else if (params.key == CompanySettings.DueReminderTemplate) {
+        toast.success(
+          params.value
+            ? `Template "${params.value}" usado nos lembretes de vencimento.`
+            : "Lembrete de parcela a vencer desativado.",
+        );
       }
     } catch (error) {
       console.log(error);
@@ -76,6 +88,13 @@ export const ConfigWhatsApp = () => {
       (cs) => cs.key === CompanySettings.SaleOverdueTemplate,
     );
     return setting?.value as string | undefined;
+  }, [companySettings]);
+
+  const savedDueReminderTemplate = useMemo(() => {
+    const setting = companySettings?.find(
+      (cs) => cs.key === CompanySettings.DueReminderTemplate,
+    );
+    return (setting?.value as string | undefined) ?? "";
   }, [companySettings]);
 
   const selectedTemplate = useMemo(() => {
@@ -102,10 +121,10 @@ export const ConfigWhatsApp = () => {
                 <FileText className="h-5 w-5 text-emerald-600" />
               </div>
               <div>
-                <CardTitle>Template da mensagem de venda</CardTitle>
+                <CardTitle>Template de cobrança de venda vencida</CardTitle>
                 <CardDescription>
-                  Escolha o modelo de mensagem enviada ao cliente quando uma
-                  venda for concluída.
+                  Modelo enviado ao cliente quando uma parcela vence e no botão
+                  &quot;Cobrar&quot; do contas a receber.
                 </CardDescription>
               </div>
             </div>
@@ -176,6 +195,93 @@ export const ConfigWhatsApp = () => {
               </div>
             </>
           )}
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <div className="flex items-start gap-3">
+            <div className="p-2 rounded-lg bg-blue-500/10">
+              <BellRing className="h-5 w-5 text-blue-600" />
+            </div>
+            <div>
+              <CardTitle>Template de lembrete de vencimento</CardTitle>
+              <CardDescription>
+                Usado no botão &quot;Lembrete&quot; do contas a receber para avisar
+                parcelas que ainda vão vencer. Sem template, o lembrete fica
+                disponível só para parcelas vencidas.
+              </CardDescription>
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          <div className="grid gap-3 md:grid-cols-3">
+            <button
+              type="button"
+              onClick={() =>
+                handleWhatsappSettings({
+                  key: CompanySettings.DueReminderTemplate,
+                  value: "",
+                })
+              }
+              className={`cursor-pointer text-left rounded-lg border p-4 transition-all hover:shadow-sm ${
+                !savedDueReminderTemplate
+                  ? "border-primary ring-2 ring-primary/20 bg-primary/5"
+                  : "hover:border-primary/40"
+              }`}
+            >
+              <div className="flex items-center justify-between gap-2 mb-1">
+                <span className="font-semibold text-sm">Não enviar</span>
+                {!savedDueReminderTemplate && (
+                  <CheckCircle2 className="h-4 w-4 text-primary shrink-0" />
+                )}
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Lembrete só para parcelas vencidas.
+              </p>
+            </button>
+            {templates
+              ?.filter((tpl) => tpl.meta_template_name !== savedTemplateId)
+              .map((tpl) => {
+                const selected =
+                  savedDueReminderTemplate === tpl.meta_template_name;
+                return (
+                  <button
+                    key={tpl.id}
+                    type="button"
+                    onClick={() =>
+                      handleWhatsappSettings({
+                        key: CompanySettings.DueReminderTemplate,
+                        value: String(tpl.meta_template_name),
+                      })
+                    }
+                    className={`cursor-pointer text-left rounded-lg border p-4 transition-all hover:shadow-sm ${
+                      selected
+                        ? "border-primary ring-2 ring-primary/20 bg-primary/5"
+                        : "hover:border-primary/40"
+                    }`}
+                  >
+                    <div className="flex items-center justify-between gap-2 mb-1">
+                      <span className="font-semibold text-sm">
+                        {tpl.meta_template_name}
+                      </span>
+                      {selected && (
+                        <CheckCircle2 className="h-4 w-4 text-primary shrink-0" />
+                      )}
+                    </div>
+                    <p className="text-xs text-muted-foreground line-clamp-3">
+                      {tpl.body_text}
+                    </p>
+                  </button>
+                );
+              })}
+          </div>
+          <p className="text-xs text-muted-foreground">
+            O template precisa estar aprovado na Meta e usar as mesmas
+            variáveis do de cobrança: cabeçalho {"{{1}}"} = nome da empresa;
+            corpo {"{{1}}"} cliente, {"{{2}}"} data da compra, {"{{3}}"} valor,{" "}
+            {"{{4}}"} vencimento e {"{{5}}"} contato da empresa.
+          </p>
         </CardContent>
       </Card>
 

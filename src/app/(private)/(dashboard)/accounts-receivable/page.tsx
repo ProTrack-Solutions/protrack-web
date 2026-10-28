@@ -13,8 +13,18 @@ import { useEffect, useState } from "react";
 import { DataPagination } from "@/components/DataPagination";
 import { usePagination } from "@/hooks/usePagination";
 import { FiltrosReceber } from "@/components/FilterPopOver";
-import { AccountsReceivablePaginationParams } from "@/interfaces/accounts-receivable.interface";
+import {
+  AccountsReceivable as AccountReceivable,
+  AccountsReceivablePaginationParams,
+} from "@/interfaces/accounts-receivable.interface";
 import { format } from "date-fns";
+import { useQueryClient } from "@tanstack/react-query";
+import { useCompanySettings } from "@/hooks/useCompanySettings";
+import { CompanySettings } from "@/enum/company-settings.enum";
+import { SendReceivableReminder } from "@/service/accounts-receivable.service";
+import { getApiErrorMessage } from "@/utils/apiError";
+import { ReminderDialog } from "./components/ReminderDialog";
+import { receivableActions } from "./components/receivableActions";
 
 export default function AccountsReceivable() {
   const { currentPage, displayPage, pageRange, goToPage, setTotalPages } =
@@ -71,14 +81,56 @@ export default function AccountsReceivable() {
     goToPage(1);
   };
 
-  const [dialogOpen, setDialogOpen] = useState(false);
+  const queryClient = useQueryClient();
+  const { companySettings } = useCompanySettings();
 
-  const handleBaixarPagamento = () => {
-    toast("O pagamento foi registrado com sucesso.");
+  // Lembrete depende do WhatsApp ligado e, para parcela a vencer, de um
+  // template de lembrete configurado (vencida usa o de venda vencida)
+  const reminderCapability = {
+    whatsappActive:
+      companySettings?.find((cs) => cs.key === CompanySettings.IsWhatsappActive)
+        ?.value !== false,
+    dueTemplateConfigured: !!companySettings?.find(
+      (cs) => cs.key === CompanySettings.DueReminderTemplate,
+    )?.value,
   };
 
-  const handleEnviarLembrete = () => {
-    toast("Lembrete de pagamento enviado para o cliente.");
+  const [dialogOpen, setDialogOpen] = useState(false);
+  // Baixa aberta pela linha: cliente e valor da parcela já preenchidos
+  const [settling, setSettling] = useState<AccountReceivable | null>(null);
+  const [reminderTarget, setReminderTarget] =
+    useState<AccountReceivable | null>(null);
+  const [sendingReminderId, setSendingReminderId] = useState<string | null>(
+    null,
+  );
+
+  const refreshAll = () => {
+    refetch();
+    queryClient.invalidateQueries({ queryKey: ["clients"] });
+    queryClient.invalidateQueries({ queryKey: ["dashboard"] });
+  };
+
+  const handleBaixarPagamento = (conta: AccountReceivable) => {
+    setSettling(conta);
+  };
+
+  const handleEnviarLembrete = async (conta: AccountReceivable) => {
+    setReminderTarget(null);
+    setSendingReminderId(conta.id);
+    try {
+      const result = await SendReceivableReminder(conta.id);
+      toast.success(
+        `${result.kind === "overdue" ? "Cobrança" : "Lembrete"} enviado para ${conta.customer_name} (${result.recipient_phone}).`,
+      );
+      refetch();
+    } catch (error) {
+      toast.error(
+        getApiErrorMessage(error, "Não foi possível enviar o lembrete."),
+      );
+      refetch();
+    } finally {
+      setSendingReminderId(null);
+    }
   };
 
   if (loading) {
@@ -123,8 +175,10 @@ export default function AccountsReceivable() {
 
       <AccountsReceivableTable
         contas={accountsReceivable?.data ?? []}
+        reminderCapability={reminderCapability}
+        sendingReminderId={sendingReminderId}
         onBaixarPagamento={handleBaixarPagamento}
-        onEnviarLembrete={handleEnviarLembrete}
+        onEnviarLembrete={setReminderTarget}
       />
 
       <DataPagination
@@ -134,7 +188,37 @@ export default function AccountsReceivable() {
         goToPage={goToPage}
       />
 
-      <DialogReceipt open={dialogOpen} onOpenChange={setDialogOpen} />
+      <DialogReceipt
+        open={dialogOpen}
+        onOpenChange={setDialogOpen}
+        onSuccess={refreshAll}
+      />
+
+      {settling && (
+        <DialogReceipt
+          key={settling.id}
+          open
+          onOpenChange={(open) => !open && setSettling(null)}
+          prefill={{
+            customerId: settling.customer_id,
+            customerName: settling.customer_name,
+            amount: settling.balance,
+            dueDate: settling.due_date,
+          }}
+          onSuccess={refreshAll}
+        />
+      )}
+
+      <ReminderDialog
+        account={reminderTarget}
+        kind={
+          reminderTarget
+            ? receivableActions(reminderTarget, reminderCapability).reminderKind
+            : "due"
+        }
+        onCancel={() => setReminderTarget(null)}
+        onConfirm={handleEnviarLembrete}
+      />
     </div>
   );
 }

@@ -24,6 +24,12 @@ export function StatusBadge({ status }: StatusBadgeProps) {
       );
     case BillsPayableStatus.StatusOverdue:
       return <Badge variant="destructive">Vencido</Badge>;
+    case BillsPayableStatus.StatusCanceled:
+      return (
+        <Badge variant="outline" className="text-muted-foreground line-through">
+          Cancelado
+        </Badge>
+      );
     default:
       return <Badge variant="outline">Pendente</Badge>;
   }

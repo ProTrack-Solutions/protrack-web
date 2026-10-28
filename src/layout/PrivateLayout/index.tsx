@@ -14,6 +14,7 @@ import {
   TrendingUp,
   Wallet,
   FileChartColumn,
+  Truck,
 } from "lucide-react";
 import { useSidebar } from "@/context/SidebarContext";
 import { Sidebar } from "@/components/Sidebar/Sidebar";
@@ -87,6 +88,12 @@ export function PrivateLayout({ children }: { children: React.ReactNode }) {
           text: "Clientes",
           router: "/clients",
           module: "customers",
+        },
+        {
+          icon: <Truck size={20} />,
+          text: "Compras",
+          router: "/purchases",
+          module: "purchases",
         },
       ],
     },
@@ -188,7 +195,10 @@ export function PrivateLayout({ children }: { children: React.ReactNode }) {
                       icon={item.icon}
                       text={item.text}
                       router={item.router}
-                      active={currentPath === item.router}
+                      active={
+                        currentPath === item.router ||
+                        currentPath.startsWith(`${item.router}/`)
+                      }
                       requiredModule={item.module}
                     />
                   ))}
