@@ -26,6 +26,16 @@ export interface AccountsReceivable {
   total_installments: number;
   updated_at: string;
   updated_by: string;
+  /** Último lembrete enviado pelo WhatsApp; null se nunca enviou */
+  last_reminder_at: string | null;
+}
+
+export interface ReceivableReminderResponse {
+  kind: "overdue" | "due";
+  template_name: string;
+  recipient_phone: string;
+  sent_at: string;
+  next_reminder_at: string;
 }
 
 export interface ListAccountsReceivableResponse {

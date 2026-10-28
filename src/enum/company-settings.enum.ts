@@ -6,4 +6,6 @@ export enum CompanySettings {
   NormalStock = "normal_stock",
   SaleOverdueTemplate = "sale_overdue_template",
   RequireOpenCashRegister = "require_open_cash_register",
+  DueReminderTemplate = "due_reminder_template",
+  LanguageDueReminderTemplate = "language_due_reminder_template",
 }
