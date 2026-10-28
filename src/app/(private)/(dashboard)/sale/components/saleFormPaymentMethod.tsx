@@ -26,6 +26,7 @@ import { PaymentMethod } from "@/enum/methodPayments";
 import { getPaymentMethodLabel } from "@/utils/paymentMethodFormat";
 import { Product } from "@/interfaces/products.interface";
 import { SaleCashChange } from "./saleCashChange";
+import { SaleStoreCredit } from "./saleStoreCredit";
 
 const metodosAPrazo: PaymentMethod[] = [
   PaymentMethod.CreditCard,
@@ -39,8 +40,6 @@ export function SaleFormPaymentMethod({ products }: { products: Product[] }) {
   const paymentMethod = useWatch({ control, name: "payment_method" });
   const installments = useWatch({ control, name: "installments_count" });
   const dueDays = useWatch({ control, name: "due_days" });
-
-  console.log("paymentMethod", paymentMethod);
 
   const isCreditCard = paymentMethod === PaymentMethod.CreditCard;
   const isAPrazo = paymentMethod === PaymentMethod.Installments;
@@ -108,8 +107,7 @@ export function SaleFormPaymentMethod({ products }: { products: Product[] }) {
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    {Object.entries(PaymentMethod).map(([k, v]) => {
-                      console.log("PaymentMethod", v);
+                    {Object.entries(PaymentMethod).filter(([, v]) => v !== PaymentMethod.StoreCredit).map(([k, v]) => {
                       return (
                         <SelectItem key={k} value={v}>
                           {getPaymentMethodLabel(v)}
@@ -267,6 +265,8 @@ export function SaleFormPaymentMethod({ products }: { products: Product[] }) {
             )}
           </>
         )}
+
+        <SaleStoreCredit products={products} />
 
         <SaleCashChange products={products} />
       </CardContent>

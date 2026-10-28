@@ -17,7 +17,8 @@ export interface SalePaginationParams extends Pagination {
     | "pix"
     | "bank_transfer"
     | "installments"
-    | "other";
+    | "other"
+    | "store_credit";
   paymentStartDate?: string; // formato: YYYY-MM-DD
   paymentEndDate?: string; // formato: YYYY-MM-DD
   saleStartDate?: string; // formato: YYYY-MM-DD
@@ -34,6 +35,7 @@ export const initialSaleFormData: CreateSaleParams = {
   installments_count: 0,
   items: [],
   prohibited: 0,
+  credit_amount: 0,
 };
 
 export interface CreateSaleParams {
@@ -47,6 +49,8 @@ export interface CreateSaleParams {
   prohibited: number;
   /** Dinheiro entregue pelo cliente (total à vista ou entrada); vazio = valor exato */
   amount_received?: number;
+  /** Parte paga com o vale-troca do cliente */
+  credit_amount?: number;
 }
 
 interface CreateSaleItemParams {
@@ -76,6 +80,12 @@ export interface ListSalesResponse {
   customer_name: string;
   installment_total_amount: number;
   down_payments: number;
+  /** Valor já devolvido em trocas/devoluções */
+  returned_total: number;
+  /** Venda criada por uma troca */
+  is_exchange_sale: boolean;
+  /** Parte paga com vale-troca */
+  credit_amount: number;
 }
 
 export interface ListProductResponse {

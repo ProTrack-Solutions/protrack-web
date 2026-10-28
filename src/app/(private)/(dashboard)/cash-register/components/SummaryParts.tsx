@@ -13,7 +13,7 @@ import { POSITIVE_TEXT, formatTime } from "./format";
 /** Quanto entrou em cada forma de pagamento, com barra proporcional */
 export function MethodBreakdown({ summary }: { summary: CashSummary }) {
   const methods = summary.by_method.filter(
-    (m) => m.received > 0 || m.sales_count > 0,
+    (m) => m.received !== 0 || m.sales_count > 0 || (m.refunds_count ?? 0) > 0,
   );
   const max = Math.max(...methods.map((m) => m.received), 1);
 
@@ -32,6 +32,8 @@ export function MethodBreakdown({ summary }: { summary: CashSummary }) {
             `${m.sales_count} ${m.sales_count === 1 ? "venda" : "vendas"}`,
           m.receipts_count &&
             `${m.receipts_count} ${m.receipts_count === 1 ? "parcela recebida" : "parcelas recebidas"}`,
+          m.refunds_total &&
+            `${brl(m.refunds_total)} devolvidos em ${m.refunds_count} ${m.refunds_count === 1 ? "devolução" : "devoluções"}`,
         ].filter(Boolean);
         return (
           <li key={m.payment_method}>
@@ -51,7 +53,7 @@ export function MethodBreakdown({ summary }: { summary: CashSummary }) {
               <div
                 className="h-full rounded-full transition-[width] duration-700"
                 style={{
-                  width: `${(m.received / max) * 100}%`,
+                  width: `${(Math.max(m.received, 0) / max) * 100}%`,
                   backgroundColor: color,
                 }}
               />
@@ -60,6 +62,8 @@ export function MethodBreakdown({ summary }: { summary: CashSummary }) {
               {details.join(" · ")}
               {m.payment_method === "installments" &&
                 ` · ${brl(m.sales_total)} vendidos, só a entrada entra no caixa`}
+              {m.payment_method === "store_credit" &&
+                " · pagas com vale-troca, não entra dinheiro"}
             </p>
           </li>
         );
@@ -85,6 +89,9 @@ export function CashComposition({
     },
     { label: "Suprimentos", value: summary.supplies_total, sign: "+" },
     { label: "Sangrias", value: summary.withdrawals_total, sign: "−" },
+    ...(summary.cash_refunds
+      ? [{ label: "Devoluções a clientes", value: summary.cash_refunds, sign: "−" }]
+      : []),
   ];
 
   return (

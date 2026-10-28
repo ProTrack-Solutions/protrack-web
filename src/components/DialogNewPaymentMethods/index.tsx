@@ -110,7 +110,9 @@ export function DialogNewPaymentMethod({
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    {Object.entries(PaymentMethod).map(([k, v]) => {
+                    {Object.entries(PaymentMethod)
+                      .filter(([, v]) => v !== PaymentMethod.StoreCredit)
+                      .map(([k, v]) => {
                       return (
                         <SelectItem key={k} value={v}>
                           {getPaymentMethodLabel(v)}

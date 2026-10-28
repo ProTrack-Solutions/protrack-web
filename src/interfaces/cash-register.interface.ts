@@ -34,8 +34,11 @@ export interface CashMethodSummary {
   sales_total: number;
   receipts_count: number;
   receipts_total: number;
-  /** O que de fato entrou: na venda a prazo, só a entrada */
+  /** O que de fato entrou: na venda a prazo, só a entrada (já sem reembolsos) */
   received: number;
+  /** Devolvido a clientes em trocas/devoluções nesta forma */
+  refunds_count?: number;
+  refunds_total?: number;
 }
 
 export interface CashSummary {
@@ -48,6 +51,11 @@ export interface CashSummary {
   cash_received: number;
   supplies_total: number;
   withdrawals_total: number;
+  /** Devolvido a clientes em trocas/devoluções do turno */
+  refunds_count?: number;
+  refunds_total?: number;
+  /** Parte em dinheiro dos reembolsos (sai da gaveta) */
+  cash_refunds?: number;
   expected_cash: number;
   /** Troco devolvido no turno, já descontado de cash_received */
   change_count: number;

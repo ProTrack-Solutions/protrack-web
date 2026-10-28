@@ -23,6 +23,7 @@ export const DASHBOARD_ROUTE_ACCESS: RouteAccessRule[] = [
   { path: "/sale", module: "sales" },
   { path: "/sales-list", module: "sales" },
   { path: "/cash-register", module: "sales" },
+  { path: "/returns", module: "sales" },
   { path: "/accounts-payable", module: "financial" },
   { path: "/accounts-receivable", module: "financial" },
   { path: "/cash-flow", module: "financial" },
