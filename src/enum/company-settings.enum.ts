@@ -8,4 +8,5 @@ export enum CompanySettings {
   RequireOpenCashRegister = "require_open_cash_register",
   DueReminderTemplate = "due_reminder_template",
   LanguageDueReminderTemplate = "language_due_reminder_template",
+  ReturnWindowDays = "return_window_days",
 }

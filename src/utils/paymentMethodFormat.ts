@@ -9,6 +9,7 @@ export function getPaymentMethodLabel(method: PaymentMethod | string): string {
     [PaymentMethod.BankTransfer]: "Transferência Bancária",
     [PaymentMethod.Installments]: "Crediário / Parcelado",
     [PaymentMethod.Other]: "Outro",
+    [PaymentMethod.StoreCredit]: "Vale-troca",
   };
 
   return labels[method] || "Desconhecido";
@@ -23,6 +24,7 @@ export function getPaymentMethodColor(method: PaymentMethod | string): string {
     [PaymentMethod.BankTransfer]: "#4F46E5",
     [PaymentMethod.Installments]: "#F59E0B",
     [PaymentMethod.Other]: "#6B7280",
+    [PaymentMethod.StoreCredit]: "#DB2777",
   };
 
   return colors[method] || "#94A3B8";
@@ -39,6 +41,7 @@ export function getPaymentMethodHSLColor(
     [PaymentMethod.BankTransfer]: "hsl(var(--muted-foreground))",
     [PaymentMethod.Installments]: "hsl(var(--warning, 38 92% 50%))",
     [PaymentMethod.Other]: "hsl(var(--muted))",
+    [PaymentMethod.StoreCredit]: "hsl(330 81% 60%)",
   };
 
   return colors[method] || "hsl(var(--border))";
