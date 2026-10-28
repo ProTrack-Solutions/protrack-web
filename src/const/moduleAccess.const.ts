@@ -26,7 +26,7 @@ export const DASHBOARD_ROUTE_ACCESS: RouteAccessRule[] = [
   { path: "/accounts-payable", module: "financial" },
   { path: "/accounts-receivable", module: "financial" },
   { path: "/cash-flow", module: "financial" },
-  { path: "/relatorio", module: "reports" },
+  { path: "/reports", module: "reports" },
   { path: "/product-registration", module: "inventory" },
   { path: "/client-registration", module: "customers" },
 ];
@@ -62,7 +62,7 @@ const MODULE_HOME_ROUTE: Record<string, string> = {
   sales: "/sale",
   customers: "/clients",
   inventory: "/stock",
-  reports: "/relatorio",
+  reports: "/reports",
 };
 
 const MODULE_PRIORITY: string[] = [

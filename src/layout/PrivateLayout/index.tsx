@@ -13,6 +13,7 @@ import {
   BanknoteArrowDown,
   TrendingUp,
   Wallet,
+  FileChartColumn,
 } from "lucide-react";
 import { useSidebar } from "@/context/SidebarContext";
 import { Sidebar } from "@/components/Sidebar/Sidebar";
@@ -132,6 +133,17 @@ export function PrivateLayout({ children }: { children: React.ReactNode }) {
           text: "Fluxo de Caixa",
           router: "/cash-flow",
           module: "financial",
+        },
+      ],
+    },
+    {
+      label: "Análises",
+      items: [
+        {
+          icon: <FileChartColumn size={20} />,
+          text: "Relatórios",
+          router: "/reports",
+          module: "reports",
         },
       ],
     },
