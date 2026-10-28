@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { use, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ArrowRight, Eye, EyeOff, Loader2, Lock, Mail } from "lucide-react";
@@ -42,17 +42,30 @@ const LOGIN_ERROR_MESSAGES: Record<string, string> = {
     "O pagamento da assinatura ainda não foi confirmado. Se você acabou de se cadastrar, aguarde alguns instantes e tente novamente.",
 };
 
+// Avisos de quando o usuário foi mandado de volta para o login
+const LOGOUT_REASONS: Record<string, string> = {
+  session_replaced:
+    "Sua conta foi acessada em outro navegador e esta sessão foi encerrada. Só é permitido um acesso por vez no sistema web.",
+};
+
 const DEFAULT_LOGIN_ERROR =
   "Credenciais inválidas ou erro ao conectar com o servidor.";
 
-export default function Login() {
+export default function Login({
+  searchParams,
+}: {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}) {
+  const { reason } = use(searchParams);
   const [loginParams, setLoginParams] = useState<LoginParams>({
     email: "",
     password: "",
   });
   const [mostrarSenha, setMostrarSenha] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useState(
+    (typeof reason === "string" && LOGOUT_REASONS[reason]) || "",
+  );
   const router = useRouter();
 
   const handleCheckboxChange = () => {
