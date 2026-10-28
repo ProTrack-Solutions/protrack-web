@@ -34,9 +34,13 @@ async function refreshAccessToken(token: JWT): Promise<JWT> {
     };
   } catch (error) {
     console.error("Erro ao renovar access token:", error);
+    // Outro login no web derrubou esta sessão (uma sessão por usuário)
+    const replaced =
+      axios.isAxiosError(error) &&
+      error.response?.data?.code === "SESSION_REPLACED";
     return {
       ...token,
-      error: "RefreshAccessTokenError",
+      error: replaced ? "SessionReplaced" : "RefreshAccessTokenError",
     };
   }
 }
@@ -117,7 +121,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
             {
               email: credentials?.email,
               password: credentials?.password,
-              aud: "protrack-web",
+              aud: "protrack-gerencial-web",
             },
           );
 
@@ -145,7 +149,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         try {
           const response = await axios.post(
             `${process.env.NEXT_PUBLIC_API_URL}/auth/demo`,
-            { aud: "protrack-web" },
+            { aud: "protrack-gerencial-web" },
           );
 
           await forwardBackendCookies(response.headers["set-cookie"]);

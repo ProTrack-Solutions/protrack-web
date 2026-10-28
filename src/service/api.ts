@@ -38,6 +38,9 @@ export async function logout(callbackUrl = "/login") {
   }
 }
 
+// Login com o aviso de que outra sessão assumiu a conta
+const SESSION_REPLACED_URL = "/login?reason=session_replaced";
+
 export const api = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL,
   timeout: 30000,
@@ -52,6 +55,11 @@ api.interceptors.request.use(
     if (signingOut) return Promise.reject(new Error("Saindo da aplicação"));
 
     const session = await getCachedSession();
+
+    if (session?.error === "SessionReplaced") {
+      await logout(SESSION_REPLACED_URL);
+      return Promise.reject(new Error("Sessão encerrada por outro login"));
+    }
 
     if (session?.error === "RefreshAccessTokenError") {
       await logout();
@@ -83,7 +91,12 @@ api.interceptors.response.use(
     }
 
     if (error.response && error.response.status === 401) {
-      await logout();
+      // A conta entrou em outro navegador: só vale uma sessão no web por usuário
+      await logout(
+        error.response.data?.code === "SESSION_REPLACED"
+          ? SESSION_REPLACED_URL
+          : undefined,
+      );
     }
     return Promise.reject(error);
   },
