@@ -51,6 +51,8 @@ interface DialogEditClientsProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   clients: Client;
+  /** Chamado depois de salvar, para a tela recarregar os dados dela */
+  onSaved?: () => void;
 }
 
 const emptyClients: UpdatedClient = {
@@ -79,21 +81,18 @@ export function DialogEditClients({
   clients,
   open,
   onOpenChange,
+  onSaved,
 }: DialogEditClientsProps) {
+  // Data de nascimento como dia do calendário (YYYY-MM-DD), sem passar por UTC
+  const birthDay = clients?.birth_date ? String(clients.birth_date).slice(0, 10) : "";
+
   const [formData, setFormData] = useState<UpdatedClient>(() =>
-    clients
-      ? {
-          ...clients,
-          birth_date: clients.birth_date
-            ? format(new Date(clients.birth_date), "yyyy-MM-dd")
-            : "",
-        }
-      : emptyClients,
+    clients ? { ...clients, birth_date: birthDay } : emptyClients,
   );
 
   const [date, setDate] = useState<Date | undefined>(() => {
-    if (!clients?.birth_date) return undefined;
-    const d = new Date(clients.birth_date + "T00:00:00");
+    if (!birthDay) return undefined;
+    const d = new Date(birthDay + "T00:00:00");
     return isNaN(d.getTime()) ? undefined : d;
   });
 
@@ -116,6 +115,7 @@ export function DialogEditClients({
       console.log("formData", formData);
       await UpdateClient(clients.id, formData);
       toast.success("Cliente atualizado com sucesso");
+      onSaved?.();
     } catch (error) {
       console.log(error);
       toast.error("Erro ao atualizar cliente");
