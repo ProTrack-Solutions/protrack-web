@@ -31,7 +31,6 @@ import {
   MessageCircle,
 } from "lucide-react";
 import { toast } from "sonner";
-import { isAxiosError } from "axios";
 import { getApiErrorMessage } from "@/utils/apiError";
 import { useClients } from "@/hooks/useClients";
 import { usePaymentMethods } from "@/hooks/usePaymentMethods";
@@ -41,6 +40,14 @@ import { Payment } from "@/service/payments.service";
 interface DialogBaixaReceberProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  /** Baixa aberta a partir de uma parcela: cliente fixo e valor sugerido */
+  prefill?: {
+    customerId: string;
+    customerName: string;
+    amount: number;
+    dueDate: string;
+  };
+  onSuccess?: () => void;
 }
 
 const todayISO = () => new Date().toISOString().slice(0, 10);
@@ -48,12 +55,15 @@ const todayISO = () => new Date().toISOString().slice(0, 10);
 export const DialogReceipt = ({
   open,
   onOpenChange,
+  prefill,
+  onSuccess,
 }: DialogBaixaReceberProps) => {
-  const [amountPaid, setAmountPaid] = useState<number>(0);
+  const [amountPaid, setAmountPaid] = useState<number>(prefill?.amount ?? 0);
   const [paymentDate, setPaymentDate] = useState<string>(todayISO());
   const [paymentMethodId, setPaymentMethodId] = useState<string>("");
   const [note, setNote] = useState("");
-  const [clientId, setClientId] = useState("");
+  const [clientId, setClientId] = useState(prefill?.customerId ?? "");
+  const [submitting, setSubmitting] = useState(false);
 
   const { clients } = useClients();
 
@@ -64,7 +74,18 @@ export const DialogReceipt = ({
 
   const { paymentMethods } = usePaymentMethods();
 
+  const reset = () => {
+    setClientId(prefill?.customerId ?? "");
+    setNote("");
+    setPaymentMethodId("");
+    setAmountPaid(prefill?.amount ?? 0);
+  };
+
   const handleSubmit = async () => {
+    if (!clientId) {
+      toast("Selecione o cliente.");
+      return;
+    }
     if (amountPaid <= 0) {
       toast("Informe um valor maior que zero.");
       return;
@@ -78,6 +99,7 @@ export const DialogReceipt = ({
       return;
     }
 
+    setSubmitting(true);
     try {
       await Payment({
         amount_paid: amountPaid,
@@ -90,20 +112,16 @@ export const DialogReceipt = ({
           minimumFractionDigits: 2,
         })} confirmado.`,
       );
+      reset();
+      onOpenChange(false);
+      onSuccess?.();
     } catch (error) {
       console.log(error);
-      // 409: caixa fechado numa empresa que exige caixa aberto
-      toast.error(
-        isAxiosError(error) && error.response?.status === 409
-          ? getApiErrorMessage(error, "Erro ao registrar o pagamento")
-          : "Erro ao registrar o pagamento",
-      );
+      // 409: caixa fechado numa empresa que exige caixa aberto. Em erro o
+      // formulário continua aberto para o usuário corrigir e tentar de novo.
+      toast.error(getApiErrorMessage(error, "Erro ao registrar o pagamento"));
     } finally {
-      onOpenChange(false);
-      setClientId("");
-      setNote("");
-      setPaymentMethodId("");
-      setAmountPaid(0);
+      setSubmitting(false);
     }
   };
 
@@ -138,23 +156,43 @@ export const DialogReceipt = ({
             </div>
             <Separator />
 
-            <div className="space-y-2">
-              <Label htmlFor="conta_id">
-                Selecionar Cliente <span className="text-destructive">*</span>
-              </Label>
-              <Select value={clientId} onValueChange={setClientId}>
-                <SelectTrigger id="conta_id">
-                  <SelectValue placeholder="Selecione o cliente" />
-                </SelectTrigger>
-                <SelectContent>
-                  {clients.map((c) => (
-                    <SelectItem key={c.id} value={c.id}>
-                      {c.full_name} — R$ {c.balance_due}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
+            {prefill ? (
+              <div className="rounded-lg border bg-muted/40 p-3 text-sm">
+                <p className="font-medium text-foreground">
+                  {prefill.customerName}
+                </p>
+                <p className="text-muted-foreground">
+                  Parcela com vencimento em {prefill.dueDate.slice(8, 10)}/
+                  {prefill.dueDate.slice(5, 7)}/{prefill.dueDate.slice(0, 4)} ·
+                  em aberto R${" "}
+                  {prefill.amount.toLocaleString("pt-BR", {
+                    minimumFractionDigits: 2,
+                  })}
+                </p>
+                <p className="mt-2 text-xs text-muted-foreground">
+                  O valor recebido abate as parcelas em aberto do cliente, da
+                  mais antiga para a mais nova.
+                </p>
+              </div>
+            ) : (
+              <div className="space-y-2">
+                <Label htmlFor="conta_id">
+                  Selecionar Cliente <span className="text-destructive">*</span>
+                </Label>
+                <Select value={clientId} onValueChange={setClientId}>
+                  <SelectTrigger id="conta_id">
+                    <SelectValue placeholder="Selecione o cliente" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {clients.map((c) => (
+                      <SelectItem key={c.id} value={c.id}>
+                        {c.full_name} — R$ {c.balance_due}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
           </div>
 
           <div className="space-y-4">
@@ -299,9 +337,13 @@ export const DialogReceipt = ({
             <X className="h-4 w-4 mr-2" />
             Cancelar
           </Button>
-          <Button onClick={handleSubmit} className="cursor-pointer">
+          <Button
+            onClick={handleSubmit}
+            disabled={submitting}
+            className="cursor-pointer"
+          >
             <CheckCircle2 className="h-4 w-4 mr-2" />
-            Confirmar Baixa
+            {submitting ? "Registrando..." : "Confirmar Baixa"}
           </Button>
         </DialogFooter>
       </DialogContent>

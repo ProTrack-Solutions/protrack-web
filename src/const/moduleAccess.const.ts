@@ -26,7 +26,8 @@ export const DASHBOARD_ROUTE_ACCESS: RouteAccessRule[] = [
   { path: "/accounts-payable", module: "financial" },
   { path: "/accounts-receivable", module: "financial" },
   { path: "/cash-flow", module: "financial" },
-  { path: "/relatorio", module: "reports" },
+  { path: "/reports", module: "reports" },
+  { path: "/purchases", module: "purchases" },
   { path: "/product-registration", module: "inventory" },
   { path: "/client-registration", module: "customers" },
 ];
@@ -50,8 +51,15 @@ export const ALL_ROUTE_ACCESS: RouteAccessRule[] = [
   ...CONFIG_ROUTE_ACCESS,
 ];
 
+// Casa a rota exata ou uma subrota dela ("/purchases/123" herda "/purchases").
+// O "/" no prefixo evita que "/sale" case com "/sales-list".
 export function findRouteAccessRule(path: string): RouteAccessRule | undefined {
-  return ALL_ROUTE_ACCESS.find((rule) => rule.path === path);
+  return (
+    ALL_ROUTE_ACCESS.find((rule) => rule.path === path) ??
+    ALL_ROUTE_ACCESS.filter((rule) => path.startsWith(`${rule.path}/`)).sort(
+      (a, b) => b.path.length - a.path.length,
+    )[0]
+  );
 }
 
 // Tela "home" de cada módulo, e a ordem de prioridade usada quando o
@@ -62,7 +70,8 @@ const MODULE_HOME_ROUTE: Record<string, string> = {
   sales: "/sale",
   customers: "/clients",
   inventory: "/stock",
-  reports: "/relatorio",
+  reports: "/reports",
+  purchases: "/purchases",
 };
 
 const MODULE_PRIORITY: string[] = [
@@ -70,6 +79,7 @@ const MODULE_PRIORITY: string[] = [
   "sales",
   "customers",
   "inventory",
+  "purchases",
   "reports",
 ];
 
