@@ -8,6 +8,7 @@ export function getSaleStatusLabel(status: SaleStatus | string): string {
     [SaleStatus.Overdue]: "Atrasado",
     [SaleStatus.Scheduled]: "Agendado",
     [SaleStatus.Canceled]: "Cancelado",
+    [SaleStatus.Partial]: "Parcial",
   };
 
   return labels[status] || "Desconhecido";
@@ -22,6 +23,7 @@ export function getSaleStatusVariant(
     [SaleStatus.Canceled]: "destructive",
     [SaleStatus.Overdue]: "destructive",
     [SaleStatus.Scheduled]: "secondary",
+    [SaleStatus.Partial]: "secondary",
   };
 
   // Se vier um status desconhecido, usamos "outline" como padrão de segurança

@@ -4,4 +4,5 @@ export enum SaleStatus {
   Overdue = "overdue",
   Scheduled = "scheduled",
   Canceled = "canceled",
+  Partial = "partial",
 }

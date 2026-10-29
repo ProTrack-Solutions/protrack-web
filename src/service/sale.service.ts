@@ -3,6 +3,8 @@ import { api } from "./api";
 import {
   CreateSaleParams,
   GetInventoryTurnoverResponse,
+  GetSalesOverviewParams,
+  GetSalesOverviewResponse,
   GetSalesSummaryResponse,
   GetTop5ProductsResponse,
   GetTotalValuePenddingResponse,
@@ -97,3 +99,12 @@ export const GetInventoryTurnover =
     );
     return response.data;
   };
+
+export const GetSalesOverview = async (
+  params: GetSalesOverviewParams,
+): Promise<GetSalesOverviewResponse> => {
+  const response = await api.get<GetSalesOverviewResponse>("/sales/overview", {
+    params,
+  });
+  return response.data;
+};
