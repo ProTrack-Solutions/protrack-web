@@ -1,8 +1,8 @@
 "use client";
 
-import { use } from "react";
+import { Suspense } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { AlertCircle, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/DashCard";
@@ -11,14 +11,19 @@ import { getApiErrorMessage } from "@/utils/apiError";
 import { ReturnForm } from "../components/ReturnForm";
 import { SalePicker } from "../components/SalePicker";
 
-export default function NewReturnPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
-}) {
+// A rota é pré-renderizada como estática no build, então o searchParams da página
+// chega vazio em produção; useSearchParams lê a URL no cliente
+export default function NewReturnPage() {
+  return (
+    <Suspense>
+      <NewReturnContent />
+    </Suspense>
+  );
+}
+
+function NewReturnContent() {
   const router = useRouter();
-  const saleParam = use(searchParams).sale;
-  const saleId = typeof saleParam === "string" ? saleParam : "";
+  const saleId = useSearchParams().get("sale") ?? "";
   const { data: sale, isLoading, isError, error, refetch } = useReturnableSale(saleId);
 
   return (
