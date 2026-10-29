@@ -58,7 +58,7 @@ function OpenRegisterForm({ onDone }: { onDone: () => void }) {
       <DialogHeader>
         <DialogTitle>Abrir caixa</DialogTitle>
         <DialogDescription>
-          As vendas e recebimentos a partir de agora entram no seu turno.
+          As vendas e recebimentos neste caixa, de qualquer operador, entram no turno.
         </DialogDescription>
       </DialogHeader>
 

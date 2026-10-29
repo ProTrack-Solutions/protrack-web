@@ -574,7 +574,7 @@ export function ReturnForm({ sale }: { sale: ReturnableSale }) {
                     </SelectContent>
                   </Select>
                   {refundMethod === "cash" && (
-                    <p className="text-xs text-muted-foreground">Sai da gaveta do seu caixa.</p>
+                    <p className="text-xs text-muted-foreground">Sai da gaveta do caixa.</p>
                   )}
                 </div>
               )}

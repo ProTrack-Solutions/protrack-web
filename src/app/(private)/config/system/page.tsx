@@ -3,6 +3,7 @@
 import { HeaderConfig } from "@/components/HeaderConfig";
 import { ConfigWhatsApp } from "./components/ConfigWhatsApp";
 import { ConfigCashRegister } from "./components/ConfigCashRegister";
+import { ConfigCashRegisters } from "./components/ConfigCashRegisters";
 import { ConfigStock } from "./components/ConfigStock";
 import { ConfigReturns } from "./components/ConfigReturns";
 import { TabsList, TabsTrigger, TabsContent, Tabs } from "@/components/ui/tabs";
@@ -41,6 +42,7 @@ export default function SystemConfigPage() {
 
         <TabsContent value="cash-register" className="space-y-4 mt-4">
           <ConfigCashRegister />
+          <ConfigCashRegisters />
         </TabsContent>
 
         <TabsContent value="stock" className="space-y-4 mt-4">
