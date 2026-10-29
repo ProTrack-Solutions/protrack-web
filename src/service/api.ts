@@ -2,6 +2,7 @@ import axios from "axios";
 import { getSession, signOut } from "next-auth/react";
 import type { Session } from "next-auth";
 import { toast } from "sonner";
+import { getDeviceCashRegisterId } from "@/utils/cashRegisterDevice";
 
 // Cada getSession() é um GET /api/auth/session; sem cache o dashboard dispara
 // dezenas deles. O jwt callback renova o token 30s antes de expirar, então
@@ -68,6 +69,12 @@ api.interceptors.request.use(
 
     if (session?.accessToken) {
       config.headers.Authorization = `Bearer ${session?.accessToken}`;
+    }
+
+    // Caixa em que este computador trabalha: a API liga vendas e recebimentos ao turno dele
+    const cashRegisterId = getDeviceCashRegisterId();
+    if (cashRegisterId) {
+      config.headers.CashRegisterId = cashRegisterId;
     }
     return config;
   },

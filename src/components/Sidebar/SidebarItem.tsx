@@ -1,6 +1,11 @@
 import Link from "next/link";
 import { useSidebar } from "../../context/SidebarContext";
 import { useModuleAccess } from "@/hooks/useModuleAccess";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 type SidebarItemProps = {
   active?: boolean;
@@ -49,23 +54,25 @@ export function SidebarItem({
           }`}
         />
       )}
-      {!expanded && (
-        <div
-          className="
-            absolute left-full rounded-md px-2 py-1 ml-6
-            bg-indigo-100 text-indigo-800 text-sm
-            invisible opacity-20 -translate-x-3 transition-all
-            group-hover:visible group-hover:opacity-100 group-hover:translate-x-0
-          "
-        >
-          {text}
-        </div>
-      )}
     </>
   );
 
+  // Recolhida, a sidebar só mostra o ícone: o nome aparece no hover. O balão
+  // vai num portal porque a lista tem overflow escondido e cortaria ele.
+  const withTooltip = (item: React.ReactElement) =>
+    expanded ? (
+      item
+    ) : (
+      <Tooltip>
+        <TooltipTrigger asChild>{item}</TooltipTrigger>
+        <TooltipContent side="right" sideOffset={8}>
+          {text}
+        </TooltipContent>
+      </Tooltip>
+    );
+
   if (router) {
-    return (
+    return withTooltip(
       <li
         className={`
           relative flex items-center w-auto h-9 py-1.5 px-3 my-0.5
@@ -81,11 +88,11 @@ export function SidebarItem({
         <Link href={router} className="flex items-center w-full">
           {content}
         </Link>
-      </li>
+      </li>,
     );
   }
 
-  return (
+  return withTooltip(
     <li
       className={`
         relative flex items-center py-1.5 px-3 my-0.5
@@ -99,6 +106,6 @@ export function SidebarItem({
       `}
     >
       {content}
-    </li>
+    </li>,
   );
 }

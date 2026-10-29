@@ -1,135 +1,56 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { Download } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { format } from "date-fns";
+import { useMemo, useState } from "react";
+import { AlertCircle } from "lucide-react";
+import { useSalesOverview } from "@/hooks/useSales";
+import { SalesHeader } from "./components/SalesHeader";
+import { SalesKpis } from "./components/SalesKpis";
+import { SalesTable } from "./components/SalesTable";
+import { SalesPeriod, periodRange } from "./components/format";
 
-import { SaleListStats } from "./components/SaleListStats";
-import { SaleListSearch } from "./components/SaleListSearch";
-import { SaleListTable } from "./components/SaleListTable";
-import { useSales } from "@/hooks/useSales";
-import { Loading } from "@/components/Loading";
-import { Header } from "@/components/Header";
-import { DataPagination } from "@/components/DataPagination";
-import { usePagination } from "@/hooks/usePagination";
-import { FiltrosReceber } from "@/components/FilterPopOver";
-import { SalePaginationParams } from "@/interfaces/sale.interface";
+// Os cards vêm de /sales/overview e a lista usa o mesmo período. Ao trocar o filtro os números anteriores ficam na tela, levemente
+// apagados, até os novos chegarem.
+export default function SalesListPage() {
+  const [period, setPeriod] = useState<SalesPeriod>("all");
+  const range = useMemo(() => periodRange(period), [period]);
 
-export default function SalesList() {
-  const [searchText, setSearchText] = useState("");
-  const [search, setSearch] = useState("");
-  const [statusFilter, setStatusFilter] = useState("todos");
-  const [paymentMethodFilter, setPaymentMethodFilter] = useState("todos");
-  const [expandedId, setExpandedId] = useState<string | null>(null);
-
-  const { currentPage, displayPage, pageRange, goToPage, setTotalPages } =
-    usePagination({
-      totalPages: 1,
-    });
-
-  const [filter, setFilter] = useState<FiltrosReceber>({
-    typeDate: "criacao",
-  });
-
-  const {
-    sales,
-    salesCanceled,
-    salesCount,
-    totalInvoiced,
-    totalPending,
-    loading,
-    totalPages,
-    refetch,
-  } = useSales({
-    Page: currentPage,
-    PerPage: 10,
-    Search: search,
-    sortBy: "sale_at",
-    OrderBy: "desc",
-    saleStatus:
-      statusFilter === "todos"
-        ? undefined
-        : (statusFilter as SalePaginationParams["saleStatus"]),
-    paymentMethod:
-      paymentMethodFilter === "todos"
-        ? undefined
-        : (paymentMethodFilter as SalePaginationParams["paymentMethod"]),
-    saleEndDate:
-      (filter?.endDate && format(filter.endDate, "yyyy-MM-dd")) ?? "",
-    saleStartDate:
-      (filter?.startDate && format(filter.startDate, "yyyy-MM-dd")) ?? "",
-  });
-
-  useEffect(() => {
-    refetch();
-  }, [
-    currentPage,
-    search,
-    filter,
-    statusFilter,
-    paymentMethodFilter,
-    refetch,
-  ]);
-
-  useEffect(() => {
-    setTotalPages(totalPages || 1);
-  }, [totalPages, setTotalPages]);
-
-  const handleSearch = (value: string) => {
-    setSearch(value);
-    goToPage(1);
-  };
-
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center w-full h-full">
-        <Loading />
-      </div>
-    );
-  }
+  const { data, isLoading, isError, isPlaceholderData, refetch } =
+    useSalesOverview(range);
 
   return (
-    <div className="container mx-auto p-6 space-y-6">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <Header title="Vendas" text="Gerencie todas as vendas realizadas" />
-        <Button variant="outline" size="sm">
-          <Download className="h-4 w-4 mr-2" />
-          Exportar
-        </Button>
-      </div>
-
-      <SaleListStats
-        salesCanceled={salesCanceled || 0}
-        salesCount={salesCount}
-        totalInvoiced={totalInvoiced || 0}
-        totalPending={totalPending || 0}
+    <div className="space-y-6 p-6">
+      <SalesHeader
+        period={period}
+        onPeriodChange={setPeriod}
+        range={data && { start: data.start_date, end: data.end_date }}
       />
 
-      <SaleListSearch
-        searchText={searchText}
-        onSearchTextChange={setSearchText}
-        onSearchChange={handleSearch}
-        statusFilter={statusFilter}
-        setStatusFilter={setStatusFilter}
-        paymentMethodFilter={paymentMethodFilter}
-        setPaymentMethodFilter={setPaymentMethodFilter}
-        filter={filter}
-        onApplyFilter={setFilter}
-      />
+      {isError && !data ? (
+        <div className="dash-in flex flex-col items-center gap-3 rounded-2xl border border-destructive/30 bg-destructive/5 p-10 text-center">
+          <AlertCircle className="h-8 w-8 text-destructive" />
+          <p className="font-medium text-foreground">
+            Não foi possível carregar os indicadores de vendas.
+          </p>
+          <button
+            type="button"
+            onClick={() => refetch()}
+            className="cursor-pointer rounded-full bg-primary px-4 py-1.5 text-sm font-semibold text-primary-foreground hover:opacity-90"
+          >
+            Tentar novamente
+          </button>
+        </div>
+      ) : (
+        <div
+          aria-busy={isPlaceholderData}
+          className={`transition-opacity duration-300 ${
+            isPlaceholderData ? "opacity-60" : ""
+          }`}
+        >
+          <SalesKpis data={data} period={period} loading={isLoading} />
+        </div>
+      )}
 
-      <SaleListTable
-        filteredVendas={sales}
-        expandedId={expandedId}
-        setExpandedId={setExpandedId}
-      />
-      <DataPagination
-        currentPage={displayPage}
-        totalPages={totalPages || 1}
-        pageRange={pageRange}
-        goToPage={goToPage}
-      />
+      <SalesTable range={range} />
     </div>
   );
 }
