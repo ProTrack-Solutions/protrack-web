@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
@@ -37,6 +37,9 @@ import {
   SalePaginationParams,
 } from "@/interfaces/sale.interface";
 import { DeleteSale, GetSaleReceipt } from "@/service/sale.service";
+import { FISCAL_KEY, useFiscalSettings, useSalesFiscalDocuments } from "@/hooks/useFiscal";
+import { FiscalStatusBadge } from "@/components/Fiscal/FiscalStatusBadge";
+import { FiscalDocumentActions } from "@/components/Fiscal/FiscalDocumentActions";
 import { getApiErrorMessage } from "@/utils/apiError";
 import { getPageRange } from "@/utils/pagination";
 import { getPaymentMethodLabel } from "@/utils/paymentMethodFormat";
@@ -121,6 +124,18 @@ export function SalesTable({ range }: SalesTableProps) {
     });
 
   const sales = data?.data ?? [];
+  // NFC-e de cada venda da página
+  const { data: fiscal } = useFiscalSettings();
+  const saleIds = useMemo(
+    () => (data?.data ?? []).map((v) => v.sale.sale_id),
+    [data],
+  );
+  const { data: fiscalDocs = {} } = useSalesFiscalDocuments(saleIds);
+  const showFiscal = !!fiscal?.enabled || Object.keys(fiscalDocs).length > 0;
+  // NFC-e é da hora da venda: sem nota, só oferece emitir para venda das últimas 24h
+  const [openedAt] = useState(() => Date.now());
+  const isRecent = (saleAt: string) =>
+    openedAt - new Date(saleAt).getTime() < 24 * 60 * 60 * 1000;
   const totalPages = Math.max(data?.total_pages ?? 1, 1);
   const filtered = !!debouncedSearch || status !== "all" || paymentMethod !== "all";
 
@@ -155,8 +170,13 @@ export function SalesTable({ range }: SalesTableProps) {
   const handleDeleteSale = async (saleId: string) => {
     try {
       await DeleteSale(saleId);
-      toast.success("Venda cancelada com sucesso");
+      toast.success(
+        fiscalDocs[saleId]?.status === "AUTHORIZED"
+          ? "Venda cancelada e NFC-e cancelada na SEFAZ"
+          : "Venda cancelada com sucesso",
+      );
       await queryClient.invalidateQueries({ queryKey: ["sales"] });
+      queryClient.invalidateQueries({ queryKey: [FISCAL_KEY] });
     } catch (error) {
       console.log(error);
       toast.error(getApiErrorMessage(error, "Erro ao cancelar venda"));
@@ -369,9 +389,37 @@ export function SalesTable({ range }: SalesTableProps) {
                             </span>
                           )}
                         </div>
+                        {showFiscal &&
+                          (fiscalDocs[sale.sale_id] ||
+                            (!!fiscal?.enabled && !isCanceled && isRecent(sale.sale_at))) && (
+                          <div
+                            className="mt-1"
+                            title={
+                              fiscalDocs[sale.sale_id]?.reject_reason ??
+                              fiscalDocs[sale.sale_id]?.error_message ??
+                              undefined
+                            }
+                          >
+                            <FiscalStatusBadge
+                              document={fiscalDocs[sale.sale_id] ?? null}
+                              showNumber
+                            />
+                          </div>
+                        )}
                       </td>
                       <td className="px-4 py-3">
                         <div className="flex items-center justify-end gap-1">
+                          {showFiscal && (
+                            <span onClick={(e) => e.stopPropagation()}>
+                              <FiscalDocumentActions
+                                saleId={sale.sale_id}
+                                document={fiscalDocs[sale.sale_id] ?? null}
+                                allowEmitWithoutDocument={
+                                  !!fiscal?.enabled && !isCanceled && isRecent(sale.sale_at)
+                                }
+                              />
+                            </span>
+                          )}
                           <Button
                             variant="ghost"
                             size="icon"

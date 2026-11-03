@@ -26,6 +26,9 @@ import { CASH_REGISTER_KEY } from "@/hooks/useCashRegister";
 import { CUSTOMER_CREDIT_KEY } from "@/hooks/useReturns";
 import { CashRegisterStatus } from "./components/CashRegisterStatus";
 import { PaymentMethod } from "@/enum/methodPayments";
+import { FiscalDocument } from "@/interfaces/fiscal.interface";
+import { FISCAL_KEY } from "@/hooks/useFiscal";
+import { SaleFiscalResult } from "./components/SaleFiscalResult";
 
 function useDebouncedValue<T>(value: T, delay: number): T {
   const [debouncedValue, setDebouncedValue] = useState(value);
@@ -76,6 +79,11 @@ export default function Sale() {
   } = useInfiniteClients(debouncedClientSearch || undefined);
 
   const queryClient = useQueryClient();
+  // Venda recém-gravada com NFC-e: abre o resultado da nota (impressão)
+  const [lastSale, setLastSale] = useState<{
+    id: string;
+    document: FiscalDocument;
+  } | null>(null);
 
   const onSubmit = async (data: CreateSaleParams) => {
     try {
@@ -103,8 +111,13 @@ export default function Sale() {
         delete payload.amount_received;
       }
 
-      await CreateSale(payload);
-      toast.success("Venda cadastrada com sucesso!");
+      const created = await CreateSale(payload);
+      if (created.fiscal_document) {
+        setLastSale({ id: created.id, document: created.fiscal_document });
+        queryClient.invalidateQueries({ queryKey: [FISCAL_KEY] });
+      } else {
+        toast.success("Venda cadastrada com sucesso!");
+      }
       // A venda entra no resumo do caixa aberto
       queryClient.invalidateQueries({ queryKey: [CASH_REGISTER_KEY] });
       if (payload.credit_amount) {
@@ -174,6 +187,8 @@ export default function Sale() {
           <SaleFormActions />
         </form>
       </Form>
+
+      <SaleFiscalResult sale={lastSale} onClose={() => setLastSale(null)} />
     </div>
   );
 }

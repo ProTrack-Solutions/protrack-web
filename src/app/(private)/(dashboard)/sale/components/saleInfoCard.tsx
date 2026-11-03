@@ -20,7 +20,9 @@ import { CreateSaleParams } from "@/interfaces/sale.interface";
 import { Client } from "@/interfaces/client.interface";
 import { useMemo, useState } from "react";
 import { cn } from "@/lib/utils";
-import { formatDocument } from "@/utils/documentFormat";
+import { formatDocument, isValidCPF, maskCPF } from "@/utils/documentFormat";
+import { useFiscalSettings } from "@/hooks/useFiscal";
+import { Receipt } from "lucide-react";
 
 interface ClientSearchSelectProps {
   value?: string;
@@ -157,9 +159,12 @@ export function SaleInfoCard({
   onClientSelected,
   isSearchingClients = false,
 }: Props) {
-  const { control } = useFormContext<CreateSaleParams>();
+  const { control, setValue, getValues } = useFormContext<CreateSaleParams>();
   const [manuallySelectedClient, setManuallySelectedClient] =
     useState<Client | null>(null);
+  // CPF na nota só aparece com a NFC-e ligada
+  const { data: fiscal } = useFiscalSettings();
+  const fiscalOn = !!fiscal?.enabled;
   const customerId = useWatch({ control, name: "customer_id" });
 
   // Derived, not stored: if there's no customerId, there's no selected client.
@@ -178,6 +183,10 @@ export function SaleInfoCard({
   const handleClientSelected = (client: Client) => {
     setManuallySelectedClient(client);
     onClientSelected?.(client);
+    // Cliente com CPF: já sugere o CPF na nota (pode apagar)
+    if (fiscalOn && client.cpf && !getValues("buyer_document")) {
+      setValue("buyer_document", maskCPF(client.cpf));
+    }
   };
 
   return (
@@ -210,6 +219,39 @@ export function SaleInfoCard({
             </FormItem>
           )}
         />
+
+        {fiscalOn && (
+          <FormField
+            control={control}
+            name="buyer_document"
+            rules={{
+              validate: (v) =>
+                !v ||
+                isValidCPF(v) ||
+                "CPF inválido: confira ou deixe em branco",
+            }}
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="flex items-center gap-1.5">
+                  <Receipt className="h-3.5 w-3.5" /> CPF na nota
+                  <span className="font-normal text-muted-foreground">
+                    (opcional)
+                  </span>
+                </FormLabel>
+                <FormControl>
+                  <Input
+                    {...field}
+                    inputMode="numeric"
+                    placeholder="000.000.000-00"
+                    value={field.value ?? ""}
+                    onChange={(e) => field.onChange(maskCPF(e.target.value))}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        )}
 
         <Input
           type="date"

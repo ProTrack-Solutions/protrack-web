@@ -16,6 +16,7 @@ import {
   Wallet,
   FileChartColumn,
   Truck,
+  FileText,
 } from "lucide-react";
 import { useSidebar } from "@/context/SidebarContext";
 import { Sidebar } from "@/components/Sidebar/Sidebar";
@@ -111,6 +112,12 @@ export function PrivateLayout({ children }: { children: React.ReactNode }) {
           icon: <ShoppingCart size={20} />,
           text: "Histórico de Vendas",
           router: "/sales-list",
+          module: "sales",
+        },
+        {
+          icon: <FileText size={20} />,
+          text: "Notas Fiscais",
+          router: "/nfce",
           module: "sales",
         },
         {

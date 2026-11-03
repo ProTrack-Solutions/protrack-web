@@ -1,3 +1,4 @@
+import { FiscalDocument } from "@/interfaces/fiscal.interface";
 import { isAxiosError } from "axios";
 import { api } from "./api";
 import {
@@ -35,9 +36,12 @@ export const GetSales = async (
   return response.data;
 };
 
-export const CreateSale = async (params: CreateSaleParams): Promise<void> => {
-  await api.post("/sales", params);
-};
+/** Venda gravada; com a NFC-e ligada, a nota já vem na resposta (ou null). */
+export const CreateSale = async (
+  params: CreateSaleParams,
+): Promise<{ id: string; fiscal_document: FiscalDocument | null }> =>
+  // A NFC-e espera a SEFAZ (até ~20s): timeout maior que o padrão
+  (await api.post("/sales", params, { timeout: 60000 })).data;
 
 export const UpdateSale = async (
   params: UpdateSaleParams,
