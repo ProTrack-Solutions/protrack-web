@@ -24,6 +24,7 @@ export const DASHBOARD_ROUTE_ACCESS: RouteAccessRule[] = [
   { path: "/sales-list", module: "sales" },
   { path: "/cash-register", module: "sales" },
   { path: "/returns", module: "sales" },
+  { path: "/nfce", module: "sales" },
   { path: "/accounts-payable", module: "financial" },
   { path: "/accounts-receivable", module: "financial" },
   { path: "/cash-flow", module: "financial" },
@@ -41,6 +42,7 @@ export const CONFIG_ROUTE_ACCESS: RouteAccessRule[] = [
   { path: "/config/vendors", module: "inventory" },
   { path: "/config/departments" }, // gestão de departamentos, sem módulo
   { path: "/config/system", role: "ADMIN" }, // hoje só tem config de WhatsApp
+  { path: "/config/fiscal", role: "ADMIN" }, // NFC-e: emitente, A1, CSC e perfis tributários
   { path: "/config/security" }, // senha/segurança da própria conta, sem módulo
   { path: "/config/signature" }, // assinatura/plano da empresa, sem módulo
   { path: "/config/backup" }, // em desenvolvimento, sem módulo

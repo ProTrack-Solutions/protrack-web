@@ -10,6 +10,7 @@ import {
   PackageSearch,
   Pencil,
   Tag,
+  Receipt,
 } from "lucide-react";
 import {
   ModelVariation,
@@ -23,6 +24,10 @@ import { DialogStockMovement } from "@/components/DialogStockMovement";
 import { DialogModelStock } from "@/components/ProductGrid/DialogModelStock";
 import { DialogModelLabels } from "@/components/ProductGrid/DialogModelLabels";
 import { DialogEditModel } from "@/components/ProductGrid/DialogEditModel";
+import {
+  DialogProductFiscal,
+  FiscalTarget,
+} from "@/components/Fiscal/DialogProductFiscal";
 import { variationLabel } from "@/components/ProductGrid/grid";
 import {
   entryToProduct,
@@ -88,6 +93,8 @@ export function EstoqueTable({
   const [stockModel, setStockModel] = useState<string | null>(null);
   const [labelsModel, setLabelsModel] = useState<string | null>(null);
   const [editModel, setEditModel] = useState<string | null>(null);
+  // Dados fiscais (NFC-e) do produto ou do modelo inteiro
+  const [fiscalTarget, setFiscalTarget] = useState<FiscalTarget | null>(null);
 
   const [expanded, setExpanded] = useState<Set<string>>(new Set());
   const toggleExpanded = (name: string) =>
@@ -181,6 +188,9 @@ export function EstoqueTable({
                       onStockModel={() => setStockModel(entry.model_name)}
                       onLabelsModel={() => setLabelsModel(entry.model_name)}
                       onEditModel={() => setEditModel(entry.model_name)}
+                      onFiscalModel={() =>
+                        setFiscalTarget({ kind: "model", modelName: entry.model_name })
+                      }
                       onStockVariation={(v) => setStockProduct(variationToProduct(v))}
                     />
                   );
@@ -292,6 +302,21 @@ export function EstoqueTable({
                         )}
                         <button
                           type="button"
+                          onClick={() =>
+                            setFiscalTarget({
+                              kind: "product",
+                              productId: product.id,
+                              name: product.name,
+                            })
+                          }
+                          title="Dados fiscais (NFC-e)"
+                          aria-label={`Dados fiscais de ${product.name}`}
+                          className={`${iconButton} hover:bg-primary/10 hover:text-primary`}
+                        >
+                          <Receipt className="h-4 w-4" />
+                        </button>
+                        <button
+                          type="button"
                           onClick={() => setEditProduct(product)}
                           title="Editar produto"
                           aria-label={`Editar ${product.name}`}
@@ -372,6 +397,10 @@ export function EstoqueTable({
           });
         }}
       />
+      <DialogProductFiscal
+        target={fiscalTarget}
+        onOpenChange={(open) => !open && setFiscalTarget(null)}
+      />
     </section>
   );
 }
@@ -406,6 +435,7 @@ interface ModelRowsProps {
   onStockModel: () => void;
   onLabelsModel: () => void;
   onEditModel: () => void;
+  onFiscalModel: () => void;
   onStockVariation: (v: ModelVariation) => void;
 }
 
@@ -421,6 +451,7 @@ function ModelRows({
   onStockModel,
   onLabelsModel,
   onEditModel,
+  onFiscalModel,
   onStockVariation,
 }: ModelRowsProps) {
   const { data: variations, isLoading } = useModelVariations(
@@ -520,6 +551,15 @@ function ModelRows({
               className={`${iconButton} hover:bg-primary/10 hover:text-primary`}
             >
               <Tag className="h-4 w-4" />
+            </button>
+            <button
+              type="button"
+              onClick={onFiscalModel}
+              title="Dados fiscais do modelo (NFC-e)"
+              aria-label={`Dados fiscais de ${entry.name}`}
+              className={`${iconButton} hover:bg-primary/10 hover:text-primary`}
+            >
+              <Receipt className="h-4 w-4" />
             </button>
             <button
               type="button"

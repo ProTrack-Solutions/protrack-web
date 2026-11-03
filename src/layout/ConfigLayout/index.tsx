@@ -14,6 +14,7 @@ import {
   Building2,
   Crown,
   Users,
+  Receipt,
 } from "lucide-react";
 import { useModuleAccess } from "@/hooks/useModuleAccess";
 import { findRouteAccessRule } from "@/const/moduleAccess.const";
@@ -68,6 +69,14 @@ export default function LayoutConfig({
       titulo: "Departamentos",
       icone: Building2,
       descricao: "Cadastro e gerenciamento de departamentos",
+      role: "ADMIN",
+    },
+    {
+      id: "fiscal",
+      href: "/config/fiscal",
+      titulo: "Nota Fiscal",
+      icone: Receipt,
+      descricao: "NFC-e: certificado, CSC e tributação",
       role: "ADMIN",
     },
     {

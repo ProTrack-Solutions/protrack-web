@@ -22,6 +22,12 @@ import { cellKey, variationName } from "@/components/ProductGrid/grid";
 import { FormTipoCadastro } from "./components/FormTipoCadastro";
 import { useInvalidateGrid } from "@/hooks/useProductGrid";
 import { getApiErrorMessage } from "@/utils/apiError";
+import { useFiscalSettings } from "@/hooks/useFiscal";
+import {
+  UpdateModelFiscal,
+  UpdateProductFiscal,
+} from "@/service/fiscal.service";
+import { FormFiscal } from "./components/FormFiscal";
 
 const MAX_VARIATIONS = 200;
 
@@ -32,6 +38,32 @@ export default function ProductRegistration() {
   const [gridEnabled, setGridEnabled] = useState(false);
   const [grid, setGrid] = useState<GridState>(initialGridState);
   const invalidateGrid = useInvalidateGrid();
+  // NCM só aparece quando a empresa já é emitente de NFC-e
+  const { data: fiscal } = useFiscalSettings();
+  const showFiscal = !!fiscal?.issuer_registered;
+  const [ncm, setNcm] = useState("");
+  const ncmDigits = ncm.replace(/\D/g, "");
+  const ncmInvalid = ncmDigits.length > 0 && ncmDigits.length !== 8;
+
+  /** Grava o NCM depois do cadastro; falha não desfaz o produto */
+  const saveNcm = async (save: () => Promise<number>) => {
+    if (!showFiscal || ncmDigits.length !== 8) return;
+    try {
+      await save();
+    } catch (error) {
+      toast.warning(
+        getApiErrorMessage(error, "Produto cadastrado, mas o NCM não foi salvo") +
+          " Preencha em Produtos → Dados fiscais.",
+      );
+    }
+  };
+  const ncmParams = {
+    ncm: ncmDigits,
+    cest: "",
+    unit: "" as const,
+    origin: 0,
+    tax_profile_id: null,
+  };
 
   // Todas as combinações da tabela; só as com estoque viram cadastro
   // (variação zerada não é cadastrada — a API também recusa)
@@ -57,6 +89,7 @@ export default function ProductRegistration() {
           "Informe o estoque de pelo menos uma combinação (variação zerada não é cadastrada).",
         combos.length > MAX_VARIATIONS &&
           `No máximo ${MAX_VARIATIONS} variações por cadastro.`,
+        ncmInvalid && "O NCM tem 8 dígitos (ou deixe em branco).",
       ].filter(Boolean) as string[])
     : [];
 
@@ -90,15 +123,24 @@ export default function ProductRegistration() {
   const handleReset = () => {
     setFormData(initialFormData);
     setGrid(initialGridState);
+    setNcm("");
   };
 
   const handleCreateProduct = async () => {
     try {
       setLoading(true);
-      await CreateProduct(formData);
+      if (ncmInvalid) {
+        toast.error("O NCM tem 8 dígitos (ou deixe em branco).");
+        return;
+      }
+      const created = await CreateProduct(formData);
+      if (created?.product?.id) {
+        await saveNcm(() => UpdateProductFiscal(created.product.id, ncmParams));
+      }
       toast.success("Produto cadastrado com sucesso!");
       invalidateGrid();
       setFormData(initialFormData);
+      setNcm("");
     } catch (error) {
       // Mantém o formulário preenchido para o usuário corrigir e reenviar
       toast.error(getApiErrorMessage(error, "Erro ao cadastrar produto!"));
@@ -131,6 +173,7 @@ export default function ProductRegistration() {
           };
         }),
       });
+      await saveNcm(() => UpdateModelFiscal(formData.name.trim(), ncmParams));
       toast.success(
         `${created.length} ${created.length === 1 ? "variação cadastrada" : "variações cadastradas"} de "${formData.name.trim()}".`,
       );
@@ -175,6 +218,9 @@ export default function ProductRegistration() {
               onChange={handleChange}
               gridEnabled={gridEnabled}
             />
+            {showFiscal && (
+              <FormFiscal ncm={ncm} onChange={setNcm} gridEnabled={gridEnabled} />
+            )}
             {gridEnabled ? (
               <>
                 {/* Na grade o preço vem antes: ele é herdado pelas variações */}
