@@ -179,8 +179,10 @@ export default function LayoutConfig({
         </div>
 
         {/* Conteúdo principal */}
-        {/* min-w-0: conteúdo largo (tabelas) rola dentro dele, sem esticar a coluna */}
-        <div className="min-w-0 flex-1 p-6 overflow-y-auto">
+        {/* min-w-0: conteúdo largo (tabelas) rola dentro dele, sem esticar a coluna.
+            relative: elementos absolutos (o <select> escondido do Radix Select) ficam
+            presos aqui; sem isso eles esticam a página e aparece uma 2ª barra de rolagem */}
+        <div className="relative min-w-0 flex-1 p-6 overflow-y-auto">
           {loading ? (
             <Loading />
           ) : allowed ? (
