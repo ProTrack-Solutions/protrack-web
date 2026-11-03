@@ -1,21 +1,34 @@
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import { Eraser, Save, Tag } from "lucide-react";
+import { AlertTriangle, Eraser, Save, Tag } from "lucide-react";
 
 import { useProductsCategories } from "@/hooks/useProductsCategories";
 import { CreateProductParams } from "@/interfaces/products.interface";
+
+interface GridSummary {
+  /** Nomes dos produtos que serão criados */
+  names: string[];
+  variations: number;
+  pieces: number;
+  colors: string[];
+  sizes: string[];
+  errors: string[];
+}
 
 interface CadastroProdutoResumoProps {
   formData: CreateProductParams;
   loading: boolean;
   onReset: () => void;
+  /** Presente quando o cadastro é de um modelo com grade */
+  grid?: GridSummary;
 }
 
 export function CadastroProdutoResumo({
   formData,
   onReset,
   loading,
+  grid,
 }: CadastroProdutoResumoProps) {
   const precoVenda = Number(formData.sale_price || 0)
     .toFixed(2)
@@ -59,12 +72,51 @@ export function CadastroProdutoResumo({
                 )}
               </Badge>
             )}
-            {formData.size && (
+            {!grid && formData.size && (
               <Badge variant="outline" className="bg-muted/60">
                 Tam: {formData.size}
               </Badge>
             )}
+            {grid?.sizes.map((size) => (
+              <Badge key={`s-${size}`} variant="outline" className="bg-muted/60">
+                {size}
+              </Badge>
+            ))}
+            {grid?.colors.map((color) => (
+              <Badge
+                key={`c-${color}`}
+                variant="outline"
+                className="bg-fuchsia-50 text-fuchsia-700 border-fuchsia-200 dark:bg-fuchsia-500/10 dark:text-fuchsia-300"
+              >
+                {color}
+              </Badge>
+            ))}
           </div>
+
+          {grid && (
+            <div className="rounded-lg border border-border/60 bg-muted/30 p-3">
+              <p className="text-[10px] text-muted-foreground uppercase tracking-wider font-medium">
+                Serão criados
+              </p>
+              <p className="text-lg font-bold text-foreground mt-1">
+                {grid.variations} {grid.variations === 1 ? "produto" : "produtos"}
+              </p>
+              {grid.names.length > 0 ? (
+                <ul className="mt-2 space-y-0.5 text-xs text-muted-foreground">
+                  {grid.names.slice(0, 6).map((n) => (
+                    <li key={n} className="truncate">• {n}</li>
+                  ))}
+                  {grid.names.length > 6 && (
+                    <li className="font-medium">+ {grid.names.length - 6} outros</li>
+                  )}
+                </ul>
+              ) : (
+                <p className="mt-1 text-xs text-muted-foreground">
+                  Monte a grade para ver a lista.
+                </p>
+              )}
+            </div>
+          )}
 
           <div className="grid grid-cols-2 gap-3 pt-2">
             <div className="rounded-lg border border-border/60 bg-muted/30 p-3">
@@ -72,7 +124,7 @@ export function CadastroProdutoResumo({
                 Estoque
               </p>
               <p className="text-lg font-bold text-foreground mt-1">
-                {formData.quantity || 0}
+                {grid ? grid.pieces : formData.quantity || 0}
               </p>
             </div>
             <div className="rounded-lg border border-border/60 bg-muted/30 p-3">
@@ -86,14 +138,29 @@ export function CadastroProdutoResumo({
           </div>
         </div>
 
+        {grid && grid.errors.length > 0 && (grid.variations > 0 || formData.name) && (
+          <ul className="space-y-1 rounded-xl border border-amber-300 bg-amber-50 p-3 text-xs text-amber-900 dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-200">
+            {grid.errors.map((e) => (
+              <li key={e} className="flex items-start gap-1.5">
+                <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0" />
+                {e}
+              </li>
+            ))}
+          </ul>
+        )}
+
         <div className="space-y-2 pt-2 border-t border-border/50">
           <Button
             type="submit"
             className="w-full h-11 bg-blue-600 hover:bg-blue-700 text-white font-semibold shadow-sm cursor-pointer"
-            disabled={loading}
+            disabled={loading || (grid && grid.errors.length > 0)}
           >
             <Save className="w-4 h-4 mr-2" />
-            {loading ? "Cadastrando ..." : "Cadastrar produto"}
+            {loading
+              ? "Cadastrando ..."
+              : grid
+                ? `Cadastrar ${grid.variations} ${grid.variations === 1 ? "variação" : "variações"}`
+                : "Cadastrar produto"}
           </Button>
           <Button
             type="button"

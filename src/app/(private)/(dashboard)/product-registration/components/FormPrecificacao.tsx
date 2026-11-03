@@ -9,11 +9,14 @@ import { CreateProductParams } from "@/interfaces/products.interface";
 interface FormPrecificacaoProps {
   formData: CreateProductParams;
   onChange: (field: keyof CreateProductParams, value: string) => void;
+  /** Na grade é o preço do modelo, herdado por todas as variações */
+  gridEnabled?: boolean;
 }
 
 export function FormPrecificacao({
   formData,
   onChange,
+  gridEnabled = false,
 }: FormPrecificacaoProps) {
   const { margemValor, margemPercent, margemTone } = useMargem(
     formData.cost_price,
@@ -24,8 +27,12 @@ export function FormPrecificacao({
     <CardSection
       icon={DollarSign}
       iconGradient="from-emerald-500 to-teal-600"
-      title="Precificação"
-      subtitle="Custo, venda e margem de lucro"
+      title={gridEnabled ? "Preço do modelo" : "Precificação"}
+      subtitle={
+        gridEnabled
+          ? "Vale para todas as cores e tamanhos (dá para mudar uma variação específica na grade)"
+          : "Custo, venda e margem de lucro"
+      }
     >
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="space-y-2">

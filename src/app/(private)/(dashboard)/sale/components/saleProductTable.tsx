@@ -1,5 +1,5 @@
 import { useFormContext, useFieldArray, useWatch } from "react-hook-form";
-import { ChevronDown, Plus, Search, Trash2 } from "lucide-react";
+import { ChevronDown, Grid3x3, Plus, Search, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -26,6 +26,10 @@ import { CreateSaleParams } from "@/interfaces/sale.interface";
 import { Product } from "@/interfaces/products.interface";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
+import {
+  DialogPickVariations,
+  PickedVariation,
+} from "@/components/ProductGrid/DialogPickVariations";
 
 interface ProductSearchSelectProps {
   value?: string;
@@ -160,7 +164,8 @@ export function SaleProductsTable({
   onProductSelected,
   isSearchingProducts = false,
 }: Props) {
-  const { control, setValue } = useFormContext<CreateSaleParams>();
+  const { control, setValue, getValues } = useFormContext<CreateSaleParams>();
+  const [gridOpen, setGridOpen] = useState(false);
 
   const { fields, append, remove } = useFieldArray({
     control,
@@ -216,19 +221,80 @@ export function SaleProductsTable({
     }
   };
 
+  // Quanto de cada produto já está na venda (a grade desconta do disponível)
+  const inSale = watchedProdutos.reduce<Record<string, number>>((acc, item) => {
+    if (item?.product_id) {
+      acc[item.product_id] = (acc[item.product_id] || 0) + (Number(item.quantity) || 0);
+    }
+    return acc;
+  }, {});
+
+  // Itens escolhidos na grade: soma em linha que já tem o produto, usa linhas
+  // vazias e só depois cria linhas novas
+  const handleGridPick = (picked: PickedVariation[]) => {
+    const current = getValues("items") ?? [];
+    const used = new Set<number>();
+    let nextIndex = current.length;
+
+    picked.forEach(({ product, quantity }) => {
+      const existing = current.findIndex((item) => item.product_id === product.id);
+      if (existing >= 0) {
+        setValue(
+          `items.${existing}.quantity`,
+          (Number(current[existing].quantity) || 0) + quantity,
+        );
+        return;
+      }
+
+      let index = current.findIndex((item, i) => !item.product_id && !used.has(i));
+      if (index >= 0) {
+        used.add(index);
+        setValue(`items.${index}.product_id`, product.id);
+        setValue(`items.${index}.quantity`, quantity);
+      } else {
+        index = nextIndex++;
+        append({ product_id: product.id, quantity });
+      }
+
+      setSelectedProductsByRow((prev) => ({ ...prev, [index]: product }));
+      setValoresProdutos((prev) => ({
+        ...prev,
+        [`items.${index}.product_id`]: product.sale_price,
+      }));
+      onProductSelected?.(product);
+    });
+  };
+
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle>Produtos da Venda</CardTitle>
-        <Button
-          type="button"
-          size="sm"
-          onClick={() => append({ product_id: "", quantity: 1 })}
-        >
-          <Plus className="h-4 w-4 mr-2" />
-          Adicionar Produto
-        </Button>
+        <div className="flex gap-2">
+          <Button
+            type="button"
+            size="sm"
+            variant="outline"
+            onClick={() => setGridOpen(true)}
+          >
+            <Grid3x3 className="h-4 w-4 mr-2" />
+            Adicionar pela grade
+          </Button>
+          <Button
+            type="button"
+            size="sm"
+            onClick={() => append({ product_id: "", quantity: 1 })}
+          >
+            <Plus className="h-4 w-4 mr-2" />
+            Adicionar Produto
+          </Button>
+        </div>
       </CardHeader>
+      <DialogPickVariations
+        open={gridOpen}
+        onOpenChange={setGridOpen}
+        inSale={inSale}
+        onPick={handleGridPick}
+      />
       <CardContent>
         <Table>
           <TableHeader>

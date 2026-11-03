@@ -30,7 +30,7 @@ import { toast } from "sonner";
 import { useProductsCategories } from "@/hooks/useProductsCategories";
 import { Product, ProductUpdateParams } from "@/interfaces/products.interface";
 import { UpdateProcut } from "@/service/products.service";
-import { useProducts } from "@/hooks/useProducts";
+import { useInvalidateGrid } from "@/hooks/useProductGrid";
 
 interface DialogEditProductProps {
   open: boolean;
@@ -81,7 +81,8 @@ export const DialogEditProduct = ({
           ? "from-amber-500 to-orange-500"
           : "from-rose-500 to-rose-600";
 
-  const { refetch } = useProducts();
+  // Atualiza o estoque (agrupado ou não), a seleção do PDV e o dashboard
+  const refetch = useInvalidateGrid();
 
   const handleUpdateProduct = async () => {
     try {

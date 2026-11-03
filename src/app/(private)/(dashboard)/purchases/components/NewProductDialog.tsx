@@ -27,8 +27,9 @@ import { PURCHASES_KEY, useCatalogCategories } from "@/hooks/usePurchases";
 import { CatalogProduct } from "@/interfaces/purchases.interface";
 import { CreateProductVariations } from "@/service/purchases.service";
 import { getApiErrorMessage } from "@/utils/apiError";
-import { ChipInput } from "./ChipInput";
-import { GridMatrix, cellKey } from "./GridMatrix";
+import { ChipInput } from "@/components/ProductGrid/ChipInput";
+import { GridMatrix } from "@/components/ProductGrid/GridMatrix";
+import { SIZE_PRESETS, cellKey, variationLabel } from "@/components/ProductGrid/grid";
 import { margin, money, percent, round2 } from "./format";
 
 export interface PickedItem {
@@ -43,18 +44,6 @@ interface NewProductDialogProps {
   onOpenChange: (open: boolean) => void;
   onCreated: (items: PickedItem[]) => void;
 }
-
-const SIZE_PRESETS = [
-  { label: "P M G GG", values: ["P", "M", "G", "GG"] },
-  { label: "PP ao XG", values: ["PP", "P", "M", "G", "GG", "XG"] },
-  { label: "34 ao 46", values: ["34", "36", "38", "40", "42", "44", "46"] },
-  { label: "Infantil 2 ao 16", values: ["2", "4", "6", "8", "10", "12", "14", "16"] },
-];
-
-const VARIATION_SEPARATOR = " – ";
-
-const variationLabel = (color: string, size: string) =>
-  [color, size].filter(Boolean).join(VARIATION_SEPARATOR) || "Produto único";
 
 /** Cadastro rápido do pedido: modelo + grade de cores e tamanhos */
 export function NewProductDialog({

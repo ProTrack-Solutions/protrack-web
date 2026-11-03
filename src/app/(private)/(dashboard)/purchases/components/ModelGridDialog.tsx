@@ -13,7 +13,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { useModelVariations } from "@/hooks/usePurchases";
 import { CatalogProduct } from "@/interfaces/purchases.interface";
-import { GridMatrix, cellKey } from "./GridMatrix";
+import { GridMatrix } from "@/components/ProductGrid/GridMatrix";
+import { cellKey, gridAxes } from "@/components/ProductGrid/grid";
 import { PickedItem } from "./NewProductDialog";
 import { money, round2 } from "./format";
 
@@ -25,9 +26,6 @@ interface ModelGridDialogProps {
   /** Quantidade 0 remove a variação do pedido */
   onApply: (items: PickedItem[]) => void;
 }
-
-const unique = (values: string[]) =>
-  values.filter((v, i) => values.findIndex((x) => x.toLowerCase() === v.toLowerCase()) === i);
 
 /** Recompra: todas as variações de um modelo numa grade de quantidades */
 export function ModelGridDialog({
@@ -84,12 +82,7 @@ function GridForm({
   onCancel: () => void;
   onApply: (items: PickedItem[]) => void;
 }) {
-  const byKey = useMemo(
-    () => new Map(variations.map((v) => [cellKey(v.color, v.size), v])),
-    [variations],
-  );
-  const colors = unique(variations.map((v) => v.color).filter(Boolean));
-  const sizes = unique(variations.map((v) => v.size).filter(Boolean));
+  const { colors, sizes, byKey } = useMemo(() => gridAxes(variations), [variations]);
 
   const [quantities, setQuantities] = useState<Record<string, number>>(() =>
     Object.fromEntries(variations.map((v) => [cellKey(v.color, v.size), currentQuantities[v.id] || 0])),

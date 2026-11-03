@@ -2,7 +2,6 @@
 
 import LayoutConfig from "@/layout/ConfigLayout";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { Toaster } from "sonner";
 
 export default function ConfigLayout({
   children,
@@ -14,7 +13,6 @@ export default function ConfigLayout({
   return (
     <QueryClientProvider client={queryClient}>
       <LayoutConfig>{children}</LayoutConfig>
-      <Toaster theme="light" richColors closeButton position="top-right" />
     </QueryClientProvider>
   );
 }

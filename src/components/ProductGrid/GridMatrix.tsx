@@ -1,20 +1,28 @@
 "use client";
 
 import { Input } from "@/components/ui/input";
+import { cn } from "@/lib/utils";
+import { cellKey } from "./grid";
 
-/** Chave da célula: cor e tamanho sem diferenciar maiúsculas (mesma regra da API) */
-export const cellKey = (color: string, size: string) =>
-  `${color.trim().toLowerCase()}|${size.trim().toLowerCase()}`;
+export { cellKey };
 
 interface GridMatrixProps {
   colors: string[];
   sizes: string[];
   quantities: Record<string, number>;
   onChange: (key: string, quantity: number) => void;
-  /** Células que não existem (recompra): ficam desabilitadas */
+  /** Células que não existem (variação não cadastrada): ficam desabilitadas */
   isAvailable?: (color: string, size: string) => boolean;
   /** Texto auxiliar abaixo do campo (ex.: estoque atual) */
   hint?: (color: string, size: string) => string | undefined;
+  /** Destaca a célula com problema (ex.: ajuste maior que o saldo) */
+  isInvalid?: (color: string, size: string) => boolean;
+  /** Ajuste de estoque aceita quantidade negativa */
+  allowNegative?: boolean;
+  /** Teto por célula (ex.: estoque disponível no PDV) */
+  max?: (color: string, size: string) => number | undefined;
+  /** Dica da célula indisponível (padrão: variação não cadastrada) */
+  unavailableTitle?: string;
 }
 
 /**
@@ -28,6 +36,10 @@ export function GridMatrix({
   onChange,
   isAvailable = () => true,
   hint,
+  isInvalid,
+  allowNegative = false,
+  max,
+  unavailableTitle = "Variação não cadastrada",
 }: GridMatrixProps) {
   const rows = colors.length ? colors : [""];
   const cols = sizes.length ? sizes : [""];
@@ -37,6 +49,13 @@ export function GridMatrix({
   const colTotal = (size: string) =>
     rows.reduce((s, color) => s + (quantities[cellKey(color, size)] || 0), 0);
   const total = rows.reduce((s, c) => s + rowTotal(c), 0);
+
+  const parse = (raw: string, limit?: number) => {
+    let n = Math.trunc(Number(raw) || 0);
+    if (!allowNegative) n = Math.max(0, n);
+    if (limit !== undefined) n = Math.min(n, limit);
+    return n;
+  };
 
   return (
     <div className="overflow-x-auto rounded-xl border border-border">
@@ -62,27 +81,41 @@ export function GridMatrix({
                 const key = cellKey(color, size);
                 const available = isAvailable(color, size);
                 const note = hint?.(color, size);
+                const invalid = isInvalid?.(color, size);
+                const limit = max?.(color, size);
                 return (
                   <td key={size || "-"} className="px-1.5 py-1.5 text-center">
                     {available ? (
                       <>
                         <Input
                           type="number"
-                          min={0}
+                          min={allowNegative ? undefined : 0}
+                          max={limit}
                           step={1}
                           inputMode="numeric"
                           value={quantities[key] || ""}
                           placeholder="0"
-                          onChange={(e) =>
-                            onChange(key, Math.max(0, Math.trunc(Number(e.target.value) || 0)))
-                          }
+                          onChange={(e) => onChange(key, parse(e.target.value, limit))}
                           aria-label={`Quantidade ${[color, size].filter(Boolean).join(" ") || "do produto"}`}
-                          className="mx-auto h-8 w-16 text-center"
+                          aria-invalid={invalid || undefined}
+                          className={cn(
+                            "mx-auto h-8 w-16 text-center",
+                            invalid && "border-destructive text-destructive focus-visible:ring-destructive/30",
+                          )}
                         />
-                        {note && <span className="mt-0.5 block text-[10px] text-muted-foreground">{note}</span>}
+                        {note && (
+                          <span
+                            className={cn(
+                              "mt-0.5 block text-[10px] text-muted-foreground",
+                              invalid && "text-destructive",
+                            )}
+                          >
+                            {note}
+                          </span>
+                        )}
                       </>
                     ) : (
-                      <span className="text-xs text-muted-foreground" title="Variação não cadastrada">
+                      <span className="text-xs text-muted-foreground" title={unavailableTitle}>
                         —
                       </span>
                     )}
