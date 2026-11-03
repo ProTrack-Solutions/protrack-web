@@ -19,9 +19,15 @@ import { useState } from "react";
 interface FormInfoBasicaProps {
   formData: CreateProductParams;
   onChange: (field: keyof CreateProductParams, value: string | boolean) => void;
+  /** Na grade o nome é do modelo e cada variação ganha código interno */
+  gridEnabled?: boolean;
 }
 
-export function FormInfoBasica({ formData, onChange }: FormInfoBasicaProps) {
+export function FormInfoBasica({
+  formData,
+  onChange,
+  gridEnabled = false,
+}: FormInfoBasicaProps) {
   const { productsCategories } = useProductsCategories();
 
   const [isBarCode, setIsBarCode] = useState(false);
@@ -36,11 +42,15 @@ export function FormInfoBasica({ formData, onChange }: FormInfoBasicaProps) {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="md:col-span-2 space-y-2">
           <Label htmlFor="nome" className="text-sm font-medium">
-            Nome do produto <span className="text-rose-500">*</span>
+            {gridEnabled ? "Nome do modelo" : "Nome do produto"}{" "}
+            <span className="text-rose-500">*</span>
           </Label>
           <Input
             id="nome"
-            placeholder="Ex: Camiseta Básica Branca"
+            placeholder={
+              gridEnabled ? "Ex: Camiseta Básica Gola V" : "Ex: Camiseta Básica Branca"
+            }
+            maxLength={100}
             value={formData.name}
             onChange={(e) => onChange("name", e.target.value)}
             className="h-11"
@@ -73,6 +83,18 @@ export function FormInfoBasica({ formData, onChange }: FormInfoBasicaProps) {
           </Select>
         </div>
 
+        {gridEnabled ? (
+          <div className="space-y-2">
+            <Label className="text-sm font-medium flex items-center gap-1.5">
+              <Barcode className="w-3.5 h-3.5 text-muted-foreground" />
+              Código de barras
+            </Label>
+            <p className="rounded-lg border border-dashed border-border px-3 py-2.5 text-xs text-muted-foreground">
+              Cada variação recebe um código interno automaticamente. Dá para
+              trocar pelo código de fábrica depois, em Produtos → Editar modelo.
+            </p>
+          </div>
+        ) : (
         <div className="space-y-2">
           <Label
             htmlFor="codigoBarras"
@@ -112,6 +134,7 @@ export function FormInfoBasica({ formData, onChange }: FormInfoBasicaProps) {
             disabled={isBarCode}
           />
         </div>
+        )}
 
         <div className="md:col-span-2 space-y-2">
           <Label htmlFor="descricao" className="text-sm font-medium">

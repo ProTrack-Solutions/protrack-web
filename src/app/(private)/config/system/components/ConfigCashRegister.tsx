@@ -59,7 +59,7 @@ export const ConfigCashRegister = () => {
             </Label>
             <p className="text-sm text-muted-foreground">
               Vendas e recebimentos de parcelas só podem ser registrados com o
-              caixa do operador aberto. Assim todo dinheiro que entra cai em
+              caixa do computador aberto. Assim todo dinheiro que entra cai em
               algum fechamento.
             </p>
           </div>

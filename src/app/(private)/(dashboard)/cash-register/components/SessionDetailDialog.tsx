@@ -1,6 +1,12 @@
 "use client";
 
-import { Banknote, CreditCard, ListOrdered, MessageSquare } from "lucide-react";
+import {
+  Banknote,
+  CreditCard,
+  ListOrdered,
+  MessageSquare,
+  Users,
+} from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -15,6 +21,7 @@ import {
   CashComposition,
   MethodBreakdown,
   MovementsList,
+  OperatorBreakdown,
 } from "./SummaryParts";
 import { formatDateTime, formatDuration, formatTime } from "./format";
 
@@ -56,15 +63,20 @@ export function SessionDetailDialog({
         <DialogHeader>
           <DialogTitle>
             {closed ? "Fechamento de caixa" : "Caixa aberto"}
+            {session?.register_name && ` · ${session.register_name}`}
           </DialogTitle>
           <DialogDescription>
             {session ? (
               <>
-                {session.user_name && `${session.user_name} · `}
                 {formatDateTime(session.opened_at)}
                 {session.closed_at && ` até ${formatTime(session.closed_at)}`}
                 {" · "}
                 {formatDuration(session.opened_at, session.closed_at)}
+                <span className="block">
+                  Aberto por {session.user_name}
+                  {session.closed_by_name &&
+                    ` · fechado por ${session.closed_by_name}`}
+                </span>
               </>
             ) : (
               "Carregando..."
@@ -127,7 +139,14 @@ export function SessionDetailDialog({
             </div>
 
             <Section
-              title="Sangrias e suprimentos"
+              title="Vendas por operador"
+              icon={<Users className="h-4 w-4" />}
+            >
+              <OperatorBreakdown summary={data.summary} />
+            </Section>
+
+            <Section
+              title="Sangrias, suprimentos e transferências"
               icon={<ListOrdered className="h-4 w-4" />}
             >
               <MovementsList movements={data.movements} />

@@ -1,29 +1,50 @@
-import { SalePaginationParams } from "@/interfaces/sale.interface";
-import { GetSales } from "@/service/sale.service";
-import { useQuery } from "@tanstack/react-query";
+import { useCallback } from "react";
+import {
+  keepPreviousData,
+  useIsFetching,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
+import {
+  GetSalesOverviewParams,
+  SalePaginationParams,
+} from "@/interfaces/sale.interface";
+import { GetSales, GetSalesOverview } from "@/service/sale.service";
 
-export const useSales = (paginationParams?: SalePaginationParams) => {
-  const pagination = paginationParams ?? { Page: 1, PerPage: 10 };
+// Prefixo único: quem invalida ["sales"] (cancelar, alterar, devolver)
+// atualiza a lista e os indicadores juntos
+const SALES_KEY = "sales";
+const INTERVAL = 60_000;
 
-  const { data, isLoading, isError, refetch } = useQuery({
-    queryKey: ["sales", pagination.Page, pagination.PerPage],
-    queryFn: () => GetSales(pagination),
-
-    refetchInterval: 10000,
+export const useSales = (params: SalePaginationParams) =>
+  useQuery({
+    queryKey: [SALES_KEY, "list", params],
+    queryFn: () => GetSales(params),
+    placeholderData: keepPreviousData,
+    staleTime: 10_000,
+    refetchInterval: INTERVAL,
     refetchOnWindowFocus: true,
   });
 
-  return {
-    sales: data?.data || [],
-    salesCount: data?.total_rows || 0,
-    totalInvoiced: data?.total_invoiced,
-    totalPending: data?.total_pending,
-    salesCanceled: data?.sales_canceled,
-    totalPages: data?.total_pages || 0,
-    loading: isLoading,
-    error: isError
-      ? "Erro ao carregar os clientes. Por favor, tente novamente."
-      : null,
-    refetch,
-  };
+export const useSalesOverview = (params: GetSalesOverviewParams) =>
+  useQuery({
+    queryKey: [SALES_KEY, "overview", params.start_date, params.end_date],
+    queryFn: () => GetSalesOverview(params),
+    placeholderData: keepPreviousData,
+    staleTime: INTERVAL,
+    refetchInterval: INTERVAL,
+    refetchOnWindowFocus: true,
+  });
+
+/** Se a tela está buscando dados e como forçar a atualização */
+export const useSalesRefresh = () => {
+  const queryClient = useQueryClient();
+  const fetching = useIsFetching({ queryKey: [SALES_KEY] });
+
+  const refresh = useCallback(
+    () => queryClient.invalidateQueries({ queryKey: [SALES_KEY] }),
+    [queryClient],
+  );
+
+  return { isFetching: fetching > 0, refresh };
 };

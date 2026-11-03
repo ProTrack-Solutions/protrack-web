@@ -13,7 +13,7 @@ interface SegmentedProps<T extends string | number> {
   onChange: (value: T) => void;
 }
 
-function Segmented<T extends string | number>({
+export function Segmented<T extends string | number>({
   label,
   value,
   options,

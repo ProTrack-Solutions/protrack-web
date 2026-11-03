@@ -1,4 +1,9 @@
-import { ArrowDownCircle, ArrowUpCircle, Inbox } from "lucide-react";
+import {
+  ArrowDownCircle,
+  ArrowLeftRight,
+  ArrowUpCircle,
+  Inbox,
+} from "lucide-react";
 import { brl } from "@/components/DashCard";
 import {
   CashMovement,
@@ -87,10 +92,24 @@ export function CashComposition({
       value: summary.cash_received,
       sign: "+",
     },
-    { label: "Suprimentos", value: summary.supplies_total, sign: "+" },
-    { label: "Sangrias", value: summary.withdrawals_total, sign: "−" },
+    {
+      label: "Suprimentos e troco recebido",
+      value: summary.supplies_total,
+      sign: "+",
+    },
+    {
+      label: "Sangrias e troco enviado",
+      value: summary.withdrawals_total,
+      sign: "−",
+    },
     ...(summary.cash_refunds
-      ? [{ label: "Devoluções a clientes", value: summary.cash_refunds, sign: "−" }]
+      ? [
+          {
+            label: "Devoluções a clientes",
+            value: summary.cash_refunds,
+            sign: "−",
+          },
+        ]
       : []),
   ];
 
@@ -130,14 +149,20 @@ export function CashComposition({
 
 export function MovementsList({ movements }: { movements: CashMovement[] }) {
   if (movements.length === 0) {
-    return <EmptyState text="Nenhuma sangria ou suprimento registrado." />;
+    return (
+      <EmptyState text="Nenhuma sangria, suprimento ou transferência registrada." />
+    );
   }
 
   return (
     <ul className="divide-y divide-border/60">
       {movements.map((m) => {
         const supply = m.type === "supply";
-        const Icon = supply ? ArrowUpCircle : ArrowDownCircle;
+        const Icon = m.transfer_label
+          ? ArrowLeftRight
+          : supply
+            ? ArrowUpCircle
+            : ArrowDownCircle;
         return (
           <li key={m.id} className="flex items-center gap-3 py-2.5">
             <Icon
@@ -145,10 +170,11 @@ export function MovementsList({ movements }: { movements: CashMovement[] }) {
             />
             <div className="min-w-0 flex-1">
               <p className="text-sm font-medium text-foreground">
-                {supply ? "Suprimento" : "Sangria"}
+                {m.transfer_label || (supply ? "Suprimento" : "Sangria")}
               </p>
               <p className="truncate text-xs text-muted-foreground">
                 {formatTime(m.created_at)}
+                {m.created_by_name ? ` · por ${m.created_by_name}` : ""}
                 {m.reason ? ` · ${m.reason}` : ""}
               </p>
             </div>
@@ -157,6 +183,50 @@ export function MovementsList({ movements }: { movements: CashMovement[] }) {
             >
               {supply ? "+" : "−"} {brl(m.amount)}
             </span>
+          </li>
+        );
+      })}
+    </ul>
+  );
+}
+
+/** Quanto cada operador vendeu e recebeu no turno do caixa */
+export function OperatorBreakdown({ summary }: { summary: CashSummary }) {
+  const operators = summary.by_operator ?? [];
+  if (operators.length === 0) {
+    return <EmptyState text="Nenhuma venda neste caixa ainda." />;
+  }
+  const max = Math.max(
+    ...operators.map((o) => o.sales_total + o.receipts_total),
+    1,
+  );
+
+  return (
+    <ul className="space-y-3.5">
+      {operators.map((o) => {
+        const total = o.sales_total + o.receipts_total;
+        return (
+          <li key={o.user_id} className="text-sm">
+            <div className="flex items-baseline justify-between gap-3">
+              <span className="truncate font-medium text-foreground">
+                {o.user_name}
+              </span>
+              <span className="shrink-0 font-semibold tabular-nums text-foreground">
+                {brl(total)}
+              </span>
+            </div>
+            <div className="mt-1.5 h-2 overflow-hidden rounded-full bg-muted">
+              <div
+                className="h-full rounded-full bg-primary transition-[width] duration-700"
+                style={{ width: `${(total / max) * 100}%` }}
+              />
+            </div>
+            <p className="mt-1 text-xs text-muted-foreground">
+              {o.sales_count} {o.sales_count === 1 ? "venda" : "vendas"} ·{" "}
+              {brl(o.sales_total)}
+              {o.receipts_total > 0 &&
+                ` · ${brl(o.receipts_total)} em parcelas recebidas`}
+            </p>
           </li>
         );
       })}

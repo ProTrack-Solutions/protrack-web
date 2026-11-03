@@ -4,7 +4,10 @@ import { useState } from "react";
 import { ChevronRight, History } from "lucide-react";
 import { DashCard, Skeleton, brl } from "@/components/DashCard";
 import { DataPagination } from "@/components/DataPagination";
-import { useCashSessions } from "@/hooks/useCashRegister";
+import {
+  useCashSessions,
+  useDeviceCashRegister,
+} from "@/hooks/useCashRegister";
 import { getPageRange } from "@/utils/pagination";
 import { DifferenceBadge } from "./DifferenceBadge";
 import { EmptyState } from "./SummaryParts";
@@ -14,22 +17,61 @@ const th =
   "px-4 py-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground";
 
 export function SessionsHistory({
+  registerId,
   onSelect,
 }: {
+  /** Caixa deste computador, para o filtro "Este caixa" */
+  registerId?: string;
   onSelect: (id: string) => void;
 }) {
   const [page, setPage] = useState(1);
-  const { data, isLoading, isPlaceholderData } = useCashSessions(page);
+  const { registers } = useDeviceCashRegister();
+  const [onlyThis, setOnlyThis] = useState(true);
+  // Com um caixa só não há o que filtrar
+  const canFilter = registers.length > 1 && !!registerId;
+  const filterId = canFilter && onlyThis ? registerId : undefined;
+  const { data, isLoading, isPlaceholderData } = useCashSessions(
+    page,
+    filterId,
+  );
   const sessions = data?.data ?? [];
   const totalPages = data?.total_pages || 1;
-  // Mostra a coluna de operador só quando há caixas de mais de uma pessoa (visão do administrador)
+  // Colunas de caixa e de quem abriu só quando há mais de um na página
+  const showRegister = new Set(sessions.map((s) => s.register_id)).size > 1;
   const showOperator = new Set(sessions.map((s) => s.user_id)).size > 1;
 
   return (
     <DashCard
-      title="Histórico de caixas"
+      title="Histórico de turnos"
       icon={<History className="h-4 w-4" />}
       delay={420}
+      action={
+        canFilter && (
+          <div className="inline-flex rounded-full bg-muted p-0.5">
+            {[
+              { value: true, label: "Este caixa" },
+              { value: false, label: "Todos os caixas" },
+            ].map((o) => (
+              <button
+                key={o.label}
+                type="button"
+                aria-pressed={onlyThis === o.value}
+                onClick={() => {
+                  setOnlyThis(o.value);
+                  setPage(1);
+                }}
+                className={`cursor-pointer rounded-full px-2.5 py-1 text-xs font-semibold transition-colors ${
+                  onlyThis === o.value
+                    ? "bg-card text-foreground shadow-sm"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                {o.label}
+              </button>
+            ))}
+          </div>
+        )
+      }
     >
       {/* A tabela encosta nas bordas do card */}
       <div className="-mx-5 -mb-5">
@@ -39,7 +81,8 @@ export function SessionsHistory({
           <table className="w-full min-w-[760px] text-sm">
             <thead className="border-y border-border bg-muted/40 text-left">
               <tr>
-                {showOperator && <th className={th}>Operador</th>}
+                {showRegister && <th className={th}>Caixa</th>}
+                {showOperator && <th className={th}>Aberto por</th>}
                 <th className={th}>Abertura</th>
                 <th className={th}>Duração</th>
                 <th className={`${th} text-right`}>Vendas</th>
@@ -69,8 +112,13 @@ export function SessionsHistory({
                     onClick={() => onSelect(s.id)}
                     className="group cursor-pointer transition-colors hover:bg-muted/40"
                   >
-                    {showOperator && (
+                    {showRegister && (
                       <td className="px-4 py-3 font-medium text-foreground">
+                        {s.register_name}
+                      </td>
+                    )}
+                    {showOperator && (
+                      <td className="px-4 py-3 text-foreground">
                         {s.user_name}
                       </td>
                     )}
@@ -116,7 +164,7 @@ export function SessionsHistory({
         </div>
 
         {!isLoading && sessions.length === 0 && (
-          <EmptyState text="Nenhum caixa aberto até agora." />
+          <EmptyState text="Nenhum turno registrado até agora." />
         )}
 
         <DataPagination

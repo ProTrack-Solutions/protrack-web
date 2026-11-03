@@ -1,18 +1,20 @@
 "use client";
 
 import { useState } from "react";
-import { AlertCircle, Clock, RefreshCw } from "lucide-react";
+import { AlertCircle, RefreshCw } from "lucide-react";
 import { Skeleton } from "@/components/DashCard";
 import { useCurrentCashSession } from "@/hooks/useCashRegister";
 import { OpenRegisterCard } from "./components/OpenRegisterCard";
+import { RegistersBar } from "./components/RegisterPicker";
 import { OpenRegisterView } from "./components/OpenRegisterView";
 import { SessionsHistory } from "./components/SessionsHistory";
 import { SessionDetailDialog } from "./components/SessionDetailDialog";
-import { formatDuration, formatTime } from "./components/format";
 
-// Caixa do operador logado: abre o turno, registra sangria/suprimento e fecha
-// conferindo o dinheiro contado com o esperado. O resumo vem da API e é
-// atualizado sozinho a cada 30s, então vendas feitas em outra aba aparecem aqui.
+// Tela do caixa físico deste computador. Em cima, a situação de todos os caixas
+// da loja (quando há mais de um); no meio, o turno do caixa deste computador:
+// abertura, sangria/suprimento e fechamento conferindo a gaveta. Qualquer
+// operador vende e mexe no turno aberto. O resumo é atualizado a cada 30s, então
+// vendas feitas em outro computador do mesmo caixa aparecem aqui.
 export default function CashRegisterPage() {
   const {
     data: current,
@@ -20,43 +22,21 @@ export default function CashRegisterPage() {
     isError,
     isFetching,
     refetch,
+    register,
+    needsChoice,
   } = useCurrentCashSession();
   const [reportId, setReportId] = useState<string | null>(null);
-
-  const session = current?.session;
 
   return (
     <div className="space-y-6 p-6">
       <div className="dash-in flex flex-wrap items-end justify-between gap-4">
         <div>
-          <div className="flex items-center gap-3">
-            <h1 className="text-3xl font-bold tracking-tight text-foreground">
-              Caixa
-            </h1>
-            {!isLoading &&
-              !isError &&
-              (session ? (
-                <span className="inline-flex items-center gap-1.5 rounded-full bg-secondary/15 px-3 py-1 text-xs font-semibold text-[hsl(150_45%_32%)]">
-                  <span className="h-2 w-2 animate-pulse rounded-full bg-secondary" />
-                  Aberto
-                </span>
-              ) : (
-                <span className="inline-flex items-center rounded-full bg-muted px-3 py-1 text-xs font-semibold text-muted-foreground">
-                  Fechado
-                </span>
-              ))}
-          </div>
-          <div className="mt-1 flex items-center gap-2 text-muted-foreground">
-            {session ? (
-              <>
-                <Clock className="h-4 w-4" />
-                Aberto às {formatTime(session.opened_at)} · há{" "}
-                {formatDuration(session.opened_at)}
-              </>
-            ) : (
-              "Abertura, sangria, suprimento e fechamento do seu turno."
-            )}
-          </div>
+          <h1 className="text-3xl font-bold tracking-tight text-foreground">
+            Caixa
+          </h1>
+          <p className="mt-1 text-muted-foreground">
+            Abertura, sangria, suprimento e fechamento dos turnos.
+          </p>
         </div>
 
         <button
@@ -72,7 +52,9 @@ export default function CashRegisterPage() {
         </button>
       </div>
 
-      {isLoading ? (
+      <RegistersBar />
+
+      {needsChoice ? null : isLoading ? (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
           {Array.from({ length: 4 }, (_, i) => (
             <Skeleton key={i} className="h-32 rounded-2xl" />
@@ -92,13 +74,18 @@ export default function CashRegisterPage() {
             Tentar novamente
           </button>
         </div>
-      ) : current ? (
-        <OpenRegisterView detail={current} onClosed={setReportId} />
+      ) : !register ? null : current ? (
+        <OpenRegisterView
+          registerName={register.name}
+          detail={current}
+          onClosed={setReportId}
+        />
       ) : (
-        <OpenRegisterCard />
+        // key: trocar de caixa limpa o valor digitado na abertura
+        <OpenRegisterCard key={register.id} register={register} />
       )}
 
-      <SessionsHistory onSelect={setReportId} />
+      <SessionsHistory registerId={register?.id} onSelect={setReportId} />
 
       <SessionDetailDialog id={reportId} onClose={() => setReportId(null)} />
     </div>

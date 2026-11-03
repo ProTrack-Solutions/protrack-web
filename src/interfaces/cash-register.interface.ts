@@ -1,10 +1,39 @@
 export type CashSessionStatus = "open" | "closed";
 export type CashMovementType = "withdrawal" | "supply";
 
+/** Caixa físico da empresa ("Caixa 1", "Balcão") */
+export interface CashRegister {
+  id: string;
+  name: string;
+  active: boolean;
+  /** Turno aberto agora; nulo quando o caixa está fechado */
+  open_session: {
+    id: string;
+    opened_at: string;
+    opening_amount: number;
+    opened_by_name: string;
+  } | null;
+  /** Último fechamento: referência para o troco da próxima abertura */
+  last_closing: {
+    closed_at: string;
+    closed_by_name: string;
+    counted_cash: number;
+  } | null;
+}
+
+export interface SaveCashRegisterParams {
+  name: string;
+  active?: boolean;
+}
+
 export interface CashSession {
   id: string;
+  register_id: string;
+  register_name?: string;
+  /** Quem abriu o turno */
   user_id: string;
   user_name?: string;
+  closed_by_name?: string;
   status: CashSessionStatus;
   opening_amount: number;
   opening_notes: string | null;
@@ -25,8 +54,30 @@ export interface CashMovement {
   type: CashMovementType;
   amount: number;
   reason: string | null;
+  created_by_name: string;
+  /** Preenchido quando o movimento veio de uma transferência entre caixas */
+  transfer_label?: string;
   created_at: string;
 }
+
+/** Transferência de troco aguardando o caixa de destino aceitar */
+export interface PendingCashTransfer {
+  id: string;
+  amount: number;
+  reason: string | null;
+  from_register_name: string;
+  to_register_name: string;
+  created_by_name: string;
+  created_at: string;
+}
+
+export interface CreateCashTransferParams {
+  to_register_id: string;
+  amount: number;
+  reason?: string;
+}
+
+export type CashTransferAction = "accept" | "reject" | "cancel";
 
 export interface CashMethodSummary {
   payment_method: string;
@@ -39,6 +90,15 @@ export interface CashMethodSummary {
   /** Devolvido a clientes em trocas/devoluções nesta forma */
   refunds_count?: number;
   refunds_total?: number;
+}
+
+/** Quanto cada operador vendeu e recebeu de parcelas no turno */
+export interface CashOperatorSummary {
+  user_id: string;
+  user_name: string;
+  sales_count: number;
+  sales_total: number;
+  receipts_total: number;
 }
 
 export interface CashSummary {
@@ -61,12 +121,17 @@ export interface CashSummary {
   change_count: number;
   change_total: number;
   by_method: CashMethodSummary[];
+  by_operator: CashOperatorSummary[];
 }
 
 export interface CashSessionDetail {
   session: CashSession;
   summary: CashSummary;
   movements: CashMovement[];
+  /** Chegando neste caixa: alguém daqui aceita ou recusa */
+  incoming_transfers: PendingCashTransfer[];
+  /** Saindo deste caixa: aguardando o destino; dá para cancelar */
+  outgoing_transfers: PendingCashTransfer[];
 }
 
 /** /current devolve `{ session: null }` quando o caixa está fechado */

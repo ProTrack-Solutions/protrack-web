@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Search, Tag, X } from "lucide-react";
+import { Layers, Search, Tag, X } from "lucide-react";
 import FilterPopOver, { FiltrosReceber } from "@/components/FilterPopOver";
 
 const types: { value: string; label: string; hint: string }[] = [
@@ -20,6 +20,9 @@ interface EstoqueSearchProps {
   generatingLabel: boolean;
   onApplyFilter: (filtros: FiltrosReceber) => void;
   filter: FiltrosReceber;
+  /** Produtos selecionados que ainda não têm grade (podem virar um modelo) */
+  groupableCount: number;
+  onGroup: () => void;
 }
 
 export function EstoqueSearch({
@@ -31,6 +34,8 @@ export function EstoqueSearch({
   generatingLabel,
   onApplyFilter,
   filter,
+  groupableCount,
+  onGroup,
 }: EstoqueSearchProps) {
   const [filterOpen, setFilterOpen] = useState(false);
   const [text, setText] = useState(searchTerm);
@@ -58,7 +63,7 @@ export function EstoqueSearch({
         <Search className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
         <input
           type="search"
-          placeholder="Pesquisar por nome ou código de barras..."
+          placeholder="Pesquisar por nome, modelo, cor ou código de barras..."
           value={text}
           onChange={(e) => setText(e.target.value)}
           onKeyDown={(e) => {
@@ -98,6 +103,21 @@ export function EstoqueSearch({
           >
             <X className="h-3.5 w-3.5" />
             Limpar seleção
+          </button>
+        )}
+
+        {groupableCount > 0 && (
+          <button
+            type="button"
+            onClick={onGroup}
+            title="Transformar os produtos selecionados em variações de um modelo"
+            className="inline-flex h-9 cursor-pointer items-center gap-2 rounded-full border border-border bg-background px-4 text-sm font-semibold text-foreground transition-colors hover:bg-muted"
+          >
+            <Layers className="h-4 w-4" />
+            Agrupar em modelo
+            <span className="rounded-full bg-muted px-2 py-0.5 text-xs tabular-nums">
+              {groupableCount.toLocaleString("pt-BR")}
+            </span>
           </button>
         )}
 

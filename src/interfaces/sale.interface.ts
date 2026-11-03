@@ -142,3 +142,43 @@ export interface GetTop5ProductsResponse {
 export interface GetInventoryTurnoverResponse {
   inventory_turnover: number;
 }
+
+/** Período da visão geral; datas locais da empresa, fim incluso.
+ * Sem start_date = desde a primeira venda; sem end_date = até hoje */
+export interface GetSalesOverviewParams {
+  start_date?: string; // formato: YYYY-MM-DD
+  end_date?: string; // formato: YYYY-MM-DD
+}
+
+export interface SalesOverviewTotals {
+  sales_count: number;
+  revenue: number;
+  average_ticket: number;
+  discounts: number;
+  items_sold: number;
+  customers_count: number;
+  canceled_count: number;
+  canceled_amount: number;
+  /** Devoluções registradas no período */
+  returned_amount: number;
+  /** Saldo em aberto das parcelas das vendas do período */
+  open_receivable: number;
+  overdue_receivable: number;
+}
+
+export interface SalesOverviewPoint {
+  date: string;
+  sales_count: number;
+  revenue: number;
+}
+
+export interface GetSalesOverviewResponse {
+  start_date: string;
+  end_date: string;
+  /** Granularidade da série, escolhida pela API conforme o tamanho do período */
+  period: "day" | "week" | "month";
+  totals: SalesOverviewTotals;
+  /** Período anterior de mesmo tamanho; zerado em "desde o início" */
+  previous: SalesOverviewTotals;
+  series: SalesOverviewPoint[];
+}
