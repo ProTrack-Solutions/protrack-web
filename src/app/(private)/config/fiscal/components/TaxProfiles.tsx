@@ -120,19 +120,20 @@ export function TaxProfiles({ settings }: Props) {
               <TableHeader>
                 <TableRow>
                   <TableHead>Perfil</TableHead>
-                  <TableHead>ICMS</TableHead>
-                  <TableHead>CFOP</TableHead>
+                  <TableHead>ICMS / CFOP</TableHead>
                   <TableHead>PIS / COFINS</TableHead>
-                  <TableHead>IBS / CBS</TableHead>
-                  <TableHead>Em uso</TableHead>
-                  <TableHead className="w-32" />
+                  <TableHead className="hidden xl:table-cell">
+                    IBS / CBS
+                  </TableHead>
+                  <TableHead className="w-28" />
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {profiles.map((p) => (
                   <TableRow key={p.id}>
-                    <TableCell className="font-medium">
-                      <span className="flex items-center gap-2">
+                    {/* Nome quebra linha; o uso fica embaixo para a tabela caber */}
+                    <TableCell className="min-w-48 whitespace-normal">
+                      <span className="flex flex-wrap items-center gap-x-2 gap-y-1 font-medium">
                         {p.name}
                         {p.is_default && (
                           <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[11px] font-semibold text-primary">
@@ -140,32 +141,40 @@ export function TaxProfiles({ settings }: Props) {
                           </span>
                         )}
                       </span>
+                      <span className="text-xs text-muted-foreground">
+                        {p.is_default
+                          ? "Vale para os produtos sem outro perfil"
+                          : `Em ${p.categories_count} categ. · ${p.products_count} prod.`}
+                      </span>
                     </TableCell>
                     <TableCell>
-                      {p.icms_csosn
-                        ? `CSOSN ${p.icms_csosn}`
-                        : `CST ${p.icms_cst}`}
-                      {p.icms_rate !== null && (
-                        <span className="text-muted-foreground">
-                          {" "}
-                          · {pct(p.icms_rate)}
-                        </span>
-                      )}
-                    </TableCell>
-                    <TableCell>{p.cfop}</TableCell>
-                    <TableCell className="text-sm">
-                      {p.pis_cst}{" "}
-                      {p.pis_rate !== null && `(${pct(p.pis_rate)})`} /{" "}
-                      {p.cofins_cst}{" "}
-                      {p.cofins_rate !== null && `(${pct(p.cofins_rate)})`}
+                      <span className="block">
+                        {p.icms_csosn
+                          ? `CSOSN ${p.icms_csosn}`
+                          : `CST ${p.icms_cst}`}
+                        {p.icms_rate !== null && (
+                          <span className="text-muted-foreground">
+                            {" "}
+                            · {pct(p.icms_rate)}
+                          </span>
+                        )}
+                      </span>
+                      <span className="text-xs text-muted-foreground">
+                        CFOP {p.cfop}
+                      </span>
                     </TableCell>
                     <TableCell className="text-sm">
+                      <span className="block">
+                        PIS {p.pis_cst}
+                        {p.pis_rate !== null && ` · ${pct(p.pis_rate)}`}
+                      </span>
+                      <span className="block">
+                        COFINS {p.cofins_cst}
+                        {p.cofins_rate !== null && ` · ${pct(p.cofins_rate)}`}
+                      </span>
+                    </TableCell>
+                    <TableCell className="hidden text-sm xl:table-cell">
                       {p.ibs_cbs_cst} · {p.ibs_cbs_class_code}
-                    </TableCell>
-                    <TableCell className="text-sm text-muted-foreground">
-                      {p.is_default
-                        ? "Todos os outros"
-                        : `${p.categories_count} categ. · ${p.products_count} prod.`}
                     </TableCell>
                     <TableCell>
                       <div className="flex justify-end gap-1">

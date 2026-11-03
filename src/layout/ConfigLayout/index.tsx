@@ -179,7 +179,8 @@ export default function LayoutConfig({
         </div>
 
         {/* Conteúdo principal */}
-        <div className="flex-1 p-6 overflow-y-auto">
+        {/* min-w-0: conteúdo largo (tabelas) rola dentro dele, sem esticar a coluna */}
+        <div className="min-w-0 flex-1 p-6 overflow-y-auto">
           {loading ? (
             <Loading />
           ) : allowed ? (
