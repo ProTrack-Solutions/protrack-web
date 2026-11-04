@@ -53,6 +53,10 @@ export interface CreateSaleParams {
   credit_amount?: number;
 }
 
+export interface CreateSaleResponse {
+  id: string;
+}
+
 interface CreateSaleItemParams {
   product_id: string;
   quantity: number;

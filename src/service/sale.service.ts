@@ -2,6 +2,7 @@ import { isAxiosError } from "axios";
 import { api } from "./api";
 import {
   CreateSaleParams,
+  CreateSaleResponse,
   GetInventoryTurnoverResponse,
   GetSalesOverviewParams,
   GetSalesOverviewResponse,
@@ -35,8 +36,11 @@ export const GetSales = async (
   return response.data;
 };
 
-export const CreateSale = async (params: CreateSaleParams): Promise<void> => {
-  await api.post("/sales", params);
+export const CreateSale = async (
+  params: CreateSaleParams,
+): Promise<CreateSaleResponse> => {
+  const response = await api.post<CreateSaleResponse>("/sales", params);
+  return response.data;
 };
 
 export const UpdateSale = async (
@@ -50,11 +54,10 @@ export const DeleteSale = async (saleId: string): Promise<void> => {
   await api.delete(`/sales/${saleId}`);
 };
 
-export const GetSaleReceipt = async (saleId: string): Promise<Blob> => {
+/** Baixa um PDF gerado pela API (recibo, carnê) */
+const getSalePdf = async (path: string): Promise<Blob> => {
   try {
-    const response = await api.get(`/sales/${saleId}/receipt`, {
-      responseType: "blob",
-    });
+    const response = await api.get(path, { responseType: "blob" });
     return new Blob([response.data], { type: "application/pdf" });
   } catch (error) {
     // Com responseType: 'blob' o JSON de erro ({ error }) também chega como Blob;
@@ -69,6 +72,13 @@ export const GetSaleReceipt = async (saleId: string): Promise<Blob> => {
     throw error;
   }
 };
+
+export const GetSaleReceipt = (saleId: string): Promise<Blob> =>
+  getSalePdf(`/sales/${saleId}/receipt`);
+
+/** Carnê de pagamento da venda no crediário: uma lâmina por parcela */
+export const GetSaleBooklet = (saleId: string): Promise<Blob> =>
+  getSalePdf(`/sales/${saleId}/booklet`);
 
 export const GetSalesSummary = async (): Promise<GetSalesSummaryResponse> => {
   const response = await api.get<GetSalesSummaryResponse>(
