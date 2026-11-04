@@ -19,13 +19,15 @@ import { useInfiniteClients } from "@/hooks/useInfiniteClients";
 import { Loading } from "@/components/Loading";
 import { CreateSale } from "@/service/sale.service";
 import { toast } from "sonner";
-import { getApiErrorMessage } from "@/utils/apiError";
 import { Product } from "@/interfaces/products.interface";
 import { useQueryClient } from "@tanstack/react-query";
 import { CASH_REGISTER_KEY } from "@/hooks/useCashRegister";
 import { CUSTOMER_CREDIT_KEY } from "@/hooks/useReturns";
 import { CashRegisterStatus } from "./components/CashRegisterStatus";
 import { PaymentMethod } from "@/enum/methodPayments";
+import { BookletSale, DialogPrintBooklet } from "./components/DialogPrintBooklet";
+import { validateSale } from "./components/validateSale";
+import { parseSaleApiError } from "./components/saleApiError";
 
 function useDebouncedValue<T>(value: T, delay: number): T {
   const [debouncedValue, setDebouncedValue] = useState(value);
@@ -50,6 +52,7 @@ export default function Sale() {
   const [selectedProducts, setSelectedProducts] = useState<
     Record<string, Product>
   >({});
+  const [bookletSale, setBookletSale] = useState<BookletSale | null>(null);
 
   const {
     products,
@@ -78,6 +81,26 @@ export default function Sale() {
   const queryClient = useQueryClient();
 
   const onSubmit = async (data: CreateSaleParams) => {
+    form.clearErrors();
+
+    // Confere no front com as mesmas regras da API antes de enviar
+    const errors = validateSale(data, productsForSummary);
+    if (errors.length > 0) {
+      errors.forEach(({ field, message }) => {
+        if (field !== "root") form.setError(field, { type: "validate", message });
+      });
+      const first = errors[0];
+      toast.error("Confira os dados da venda", {
+        description:
+          errors.length > 1
+            ? `${first.message} (e mais ${errors.length - 1} ${errors.length - 1 === 1 ? "pendência" : "pendências"})`
+            : first.message,
+      });
+      const firstField = errors.find((e) => e.field !== "root")?.field;
+      if (firstField && firstField !== "root") form.setFocus(firstField);
+      return;
+    }
+
     try {
       const payload = { ...data };
 
@@ -103,8 +126,12 @@ export default function Sale() {
         delete payload.amount_received;
       }
 
-      await CreateSale(payload);
+      const { id: saleId } = await CreateSale(payload);
       toast.success("Venda cadastrada com sucesso!");
+      // Venda no crediário: oferece imprimir o carnê de pagamento para o cliente
+      if (payload.payment_method === PaymentMethod.Installments && saleId) {
+        setBookletSale({ saleId, installments: payload.installments_count });
+      }
       // A venda entra no resumo do caixa aberto
       queryClient.invalidateQueries({ queryKey: [CASH_REGISTER_KEY] });
       if (payload.credit_amount) {
@@ -117,8 +144,19 @@ export default function Sale() {
       setProductSearch("");
       setClientSearch("");
     } catch (error) {
-      console.log(error);
-      toast.error(getApiErrorMessage(error, "Erro ao cadastrar venda"));
+      console.error(error);
+      const { title, description, field, refresh } = parseSaleApiError(error);
+      toast.error(title, { description });
+      if (field) form.setError(field, { type: "server", message: description });
+
+      // O erro mostra que a tela está desatualizada: recarrega o que mudou
+      if (refresh === "cash-register") {
+        queryClient.invalidateQueries({ queryKey: [CASH_REGISTER_KEY] });
+      } else if (refresh === "products") {
+        queryClient.invalidateQueries({ queryKey: ["products-select"] });
+      } else if (refresh === "clients") {
+        queryClient.invalidateQueries({ queryKey: ["clients-select"] });
+      }
     }
   };
 
@@ -174,6 +212,11 @@ export default function Sale() {
           <SaleFormActions />
         </form>
       </Form>
+
+      <DialogPrintBooklet
+        sale={bookletSale}
+        onClose={() => setBookletSale(null)}
+      />
     </div>
   );
 }

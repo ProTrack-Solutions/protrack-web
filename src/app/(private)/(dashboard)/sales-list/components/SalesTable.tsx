@@ -10,6 +10,7 @@ import {
   ChevronDown,
   ChevronRight,
   Loader2,
+  NotebookText,
   Pencil,
   Printer,
   Receipt,
@@ -36,9 +37,14 @@ import {
   ListSalesWithInstallmentsResponse,
   SalePaginationParams,
 } from "@/interfaces/sale.interface";
-import { DeleteSale, GetSaleReceipt } from "@/service/sale.service";
+import {
+  DeleteSale,
+  GetSaleBooklet,
+  GetSaleReceipt,
+} from "@/service/sale.service";
 import { getApiErrorMessage } from "@/utils/apiError";
 import { getPageRange } from "@/utils/pagination";
+import { printPdfBlob } from "@/utils/printPdf";
 import { getPaymentMethodLabel } from "@/utils/paymentMethodFormat";
 import { getSaleStatusLabel, getSaleStatusVariant } from "@/utils/salesStatus";
 import { SalesRange, formatDateTime, plural } from "./format";
@@ -94,6 +100,7 @@ export function SalesTable({ range }: SalesTableProps) {
   const [saleToEdit, setSaleToEdit] = useState<ListSalesWithInstallmentsResponse>();
   const [saleToDelete, setSaleToDelete] = useState<string | null>(null);
   const [printingSaleId, setPrintingSaleId] = useState<string | null>(null);
+  const [printingBookletId, setPrintingBookletId] = useState<string | null>(null);
   const debouncedSearch = useDebouncedValue(search.trim(), 300);
 
   // Trocar o período no cabeçalho volta para a primeira página
@@ -127,28 +134,24 @@ export function SalesTable({ range }: SalesTableProps) {
   const handlePrintSale = async (saleId: string) => {
     setPrintingSaleId(saleId);
     try {
-      const blob = await GetSaleReceipt(saleId);
-      const url = window.URL.createObjectURL(blob);
-
-      // Carrega o PDF num iframe invisível e abre a janela de impressão do navegador
-      const iframe = document.createElement("iframe");
-      iframe.style.display = "none";
-      iframe.src = url;
-      iframe.onload = () => {
-        iframe.contentWindow?.focus();
-        iframe.contentWindow?.print();
-        // Limpeza depois que a janela de impressão já leu o arquivo
-        setTimeout(() => {
-          iframe.remove();
-          window.URL.revokeObjectURL(url);
-        }, 60_000);
-      };
-      document.body.appendChild(iframe);
+      printPdfBlob(await GetSaleReceipt(saleId));
     } catch (error) {
       console.log(error);
       toast.error(getApiErrorMessage(error, "Erro ao gerar recibo da venda"));
     } finally {
       setPrintingSaleId(null);
+    }
+  };
+
+  const handlePrintBooklet = async (saleId: string) => {
+    setPrintingBookletId(saleId);
+    try {
+      printPdfBlob(await GetSaleBooklet(saleId));
+    } catch (error) {
+      console.log(error);
+      toast.error(getApiErrorMessage(error, "Erro ao gerar o carnê da venda"));
+    } finally {
+      setPrintingBookletId(null);
     }
   };
 
@@ -389,6 +392,26 @@ export function SalesTable({ range }: SalesTableProps) {
                               <Printer className="h-4 w-4" />
                             )}
                           </Button>
+                          {!isCanceled &&
+                            sale.payment_method === PaymentMethod.Installments && (
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="cursor-pointer"
+                                title="Imprimir carnê"
+                                disabled={printingBookletId === sale.sale_id}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handlePrintBooklet(sale.sale_id);
+                                }}
+                              >
+                                {printingBookletId === sale.sale_id ? (
+                                  <Loader2 className="h-4 w-4 animate-spin" />
+                                ) : (
+                                  <NotebookText className="h-4 w-4" />
+                                )}
+                              </Button>
+                            )}
                           {!isCanceled && (
                             <>
                               <Button
