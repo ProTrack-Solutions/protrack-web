@@ -5,8 +5,11 @@ import {
   FiscalDocument,
   FiscalDocumentList,
   FiscalProfile,
+  FiscalModel,
   FiscalProfileParams,
   FiscalSettings,
+  ManualDocumentInput,
+  ManualPreview,
   ProductFiscal,
   ProductFiscalParams,
   SefazStatus,
@@ -120,6 +123,8 @@ const cleanFiscal = (p: ProductFiscalParams) => ({
 
 export const GetFiscalDocuments = async (params: {
   status?: string;
+  model?: FiscalModel;
+  source?: "sale" | "manual";
   problems?: boolean;
   page?: number;
   per_page?: number;
@@ -181,7 +186,24 @@ const fetchFile = async (path: string): Promise<Blob> => {
   }
 };
 
-/** Abre o DANFC-e (PDF 80 mm) em outra aba para imprimir */
+/** Confere a nota manual sem emitir: problemas, CFOPs e totais */
+export const PreviewManualDocument = async (
+  input: ManualDocumentInput,
+): Promise<ManualPreview> =>
+  (
+    await api.post("/fiscal/documents/manual/preview", input, {
+      timeout: 30000,
+    })
+  ).data;
+
+/** Emite a NF-e/NFC-e manual. A SEFAZ pode demorar: timeout maior. */
+export const EmitManualDocument = async (
+  input: ManualDocumentInput,
+): Promise<FiscalDocument> =>
+  (await api.post("/fiscal/documents/manual", input, { timeout: 60000 })).data
+    .document;
+
+/** Abre o PDF da nota (DANFC-e 80 mm ou DANFE A4) em outra aba para imprimir */
 export const PrintDanfce = async (documentId: string): Promise<void> => {
   // Abre a aba antes do await: depois dele o navegador bloqueia como pop-up
   const tab = window.open("", "_blank");
@@ -205,6 +227,7 @@ export const PrintDanfce = async (documentId: string): Promise<void> => {
 export const DownloadFiscalXml = async (
   documentId: string,
   accessKey: string | null,
+  model: FiscalModel = 65,
 ): Promise<void> => {
   const blob = await fetchFile(`/fiscal/documents/${documentId}/xml`);
   const url = URL.createObjectURL(
@@ -212,7 +235,7 @@ export const DownloadFiscalXml = async (
   );
   const link = document.createElement("a");
   link.href = url;
-  link.download = `nfce-${accessKey ?? documentId}.xml`;
+  link.download = `${model === 55 ? "nfe" : "nfce"}-${accessKey ?? documentId}.xml`;
   document.body.appendChild(link);
   link.click();
   link.remove();

@@ -180,9 +180,20 @@ export type FiscalDocumentStatus =
   | "SUPERSEDED"
   | "FAILED";
 
+/** 55 = NF-e, 65 = NFC-e */
+export type FiscalModel = 55 | 65;
+
 export interface FiscalDocument {
   id: string;
-  sale_id: string;
+  /** Nulo na nota manual (avulsa) */
+  sale_id: string | null;
+  model: FiscalModel;
+  source: "sale" | "manual";
+  operation_nature: string | null;
+  recipient_name: string | null;
+  recipient_document: string | null;
+  /** Total da nota manual (a da venda vem da venda) */
+  total: number | null;
   environment: FiscalEnvironment;
   attempt: number;
   status: FiscalDocumentStatus;
@@ -219,3 +230,129 @@ export const isPrintable = (d?: Pick<FiscalDocument, "status"> | null) =>
 /** Sem nota válida: o lojista corrige e emite de novo */
 export const needsAttention = (d?: Pick<FiscalDocument, "status"> | null) =>
   d?.status === "REJECTED" || d?.status === "FAILED" || d?.status === "ERROR";
+
+export const modelLabel = (model?: FiscalModel | null) =>
+  model === 55 ? "NF-e" : "NFC-e";
+
+/** DANFE (NF-e, A4) ou DANFC-e (NFC-e, 80 mm) */
+export const printoutLabel = (model?: FiscalModel | null) =>
+  model === 55 ? "DANFE" : "DANFC-e";
+
+// ---------- Emissão manual (NF-e / NFC-e avulsa) ----------
+
+/** indIEDest: 1 contribuinte, 2 isento, 9 não contribuinte */
+export type IEIndicator = "1" | "2" | "9";
+
+export interface ManualAddress {
+  street: string;
+  number: string;
+  complement: string;
+  district: string;
+  city_code: string;
+  city_name: string;
+  state: string;
+  zip_code: string;
+  phone: string;
+}
+
+export interface ManualRecipient {
+  document: string;
+  name: string;
+  ie_indicator: IEIndicator;
+  state_registration: string;
+  email: string;
+  address: ManualAddress;
+}
+
+export interface ManualDifal {
+  destination_rate: number;
+  interstate_rate: 4 | 7 | 12;
+  fcp_rate?: number;
+  method?: "single" | "double";
+}
+
+export interface ManualItemInput {
+  product_id: string;
+  description?: string;
+  quantity: number;
+  unit_price: number;
+  discount?: number;
+  cfop?: string;
+  tax_profile_id?: string | null;
+  freight?: number;
+  insurance?: number;
+  other_expenses?: number;
+  additional_info?: string;
+  difal?: ManualDifal;
+}
+
+export interface ManualPayment {
+  /** tPag da SEFAZ */
+  method: string;
+  amount: number;
+  description?: string;
+}
+
+export interface ManualTransport {
+  mode: "0" | "1" | "2" | "3" | "4" | "9";
+  carrier?: {
+    document: string;
+    name: string;
+    state_registration: string;
+    address: string;
+    city_name: string;
+    state: string;
+  };
+  volumes?: {
+    quantity: number;
+    species?: string;
+    brand?: string;
+    net_weight?: number;
+    gross_weight?: number;
+  }[];
+}
+
+export interface ManualDocumentInput {
+  model: FiscalModel;
+  idempotency_key: string;
+  operation_nature?: string;
+  /** CFOP dos itens sem CFOP próprio; 5 vira 6 sozinho para outro estado */
+  default_cfop?: string;
+  final_consumer?: boolean;
+  presence?: string;
+  recipient?: Partial<ManualRecipient> | null;
+  items: ManualItemInput[];
+  payments: ManualPayment[];
+  transport?: ManualTransport;
+  additional_info?: string;
+}
+
+export interface NfeTotals {
+  products: number;
+  discount: number;
+  freight: number;
+  insurance: number;
+  otherExpenses: number;
+  icmsBase: number;
+  icms: number;
+  fcp: number;
+  stBase: number;
+  st: number;
+  fcpSt: number;
+  ipi: number;
+  pis: number;
+  cofins: number;
+  difal: { icms: number; fcp: number } | null;
+  ibsCbs: { base: number; ibsState: number; ibsCity: number; cbs: number };
+  total: number;
+  totalWithIbsCbs: number;
+}
+
+export interface ManualPreview {
+  problems: string[];
+  interstate: boolean;
+  items: { description: string; cfop: string }[];
+  /** vNF na NF-e; soma dos itens na NFC-e */
+  total: number;
+  totals: NfeTotals | null;
+}

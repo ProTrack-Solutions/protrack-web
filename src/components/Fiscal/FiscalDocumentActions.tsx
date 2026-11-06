@@ -31,7 +31,9 @@ import { Label } from "@/components/ui/label";
 import {
   FiscalDocument,
   isPrintable,
+  modelLabel,
   needsAttention,
+  printoutLabel,
 } from "@/interfaces/fiscal.interface";
 import {
   CancelFiscalDocument,
@@ -43,31 +45,33 @@ import { useInvalidateFiscal } from "@/hooks/useFiscal";
 import { getApiErrorMessage } from "@/utils/apiError";
 
 interface Props {
-  saleId: string;
+  /** Nulo na nota manual: não há venda para emitir de novo */
+  saleId: string | null;
   document: FiscalDocument | null;
   /** Mostra "Emitir NFC-e" para venda sem nota (emissão desligada na hora da venda) */
   allowEmitWithoutDocument?: boolean;
 }
 
 export const emitResultToast = (doc: FiscalDocument) => {
+  const label = modelLabel(doc.model);
   if (isPrintable(doc)) {
     toast.success(
       doc.status === "CONTINGENCY"
-        ? `NFC-e nº ${doc.number} emitida em contingência (vale normalmente; será transmitida à SEFAZ).`
-        : `NFC-e nº ${doc.number} autorizada.`,
+        ? `${label} nº ${doc.number} emitida em contingência (vale normalmente; será transmitida à SEFAZ).`
+        : `${label} nº ${doc.number} autorizada.`,
     );
   } else if (doc.status === "PENDING" || doc.status === "PROCESSING") {
     toast.info(
-      doc.error_message ?? "NFC-e enviada; aguardando a SEFAZ responder.",
+      doc.error_message ?? `${label} enviada; aguardando a SEFAZ responder.`,
     );
   } else {
     toast.error(
-      `NFC-e não emitida: ${doc.reject_reason ?? doc.error_message ?? "verifique a nota"}`,
+      `${label} não emitida: ${doc.reject_reason ?? doc.error_message ?? "verifique a nota"}`,
     );
   }
 };
 
-/** Menu de ações da NFC-e de uma venda: imprimir, reemitir, XML e cancelar */
+/** Menu de ações da nota (NFC-e da venda ou NF-e/NFC-e manual): imprimir, reemitir, XML e cancelar */
 export function FiscalDocumentActions({
   saleId,
   document,
@@ -78,8 +82,12 @@ export function FiscalDocumentActions({
   const [cancelOpen, setCancelOpen] = useState(false);
   const [reason, setReason] = useState("");
 
+  const label = modelLabel(document?.model);
+  const printout = printoutLabel(document?.model);
+  // Reemitir é da venda; a nota manual com problema se corrige numa nova emissão
   const canEmit =
-    needsAttention(document) || (!document && allowEmitWithoutDocument);
+    !!saleId &&
+    (needsAttention(document) || (!document && allowEmitWithoutDocument));
   const printable = isPrintable(document);
   const cancellable = document?.status === "AUTHORIZED";
   const hasXml = printable || document?.status === "CANCELLED";
@@ -99,7 +107,7 @@ export function FiscalDocumentActions({
 
   const emit = () =>
     run(async () => {
-      const doc = await EmitSaleFiscalDocument(saleId);
+      const doc = await EmitSaleFiscalDocument(saleId!);
       emitResultToast(doc);
       invalidate();
     }, "Erro ao emitir a NFC-e");
@@ -107,11 +115,11 @@ export function FiscalDocumentActions({
   const cancel = () =>
     run(async () => {
       await CancelFiscalDocument(document!.id, reason);
-      toast.success("NFC-e cancelada na SEFAZ.");
+      toast.success(`${label} cancelada na SEFAZ.`);
       setCancelOpen(false);
       setReason("");
       invalidate();
-    }, "Erro ao cancelar a NFC-e");
+    }, `Erro ao cancelar a ${label}`);
 
   const reasonOk = reason.trim().length >= 15 && reason.trim().length <= 255;
 
@@ -124,7 +132,7 @@ export function FiscalDocumentActions({
             size="icon"
             className="h-8 w-8"
             disabled={busy}
-            aria-label="Ações da NFC-e"
+            aria-label={`Ações da ${label}`}
           >
             {busy ? (
               <Loader2 className="h-4 w-4 animate-spin" />
@@ -137,10 +145,13 @@ export function FiscalDocumentActions({
           {printable && (
             <DropdownMenuItem
               onClick={() =>
-                run(() => PrintDanfce(document!.id), "Erro ao abrir o DANFC-e")
+                run(
+                  () => PrintDanfce(document!.id),
+                  `Erro ao abrir o ${printout}`,
+                )
               }
             >
-              <Printer className="h-4 w-4" /> Imprimir DANFC-e
+              <Printer className="h-4 w-4" /> Imprimir {printout}
             </DropdownMenuItem>
           )}
           {canEmit && (
@@ -153,7 +164,12 @@ export function FiscalDocumentActions({
             <DropdownMenuItem
               onClick={() =>
                 run(
-                  () => DownloadFiscalXml(document!.id, document!.access_key),
+                  () =>
+                    DownloadFiscalXml(
+                      document!.id,
+                      document!.access_key,
+                      document!.model,
+                    ),
                   "Erro ao baixar o XML",
                 )
               }
@@ -168,7 +184,7 @@ export function FiscalDocumentActions({
                 className="text-destructive focus:text-destructive"
                 onClick={() => setCancelOpen(true)}
               >
-                <Ban className="h-4 w-4" /> Cancelar NFC-e
+                <Ban className="h-4 w-4" /> Cancelar {label}
               </DropdownMenuItem>
             </>
           )}
@@ -178,11 +194,14 @@ export function FiscalDocumentActions({
       <Dialog open={cancelOpen} onOpenChange={setCancelOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Cancelar NFC-e nº {document?.number}</DialogTitle>
+            <DialogTitle>
+              Cancelar {label} nº {document?.number}
+            </DialogTitle>
             <DialogDescription>
               O cancelamento vai para a SEFAZ e só é aceito dentro do prazo da
-              UF. A venda continua registrada: para desfazer a venda inteira,
-              cancele a venda no histórico (a nota é cancelada junto).
+              UF.
+              {saleId &&
+                " A venda continua registrada: para desfazer a venda inteira, cancele a venda no histórico (a nota é cancelada junto)."}
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-2">
@@ -208,7 +227,7 @@ export function FiscalDocumentActions({
               onClick={cancel}
             >
               {busy && <Loader2 className="h-4 w-4 animate-spin" />}
-              Cancelar NFC-e
+              Cancelar {label}
             </Button>
           </DialogFooter>
         </DialogContent>

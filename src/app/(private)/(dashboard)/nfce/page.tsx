@@ -6,6 +6,7 @@ import {
   AlertTriangle,
   ChevronLeft,
   ChevronRight,
+  FilePlus2,
   FileText,
   Loader2,
   Settings2,
@@ -17,6 +18,7 @@ import { FiscalDocumentActions } from "@/components/Fiscal/FiscalDocumentActions
 import { brl } from "@/components/DashCard";
 import { useFiscalDocuments, useFiscalSettings } from "@/hooks/useFiscal";
 import { useModuleAccess } from "@/hooks/useModuleAccess";
+import { FiscalModel, modelLabel } from "@/interfaces/fiscal.interface";
 import { cn } from "@/lib/utils";
 
 const PER_PAGE = 20;
@@ -30,15 +32,23 @@ const dateTime = (iso: string) =>
     minute: "2-digit",
   });
 
-/** Notas fiscais (NFC-e) das vendas, com as que precisam de atenção em destaque */
+const MODELS: { value: FiscalModel | undefined; label: string }[] = [
+  { value: undefined, label: "Todos os modelos" },
+  { value: 65, label: "NFC-e" },
+  { value: 55, label: "NF-e" },
+];
+
+/** Notas fiscais: NFC-e das vendas e NF-e/NFC-e manuais, com as que precisam de atenção em destaque */
 export default function NfcePage() {
   const [problems, setProblems] = useState(false);
+  const [model, setModel] = useState<FiscalModel | undefined>();
   const [page, setPage] = useState(1);
   const { data: settings } = useFiscalSettings();
   const { canAccess } = useModuleAccess();
   const isAdmin = canAccess(undefined, "ADMIN");
   const { data, isLoading, isPlaceholderData } = useFiscalDocuments({
     problems,
+    model,
     page,
     per_page: PER_PAGE,
   });
@@ -65,10 +75,19 @@ export default function NfcePage() {
 
   return (
     <div className="space-y-6 p-6">
-      <Header
-        title="Notas fiscais"
-        text="NFC-e emitidas nas vendas: imprima, reemita as que falharam e cancele quando precisar."
-      />
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <Header
+          title="Notas fiscais"
+          text="NFC-e das vendas e notas emitidas à mão (NF-e e NFC-e): imprima, reemita as que falharam e cancele quando precisar"
+        />
+        {settings?.issuer_registered !== false && (
+          <Button asChild>
+            <Link href="/nfce/new">
+              <FilePlus2 className="h-4 w-4" /> Emitir nota
+            </Link>
+          </Button>
+        )}
+      </div>
 
       {settings && !settings.enabled && (
         <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-amber-300 bg-amber-50 p-4 text-sm text-amber-900 dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-200">
@@ -99,9 +118,31 @@ export default function NfcePage() {
               </span>
             )}
           </h2>
-          <div className="flex gap-1 rounded-full border p-1">
-            {tab(false, "Todas")}
-            {tab(true, "Precisam de atenção")}
+          <div className="flex flex-wrap items-center gap-2">
+            <div className="flex gap-1 rounded-full border p-1">
+              {MODELS.map((m) => (
+                <button
+                  key={m.label}
+                  type="button"
+                  onClick={() => {
+                    setModel(m.value);
+                    setPage(1);
+                  }}
+                  className={cn(
+                    "rounded-full px-3 py-1 text-sm font-medium transition-colors",
+                    model === m.value
+                      ? "bg-primary text-primary-foreground"
+                      : "text-muted-foreground hover:bg-muted",
+                  )}
+                >
+                  {m.label}
+                </button>
+              ))}
+            </div>
+            <div className="flex gap-1 rounded-full border p-1">
+              {tab(false, "Todas")}
+              {tab(true, "Precisam de atenção")}
+            </div>
           </div>
         </div>
 
@@ -122,7 +163,9 @@ export default function NfcePage() {
             <table className="w-full text-sm">
               <thead className="bg-slate-100 text-xs text-slate-700 dark:bg-muted dark:text-muted-foreground">
                 <tr>
-                  <th className="px-4 py-2.5 text-left font-semibold">Venda</th>
+                  <th className="px-4 py-2.5 text-left font-semibold">
+                    Origem
+                  </th>
                   <th className="px-3 py-2.5 text-right font-semibold">
                     Total
                   </th>
@@ -141,9 +184,16 @@ export default function NfcePage() {
                         {d.customer_name || "Consumidor final"}
                       </p>
                       <p className="text-xs text-muted-foreground">
-                        <span className="font-mono">
-                          {d.sale_id.slice(0, 8)}
-                        </span>{" "}
+                        {d.sale_id ? (
+                          <>
+                            Venda{" "}
+                            <span className="font-mono">
+                              {d.sale_id.slice(0, 8)}
+                            </span>
+                          </>
+                        ) : (
+                          (d.operation_nature ?? "Nota manual")
+                        )}{" "}
                         · {dateTime(d.sale_at)}
                       </p>
                     </td>
@@ -151,6 +201,9 @@ export default function NfcePage() {
                       {brl(d.sale_total)}
                     </td>
                     <td className="px-3 py-3">
+                      <span className="mb-1 inline-block rounded bg-muted px-1.5 py-0.5 text-[11px] font-semibold text-muted-foreground">
+                        {modelLabel(d.model)}
+                      </span>
                       {d.number ? (
                         <>
                           <p>nº {d.number}</p>

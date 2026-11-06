@@ -4,6 +4,7 @@ import {
   useQueryClient,
 } from "@tanstack/react-query";
 import { useCallback } from "react";
+import { FiscalModel } from "@/interfaces/fiscal.interface";
 import {
   GetFiscalCategories,
   GetFiscalDocuments,
@@ -48,6 +49,8 @@ export const useFiscalCategories = (enabled = true) =>
 
 export const useFiscalDocuments = (params: {
   status?: string;
+  model?: FiscalModel;
+  source?: "sale" | "manual";
   problems?: boolean;
   page: number;
   per_page: number;
