@@ -3,7 +3,11 @@ import { auth } from "@/auth";
 import { getInitialRoute } from "@/const/moduleAccess.const";
 
 export default auth((req) => {
-  const isLoggedIn = !!req.auth;
+  // Sessão com erro (substituída por outro login ou refresh que falhou) já
+  // morreu no backend: conta como deslogado. Senão o /demo e o /login
+  // mandavam pro dashboard da sessão morta e o 401 jogava de volta pro login.
+  const sessionError = req.auth?.error;
+  const isLoggedIn = !!req.auth && !sessionError;
   const hasCompany = req.auth?.hasCompany;
   const { nextUrl } = req;
 
@@ -26,7 +30,11 @@ export default auth((req) => {
 
   // 1. Se estiver deslogado e tentar acessar uma rota privada, vai para o login
   if (!isLoggedIn && !isPublicRoute) {
-    return NextResponse.redirect(new URL("/login", nextUrl));
+    const loginUrl = new URL("/login", nextUrl);
+    if (sessionError === "SessionReplaced") {
+      loginUrl.searchParams.set("reason", "session_replaced");
+    }
+    return NextResponse.redirect(loginUrl);
   }
 
   // 2. Se estiver logado e tentar ir para o login (ou cair na raiz), manda
