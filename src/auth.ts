@@ -61,6 +61,14 @@ async function forwardBackendCookies(backendCookies?: string[]) {
   });
 }
 
+// IP do navegador que pediu o login, informado pelo proxy da hospedagem.
+function getVisitorIp(request?: Request): string | undefined {
+  const forwarded = request?.headers.get("x-forwarded-for");
+  const ip =
+    forwarded?.split(",")[0]?.trim() || request?.headers.get("x-real-ip");
+  return ip || undefined;
+}
+
 // Monta o usuário do NextAuth a partir da resposta de /auth/login ou
 // /auth/demo (mesmo formato nos dois).
 async function buildSessionUser(
@@ -145,11 +153,17 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       id: "demo",
       name: "Demo",
       credentials: {},
-      async authorize() {
+      async authorize(_credentials, request) {
         try {
+          // Esta chamada sai do servidor Next: sem repassar o IP do visitante,
+          // o rate limit do backend contaria todos os acessos como um só.
+          const visitorIp = getVisitorIp(request);
           const response = await axios.post(
             `${process.env.NEXT_PUBLIC_API_URL}/auth/demo`,
             { aud: "protrack-gerencial-web" },
+            visitorIp
+              ? { headers: { "X-Forwarded-For": visitorIp } }
+              : undefined,
           );
 
           await forwardBackendCookies(response.headers["set-cookie"]);
