@@ -16,7 +16,20 @@ function getCachedSession() {
   if (!sessionCache || Date.now() - sessionCache.at > SESSION_CACHE_MS) {
     const promise = getSession();
     sessionCache = { promise, at: Date.now() };
-    promise.catch(() => (sessionCache = null));
+    // Sessão sem token (visitante ainda deslogado, ex: landing carregando os
+    // planos) não fica no cache: senão as chamadas logo após o login (demo ou
+    // credenciais, sem recarregar a página) saíam sem Authorization e o 401
+    // jogava o usuário de volta pro login.
+    promise.then(
+      (session) => {
+        if (!session?.accessToken && sessionCache?.promise === promise) {
+          sessionCache = null;
+        }
+      },
+      () => {
+        if (sessionCache?.promise === promise) sessionCache = null;
+      },
+    );
   }
   return sessionCache.promise;
 }
